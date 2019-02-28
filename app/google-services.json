@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1059864150157",
+    "firebase_url": "https://castlequiz-d0708.firebaseio.com",
+    "project_id": "castlequiz-d0708",
+    "storage_bucket": "castlequiz-d0708.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059864150157:android:c2369454e46d8d6b",
+        "android_client_info": {
+          "package_name": "com.example.historyquiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059864150157-eppqo5kibh2uatfm4m1en9m5o9hqflf5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.historyquiz",
+            "certificate_hash": "dbcda37ba0fcac957c463bc06b0ffe2578e7bafb"
+          }
+        },
+        {
+          "client_id": "1059864150157-673pcrhpuk2396qd7rro8b7dj8e95ul5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsRABjsJMxwYl6BF0cgSrmZc0Mwj-p9og"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059864150157-673pcrhpuk2396qd7rro8b7dj8e95ul5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">HistoryQuiz</string>
+
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+
+    <!--Новое приложение-->
+    <string name="menu_profile">Профиль</string>
+    <string name="menu_students">Студенты</string>
+    <string name="menu_works">Курсовые</string>
+    <string name="menu_themes">Темы</string>
+    <string name="sign_up">Зарегистрироваться</string>
+
+    <!--Auth-->
+    <string name="enter_correct_name">Введите правильный email</string>
+    <string name="enter_correct_password">Введите правильный пароль</string>
+    <string name="user_not_found">Пользователь с таким именем и паролем не найден.Введите корректные данные</string>
+
+    <string name="progress_message">Загрузка…</string>
+    <string name="error_authentication">Authentication failed.</string>
+    <string name="connection_reset">Ошибка подключения к серверу. Попробуйте переподключиться</string>
+    <string name="server_reset">Ошибка подключения</string>
+
+    <string name="add_photo">Add photo</string>
+
+    <string name="if_member_login">Уже зарегистрированы? Войти</string>
+    <string name="create_new_account">Создать аккаунт</string>
+</resources>

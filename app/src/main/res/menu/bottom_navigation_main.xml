@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/workFragment"
+        android:title="@string/menu_works"
+        android:icon="@drawable/ic_group_work_black_24dp"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/themeFragment"
+        android:title="@string/menu_themes"
+        android:icon="@drawable/ic_note_black_24dp"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/studentFragment"
+        android:title="@string/menu_profile"
+        android:icon="@drawable/ic_person_black_24dp"
+        app:showAsAction="ifRoom" />
+
+</menu>

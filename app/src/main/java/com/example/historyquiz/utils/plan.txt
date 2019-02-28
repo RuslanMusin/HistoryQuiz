@@ -1,0 +1,17 @@
+Navigation
+1) Tests
+2) Profile
+3) Cards
+4) Game
+5) Friends
+6) Quit
+7) Statistics
+
+BottomNavigation
+1) Tests
+2) Cards
+3) Game
+4) Profile
+(includes
+Friends, Quit,
+Statistics)
