@@ -63,6 +63,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${retrofit}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofit}"
     implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofit}"
+    implementation "com.squareup.retrofit2:converter-simplexml:${retrofit}"
 
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:${okhttp}"
@@ -102,6 +103,7 @@ dependencies {
     //Custom Views
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
+    //Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version" // use -ktx for Kotlin
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version"
 }

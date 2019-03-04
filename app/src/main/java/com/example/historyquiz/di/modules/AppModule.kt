@@ -12,7 +12,7 @@ import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
-@Module(includes = [AndroidSupportInjectionModule::class, FirebaseModule::class])
+@Module(includes = [AndroidSupportInjectionModule::class, FirebaseModule::class, RepositoryModule::class])
 interface AppModule {
 
     @ActivityScope
