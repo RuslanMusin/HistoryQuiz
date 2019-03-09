@@ -13,11 +13,11 @@ class User {
 
     var username: String? = null
 
+    var password: String? = null
+
     var lowerUsername: String? = null
 
-    var photoUrl: String? = null
-
-    var desc: String? = null
+    lateinit var photoUrl: String
 
     var score: String? = null
 

@@ -63,6 +63,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${retrofit}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofit}"
     implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofit}"
+    implementation "com.squareup.retrofit2:converter-simplexml:${retrofit}"
 
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:${okhttp}"
@@ -92,16 +93,23 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.15'
     kapt 'com.google.dagger:dagger-compiler:2.15'
 
-//Dagger-Android
+    //Dagger-Android
     implementation 'com.google.dagger:dagger-android:2.15'
     kapt 'com.google.dagger:dagger-android-processor:2.15'
 
-//Если мы собираемся использовать support библиотеку
+    //Если мы собираемся использовать support библиотеку
     implementation 'com.google.dagger:dagger-android-support:2.15'
 
     //Custom Views
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    //ExpandableTextView
+    implementation 'com.ms-square:expandableTextView:0.1.4'
 
+    //Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version" // use -ktx for Kotlin
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version"
+
+    //MaterialDesign
+    implementation 'com.jaredrummler:material-spinner:1.2.5'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }
