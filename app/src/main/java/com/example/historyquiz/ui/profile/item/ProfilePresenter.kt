@@ -25,13 +25,13 @@ class ProfilePresenter: BasePresenter<ProfileView>() {
     @Inject
     lateinit var wikiApiRepository: WikiApiRepository
 
-    fun query(query: String) {
+  /*  fun query(query: String) {
         Log.d(TAG_LOG,"pres opensearch")
         wikiApiRepository
             .query(TITLES)
             .doOnSubscribe(Consumer<Disposable> { viewState.showProgressDialog(R.string.progress_message) })
             .doAfterTerminate(Action { viewState.hideProgressDialog() })
             .subscribe({ viewState.setQueryResults(it) }, { viewState.handleError(it) })
-    }
+    }*/
 
 }

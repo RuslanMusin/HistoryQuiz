@@ -6,8 +6,6 @@ import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 
 interface ProfileView: BasicFunctional {
 
-    fun setQueryResults(list: List<Page>)
-
     fun handleError(throwable: Throwable)
 
 }

@@ -1,15 +1,17 @@
 <resources>
     <string name="app_name">HistoryQuiz</string>
 
+    <string name="menu_profile">Профиль</string>
+    <string name="menu_tests">Тесты</string>
+    <string name="menu_cards">Карточки</string>
+    <string name="menu_game">Игра</string>
+
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
 
-    <!--Новое приложение-->
-    <string name="menu_profile">Профиль</string>
-    <string name="menu_students">Студенты</string>
-    <string name="menu_works">Курсовые</string>
-    <string name="menu_themes">Темы</string>
+    <string name="friends">Друзья</string>
+
     <string name="sign_up">Зарегистрироваться</string>
 
     <!--Auth-->
@@ -26,4 +28,56 @@
 
     <string name="if_member_login">Уже зарегистрированы? Войти</string>
     <string name="create_new_account">Создать аккаунт</string>
+    <string name="username">Username</string>
+
+    <string name="choose_from_standart">Выбрать из стандартных</string>
+    <string name="choose_from_gallery">Выбрать из галлереи</string>
+
+    <string name="add_friend">Добавить в друзья</string>
+    <string name="remove_friend">Удалить из друзей</string>
+    <string name="remove_request">Удалить из подписок</string>
+
+    <string name="play_game">Сыграть в игру</string>
+    <string name="offline_connection">Нет сети</string>
+    <string name="view_time">Просмотр карт</string>
+    <string name="wait_enemy">Ожидание противника</string>
+
+    <!--Game-->
+    <string name="find_game">Find Game</string>
+    <string name="game_searching">Ищем игру</string>
+    <string name="not_enough_cards">У вас недостаточно карт</string>
+    <string name="enemy">enemy:</string>
+
+    <string name="default_parametr_value">10</string>
+    <string name="authorName">Автор теста</string>
+    <string name="test_done">Тест пройден</string>
+    <string name="test_wasnt_done">Нет</string>
+    <string name="test_was_done">Да</string>
+    <string name="do_test">Решить тест</string>
+    <string name="question_text">Вопрос</string>
+    <string name="right_asnwers">Правильных ответов</string>
+    <string name="answer">Ответ</string>
+    <string name="wrong_answers">Неправильных ответов</string>
+    <string name="winned_card">Выигранная карта</string>
+    <string name="test_failed">Тест не пройден</string>
+    <string name="set_answer">Ответить</string>
+    <string name="agree">Да</string>
+    <string name="disagree">Нет</string>
+    <string name="question_dialog_content">При выходе результат будет потерян. Выйти ?</string>
+    <string name="question_dialog_title">Вы точно хотите выйти?</string>
+    <string name="card_getted">Карта получена</string>
+    <string name="add_test">Новый тест</string>
+    <string name="wiki">Википедия</string>
+    <string name="states">Состояния</string>
+    <string name="change_two_cards">Замените 2 карты по желанию</string>
+    <string name="time">Время :</string>
+    <string name="find_bot">Найти бота</string>
+    <string name="games">Игры</string>
+    <string name="add_game">Новая игра</string>
+    <string name="game_name">Название игры</string>
+    <string name="game_card_count">Кол-во возможных карт</string>
+    <string name="add_another_photo">Выбрать другой аватар</string>
+    <string name="create_game">Создать игру</string>
+    <string name="select_game_type">Выберите тип игры</string>
+    <string name="description">Описание</string>
 </resources>

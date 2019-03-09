@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
                                                  android:id="@+id/main_content"
                                                  android:layout_width="match_parent"
                                                  android:layout_height="match_parent"
-                                                 android:fitsSystemWindows="true"
 >
+
 
     <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:elevation="0dp">
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -22,22 +22,201 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_enter"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:padding="12dp"
-            android:background="@color/primary"
-            android:textColor="@color/white"
-            android:text="@string/menu_profile"
-            android:layout_gravity="center"
-    />
+    <RelativeLayout
+                    xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:id="@+id/tv_text"
+        <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
 
-    />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin.large"
+                    android:layout_marginStart="@dimen/margin.large"
+                    android:orientation="vertical">
+
+                <LinearLayout
+                        android:id="@+id/li_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <RelativeLayout
+                            android:id="@+id/profileInfo"
+                            android:layout_width="match_parent"
+                            android:minHeight="120dp"
+                            android:layout_height="wrap_content"
+                    >
+
+                        <RelativeLayout
+                                android:id="@+id/imageContainer"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:layout_marginEnd="@dimen/margin.large"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                        >
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/iv_profile"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:alpha="1"
+                                    android:src="@mipmap/ic_launcher" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                                android:id="@+id/linearLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toEndOf="@+id/imageContainer"
+                                android:orientation="vertical">
+
+                            <TextView
+                                    android:id="@+id/tv_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="16dp"
+                                    android:text="@string/app_name"
+                                    android:textColor="@color/primary_text"
+                                    android:textSize="@dimen/text.22"
+                            />
+
+                            <android.support.v7.widget.AppCompatButton
+                                    android:id="@+id/btn_add_friend"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/add_friend"
+                                    android:textAllCaps="false"
+                                    android:background="@color/primary"
+                                    android:layout_marginTop="@dimen/margin.normal"
+                                    android:padding="@dimen/padding_small"
+                                    android:textColor="@color/white"
+                            />
+
+                            <android.support.v7.widget.AppCompatButton
+                                    android:id="@+id/btn_play_game"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/margin.normal"
+                                    android:text="@string/play_game"
+                                    android:textAllCaps="false"
+                                    android:background="@color/primary"
+                                    android:padding="@dimen/padding_small"
+                                    android:textColor="@color/white"
+                            />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="@dimen/margin.normal"
+                >
+
+                    <LinearLayout
+                            android:id="@+id/li_tests"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="@dimen/padding_small"
+                                android:paddingBottom="@dimen/padding_small"
+                                android:src="@drawable/ic_insert_drive_file_black_24dp"/>
+
+                        <TextView
+                                android:id="@+id/tv_crossings"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/padding_small"
+                                android:paddingTop="@dimen/padding_small"
+                                android:paddingBottom="@dimen/padding_small"
+                                android:text="@string/menu_tests"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                    <LinearLayout
+                            android:id="@+id/li_cards"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="@dimen/padding_small"
+                                android:paddingBottom="@dimen/padding_small"
+                                android:src="@drawable/ic_portrait_black_24dp"/>
+
+                        <TextView
+                                android:id="@+id/tv_cards"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/padding_small"
+                                android:paddingTop="@dimen/padding_small"
+                                android:paddingBottom="@dimen/padding_small"
+                                android:text="@string/menu_cards"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                    <TextView
+                            android:id="@+id/tv_desc_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/description"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                    <include layout="@layout/layout_expandable_text_view"/>
+
+                    <ProgressBar
+                            android:id="@+id/progress_loader"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

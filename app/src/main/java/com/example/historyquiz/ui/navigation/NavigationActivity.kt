@@ -21,7 +21,6 @@ open class NavigationActivity: BaseActivity(), NavigationView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
 
-        setSupportActionBar(toolbar as Toolbar)
         val navFragment = host as NavHostFragment
         setupBottomNavMenu(navFragment.navController)
 

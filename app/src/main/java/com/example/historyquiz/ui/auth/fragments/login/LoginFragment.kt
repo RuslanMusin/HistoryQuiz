@@ -12,14 +12,19 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG
 import com.example.historyquiz.utils.Const.USER_DATA_PREFERENCES
 import com.example.historyquiz.utils.Const.USER_PASSWORD
 import com.example.historyquiz.utils.Const.USER_USERNAME
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_login.*
 import javax.inject.Inject
 
 class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
+
+    @Inject
+    lateinit var gson: Gson
 
     @InjectPresenter
     lateinit var loginFragmentPresenter: LoginFragmentPresenter
@@ -35,6 +40,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
     }
 
     private fun initViews() {
+        setBottomVisibility(false)
         setListeners()
     }
 
@@ -48,16 +54,9 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
      }*/
 
     private fun signUp(v: View) {
-        val options = NavOptions.Builder().apply {
-            setEnterAnim(R.anim.slide_in_right)
-            setExitAnim(R.anim.slide_out_left)
-            setPopEnterAnim(R.anim.slide_in_left)
-            setPopExitAnim(R.anim.slide_out_right)
-        }.build()
-
         val args = Bundle()
         args.putString(KEY, "Button")
-        Navigation.findNavController(v).navigate(R.id.signUpFragment, args, options)
+        Navigation.findNavController(v).navigate(R.id.signUpAciton)
     }
 
     private fun checkUserSession() {
@@ -120,12 +119,12 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
         }
     }
 
-    override fun goToProfile(curator: User) {
+    override fun goToProfile(user: User) {
         Log.d(TAG,"login")
         val args = Bundle()
-        args.putString(KEY, "Button")
-        Navigation.findNavController(btn_enter).navigate(R.id.loginAction, args)
-//        Navigation.createNavigateOnClickListener(R.id.signUpAciton, args)
+        args.putString(Const.USER_KEY, gson.toJson(user))
+        Navigation.findNavController(btn_enter)
+            .navigate(R.id.action_loginFragment_to_profileFragment, args)
         Log.d(TAG,"loginAfter")
     }
 
