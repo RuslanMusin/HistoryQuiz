@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/workFragment"
+        android:id="@+id/action_cards"
         android:title="@string/menu_cards"
         android:icon="@drawable/ic_event_note_black_24dp"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/themeFragment"
+        android:id="@+id/action_tests"
         android:title="@string/menu_tests"
         android:icon="@drawable/ic_note_black_24dp"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/testsFragment"
+        android:id="@+id/action_game"
         android:title="@string/menu_game"
         android:icon="@drawable/ic_games_black_24dp"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/studentFragment"
+        android:id="@+id/action_profile"
         android:title="@string/menu_profile"
         android:icon="@drawable/ic_person_black_24dp"
         app:showAsAction="ifRoom" />

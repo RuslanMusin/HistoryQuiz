@@ -2,16 +2,17 @@ package com.example.historyquiz.ui.auth.fragments.login
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavOptions
-import androidx.navigation.Navigation
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
+import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG
 import com.example.historyquiz.utils.Const.USER_DATA_PREFERENCES
@@ -40,7 +41,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
     }
 
     private fun initViews() {
-        setBottomVisibility(false)
+        hideBottomNavigation()
         setListeners()
     }
 
@@ -56,7 +57,9 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
     private fun signUp(v: View) {
         val args = Bundle()
         args.putString(KEY, "Button")
-        Navigation.findNavController(v).navigate(R.id.signUpAciton)
+//        Navigation.findNavController(v).navigate(R.id.signUpAciton)
+        val fragment = SignUpFragment.newInstance(args)
+        pushFragments(fragment, true)
     }
 
     private fun checkUserSession() {
@@ -123,9 +126,10 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
         Log.d(TAG,"login")
         val args = Bundle()
         args.putString(Const.USER_KEY, gson.toJson(user))
-        Navigation.findNavController(btn_enter)
-            .navigate(R.id.action_loginFragment_to_profileFragment, args)
-        Log.d(TAG,"loginAfter")
+        val fragment = ProfileFragment.newInstance(args)
+        pushFragments(fragment, true)
+       /* Navigation.findNavController(btn_enter)
+            .navigate(R.id.action_loginFragment_to_profileFragment, args)*/
     }
 
     override fun showError() {
@@ -147,5 +151,15 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
     companion object {
 
         const val KEY = "TITLE"
+
+        fun newInstance(args: Bundle): Fragment {
+            val fragment = LoginFragment()
+            fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(): Fragment {
+            return LoginFragment()
+        }
     }
 }

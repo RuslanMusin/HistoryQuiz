@@ -2,6 +2,7 @@ package com.example.historyquiz.ui.profile.item
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.model.wiki_api.query.Page
+import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.navigation.NavigationPresenter
 import com.example.historyquiz.ui.navigation.NavigationView
@@ -47,7 +49,7 @@ class ProfileFragment: BaseFragment(), ProfileView {
     }
 
     private fun initViews() {
-        setBottomVisibility(true)
+//        setBottomVisibility(true)
         setActionBar(toolbar)
         setToolbarTitle(R.string.menu_profile)
         setListeners()
@@ -68,6 +70,19 @@ class ProfileFragment: BaseFragment(), ProfileView {
 
     override fun handleError(throwable: Throwable) {
         Log.d(TAG_LOG, "handle error")
+    }
+
+    companion object {
+
+        fun newInstance(args: Bundle): Fragment {
+            val fragment = ProfileFragment()
+            fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(): Fragment {
+            return ProfileFragment()
+        }
     }
 
 }

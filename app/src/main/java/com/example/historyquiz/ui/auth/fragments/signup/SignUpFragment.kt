@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,7 +55,7 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     }
 
     private fun initViews() {
-        setBottomVisibility(false)
+//        setBottomVisibility(false)
         setListeners()
     }
 
@@ -187,5 +188,15 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
         private val GALLERY_PHOTO = 0
 
         private val STANDART_PHOTO = 1
+
+            fun newInstance(args: Bundle): Fragment {
+                val fragment = SignUpFragment()
+                fragment.arguments = args
+                return fragment
+            }
+
+            fun newInstance(): Fragment {
+                return SignUpFragment()
+            }
     }
 }

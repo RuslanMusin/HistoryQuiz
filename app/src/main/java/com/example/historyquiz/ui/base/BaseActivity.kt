@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
@@ -78,12 +79,17 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
         supportActionBar?.title = getString(id)
     }
 
-    override fun setBottomVisibility(flag: Boolean) {
-        if(flag) {
-            bottom_nav_view.visibility = View.VISIBLE
-        } else {
-            bottom_nav_view.visibility = View.GONE
-        }
+    override fun hideBottomNavigation() {
+        bottom_navigation.visibility = View.GONE
+    }
+
+    override fun showBottomNavigation() {
+        bottom_navigation.visibility = View.VISIBLE
+        changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    }
+
+    override fun changeWindowsSoftInputMode(mode: Int) {
+        this.window.setSoftInputMode(mode);
     }
 
 }

@@ -1,9 +1,11 @@
 package com.example.historyquiz.ui.base
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
+import com.example.historyquiz.ui.navigation.NavigationView
 import dagger.android.support.AndroidSupportInjection
 
 abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
@@ -33,15 +35,31 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
         (activity as BasicFunctional).showSnackBar(messageId)
     }
 
-    override fun setBottomVisibility(flag: Boolean) {
-        (activity as BasicFunctional).setBottomVisibility(flag)
-    }
-
     override fun setActionBar(toolbar: Toolbar) {
         (activity as BasicFunctional).setActionBar(toolbar)
     }
 
     override fun setToolbarTitle(id: Int) {
         (activity as BasicFunctional).setToolbarTitle(id)
+    }
+
+    override fun hideBottomNavigation() {
+        (activity as BasicFunctional).hideBottomNavigation()
+    }
+
+    override fun showBottomNavigation() {
+        (activity as BasicFunctional).showBottomNavigation()
+    }
+
+    override fun changeWindowsSoftInputMode(mode: Int) {
+        (activity as BasicFunctional).changeWindowsSoftInputMode(mode)
+    }
+
+    override fun pushFragments(fragment: Fragment, shouldAdd: Boolean) {
+        (activity as NavigationView).pushFragments(fragment, shouldAdd)
+    }
+
+    override fun showFragment(lastFragment: Fragment, fragment: Fragment) {
+        (activity as NavigationView).showFragment(lastFragment, fragment)
     }
 }
