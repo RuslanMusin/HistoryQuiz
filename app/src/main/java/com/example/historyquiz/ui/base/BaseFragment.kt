@@ -47,8 +47,9 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
         (activity as BasicFunctional).hideBottomNavigation()
     }
 
-    override fun showBottomNavigation() {
-        (activity as BasicFunctional).showBottomNavigation()
+    override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.showBottomNavigation(navigationView)
+//        (activity as BasicFunctional).showBottomNavigation()
     }
 
     override fun changeWindowsSoftInputMode(mode: Int) {
@@ -61,5 +62,13 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
 
     override fun showFragment(lastFragment: Fragment, fragment: Fragment) {
         (activity as NavigationView).showFragment(lastFragment, fragment)
+    }
+
+    override fun openLoginPage() {
+        (activity as NavigationView).openLoginPage()
+    }
+
+    override fun openNavigationPage() {
+        (activity as NavigationView).openNavigationPage()
     }
 }

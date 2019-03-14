@@ -12,6 +12,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG
@@ -43,6 +44,10 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
     private fun initViews() {
         hideBottomNavigation()
         setListeners()
+    }
+
+    override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
     }
 
     /* private fun setListeners() {
@@ -109,7 +114,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
 
             R.id.tv_name -> {
                 et_email.setText("rust@ma.ru")
-                et_password.setText("rustam")
+                et_password.setText("rustamka")
 
             }
 
@@ -126,8 +131,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
         Log.d(TAG,"login")
         val args = Bundle()
         args.putString(Const.USER_KEY, gson.toJson(user))
-        val fragment = ProfileFragment.newInstance(args)
-        pushFragments(fragment, true)
+        openNavigationPage()
        /* Navigation.findNavController(btn_enter)
             .navigate(R.id.action_loginFragment_to_profileFragment, args)*/
     }

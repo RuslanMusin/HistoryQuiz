@@ -15,6 +15,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.base.BaseActivity
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.utils.Const.TAG_LOG
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.layout_connectivity.*
@@ -29,7 +30,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     private lateinit var relativeTabs: HashMap<String, String>
 
     var currentTab: String = TAB_AUTH
-    private var showTab: String = TAB_PROFILE
+    private var showTab: String = SHOW_AUTH
 
     var lastRequest: (() -> Unit)? = null
 
@@ -42,6 +43,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         const val TAB_GAME = "tab_game"
         const val TAB_CARDS = "tab_cards"
         const val TAB_TESTS = "tab_tests"
+        const val SHOW_AUTH = "show_auth"
         const val SHOW_PROFILE = "show_profile"
         const val SHOW_GAME = "show_game"
         const val SHOW_TESTS = "show_tests"
@@ -73,20 +75,28 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         stacks[SHOW_TESTS] = Stack()
         stacks[SHOW_CARDS] = Stack()
 
-
-
         relativeTabs = HashMap()
+        relativeTabs[TAB_AUTH] = SHOW_AUTH
         relativeTabs[TAB_PROFILE] = SHOW_PROFILE
         relativeTabs[TAB_GAME] = SHOW_GAME
         relativeTabs[TAB_TESTS] = SHOW_TESTS
         relativeTabs[TAB_CARDS] = SHOW_CARDS
 
-        openLogin()
+        openLoginPage()
 //        bottom_navigation.selectedItemId = R.id.action_profile
     }
 
-    private fun openLogin() {
+    override fun openLoginPage() {
+        currentTab = TAB_AUTH
+        showTab = SHOW_AUTH
         val fragment = LoginFragment.newInstance()
+        pushFragments(fragment, true)
+    }
+
+    override fun openNavigationPage() {
+        currentTab = TAB_PROFILE
+        showTab = SHOW_PROFILE
+        val fragment = ProfileFragment.newInstance()
         pushFragments(fragment, true)
     }
 
@@ -217,19 +227,19 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     override fun pushFragments(fragment: Fragment, shouldAdd: Boolean) {
-        showBottomNavigation()
+        showBottomNavigation(this)
         if (shouldAdd) {
             stacks[currentTab]?.push(fragment)
         }
         val manager = supportFragmentManager
         val ft = manager.beginTransaction()
-        (fragment as BaseFragment).showBottomNavigation()
+        (fragment as BaseFragment).showBottomNavigation(this)
         ft.replace(R.id.container, fragment)
         ft.commit()
     }
 
     override fun onBackPressed() {
-        showBottomNavigation()
+        showBottomNavigation(this)
         if(stacks[showTab]?.size!! > 1) {
             hideFragment()
         } else {
@@ -254,7 +264,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         val manager = supportFragmentManager
         val ft = manager.beginTransaction()
         fragment?.let {
-            (it as BaseFragment).showBottomNavigation()
+            (it as BaseFragment).showBottomNavigation(this@NavigationActivity)
             ft.replace(R.id.container, it) }
         ft.commit()
     }
@@ -273,7 +283,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
             stacks[showTab]?.pop()
         }
         fragment?.let {
-            (it as BaseFragment).showBottomNavigation()
+            (it as BaseFragment).showBottomNavigation(this@NavigationActivity)
             Log.d(TAG_LOG, "show")
             ft.show(it)
         }
@@ -289,7 +299,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         val manager = supportFragmentManager
         val ft = manager.beginTransaction()
         lastFragment.let {
-            (it as BaseFragment).showBottomNavigation()
+            (it as BaseFragment).showBottomNavigation(this@NavigationActivity)
             ft.hide(it).add(R.id.container, fragment).show(fragment)
         }
         ft.commit()

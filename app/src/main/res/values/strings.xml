@@ -80,4 +80,39 @@
     <string name="create_game">Создать игру</string>
     <string name="select_game_type">Выберите тип игры</string>
     <string name="description">Описание</string>
+    <string name="loading">Загрузка…</string>
+
+    <string name="test_name">Название теста</string>
+    <string name="add_card">Добавить карточку</string>
+    <string name="added_cards">Добавленная карта</string>
+    <string name="create_questions">Создать вопросы</string>
+    <string name="qustionId">Вопрос</string>
+    <string name="add_answer">Добавить ответ</string>
+    <string name="next_question">Следующий вопрос</string>
+    <string name="finish_questions">Завершить</string>
+    <string name="test_desc">Описание</string>
+    <string name="select_test_type">Выберите тип теста</string>
+    <string name="test_type_one">Один ответ</string>
+    <string name="test_type_many">Много ответов</string>
+    <string name="intelligence">Интеллект</string>
+    <string name="strength">Сила</string>
+    <string name="hp">Здоровье</string>
+    <string name="support">Поддержка</string>
+    <string name="prestige">Влияние</string>
+
+    <string name="game_ended">Игра закончена</string>
+    <string name="enemy_disconnected">Противник отключился от игры</string>
+    <string name="old_game_will_be_deleted">Старая игра будет удалена</string>
+    <string name="create_new_game">Создание новой игры</string>
+    <string name="game_will_be_deleted">Удалить эту игру ?</string>
+    <string name="delete_game">Удаление игры</string>
+    <string name="enemy_not_online">Игрок не в сети</string>
+    <string name="choose_card_mode">Какие карты можно использовать</string>
+    <string name="default_card_number">5</string>
+    <string name="set_card_min">В игре должно быть минимум 5 карт</string>
+    <string name="enemy_doesnt_have_card_min">У противника недостаточно карт для этой игры</string>
+    <string name="you_dont_have_card_min">Вам не хватает карт для игры</string>
+    <string name="comments">Комментарии</string>
+    <string name="comment_text_hint">Комментарий</string>
+
 </resources>

@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
+import com.example.historyquiz.ui.navigation.NavigationView
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -83,7 +84,8 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
         bottom_navigation.visibility = View.GONE
     }
 
-    override fun showBottomNavigation() {
+
+    override fun showBottomNavigation(navigationView: NavigationView) {
         bottom_navigation.visibility = View.VISIBLE
         changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }

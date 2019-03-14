@@ -20,4 +20,11 @@
     <dimen name="margin.large">16dp</dimen>
     <dimen name="margin.xlarge">24dp</dimen>
 
+
+    <dimen name="small_intrinsic_padding">4dp</dimen>
+    <dimen name="intrinsic_padding">8dp</dimen>
+    <dimen name="large_intrinsic_padding">16dp</dimen>
+
+    <dimen name="new_comment_min_height">50dp</dimen>
+    <dimen name="new_comment_max_height">100dp</dimen>
 </resources>

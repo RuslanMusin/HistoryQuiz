@@ -1,6 +1,7 @@
 package com.example.historyquiz.ui.auth.fragments.signup
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -18,8 +19,11 @@ import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.PhotoItem
 import com.example.historyquiz.model.user.User
+import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.auth.fragments.login.LoginFragment.Companion.KEY
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.navigation.NavigationActivity
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.STUB_PATH
@@ -43,7 +47,6 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     var imageUri: Uri? = null
     var photoUrl: String = STUB_PATH
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_sign_up, container, false)
         return view
@@ -52,6 +55,10 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+    }
+
+    override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
     }
 
     private fun initViews() {
@@ -118,14 +125,16 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     }
 
     private fun goToLogin() {
-        Navigation.findNavController(btn_login).navigate(R.id.action_signUpFragment_to_loginFragment2)
+        openLoginPage()
+//        Navigation.findNavController(btn_login).navigate(R.id.action_signUpFragment_to_loginFragment2)
     }
 
     override fun goToProfile(user: User) {
         val args = Bundle()
         args.putString(USER_KEY, gson.toJson(user))
-        Navigation.findNavController(btn_sign_up)
-            .navigate(R.id.action_signUpFragment_to_profileFragment,args)
+        openNavigationPage()
+       /* Navigation.findNavController(btn_sign_up)
+            .navigate(R.id.action_signUpFragment_to_profileFragment,args)*/
     }
 
     private fun addPhoto() {
