@@ -5,27 +5,26 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bumptech.glide.Glide
-import com.summer.itis.cardsproject.R
-import com.summer.itis.cardsproject.model.Card
-import com.summer.itis.cardsproject.model.Test
-import com.summer.itis.cardsproject.ui.base.BaseBackActivity
-import com.summer.itis.cardsproject.ui.base.OnBackPressedListener
-import com.summer.itis.cardsproject.ui.tests.ChangeToolbarListener
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.WINNED_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.fragments.finish.FinishFragment
-import com.summer.itis.cardsproject.ui.tests.test_item.fragments.main.TestFragment
-import com.summer.itis.cardsproject.ui.widget.ExpandableTextView
-import com.summer.itis.cardsproject.utils.Const.gsonConverter
+import com.example.historyquiz.R
+import com.example.historyquiz.model.card.Card
+import com.example.historyquiz.model.test.Test
+import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const.TEST_ITEM
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_test_card.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
+import javax.inject.Inject
 
 
-class TestCardFragment: Fragment(), OnBackPressedListener {
+class TestCardFragment: BaseFragment(), TestCardView {
 
+    @Inject
+    lateinit var gson: Gson
+
+    @InjectPresenter
+    lateinit var presenter: TestCardPresenter
 
     lateinit var test: Test
     lateinit var card: Card
@@ -39,21 +38,21 @@ class TestCardFragment: Fragment(), OnBackPressedListener {
         }
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         val args: Bundle = Bundle()
         args.putString(TEST_JSON, gsonConverter.toJson(test))
         val fragment = FinishFragment.newInstance(args)
         (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)
-    }
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_card, container, false)
 
-        val testStr: String? = arguments?.getString(TEST_JSON)
-        test = gsonConverter.fromJson(testStr, Test::class.java)
+        val testStr: String? = arguments?.getString(TEST_ITEM)
+        test = gson.fromJson(testStr, Test::class.java)
         card = test.card!!
-        (activity as BaseBackActivity).currentTag = TestActivity.WINNED_FRAGMENT
-        (activity as ChangeToolbarListener).changeToolbar(WINNED_FRAGMENT,"Карта ${card.abstractCard?.name}")
+//        (activity as BaseBackActivity).currentTag = TestActivity.WINNED_FRAGMENT
+//        (activity as ChangeToolbarListener).changeToolbar(WINNED_FRAGMENT,"Карта ${card.abstractCard?.name}")
         return view
     }
 

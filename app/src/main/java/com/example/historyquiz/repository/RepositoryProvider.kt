@@ -1,6 +1,6 @@
 package com.example.historyquiz.repository
 
-import android.util.Log
+import com.example.historyquiz.repository.user.UserRepository
 
 class RepositoryProvider {
 

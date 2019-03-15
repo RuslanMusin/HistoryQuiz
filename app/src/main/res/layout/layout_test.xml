@@ -87,9 +87,9 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_marginTop="@dimen/margin.large"
-                 android:text="@string/name"
+                 android:content="@string/name"
                  android:textColor="@color/primary_text"
-                 android:textSize="@dimen/text.16" />
+                 android:textSize="@dimen/content.16" />
 
              <TextView
                  android:id="@+id/tv_name"
@@ -97,8 +97,8 @@
                  android:layout_height="wrap_content"
                  android:layout_marginTop="@dimen/margin.small"
                  android:textColor="@color/secondary_text"
-                 android:textSize="@dimen/text.14"
-                 tools:text="Name" />-->
+                 android:textSize="@dimen/content.14"
+                 tools:content="Name" />-->
 
             <include layout="@layout/layout_divider"/>
 

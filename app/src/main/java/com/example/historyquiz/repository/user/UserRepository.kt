@@ -1,4 +1,4 @@
-package com.example.historyquiz.repository
+package com.example.historyquiz.repository.user
 
 import android.util.Log
 import com.example.historyquiz.model.user.User

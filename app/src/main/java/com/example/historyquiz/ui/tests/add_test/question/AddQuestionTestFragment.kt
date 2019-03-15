@@ -14,25 +14,25 @@ import android.view.ViewGroup
 import android.widget.*
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.example.historyquiz.R
+import com.example.historyquiz.model.test.Answer
+import com.example.historyquiz.model.test.Question
+import com.example.historyquiz.model.test.Test
+import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const.QUESTION_NUMBER
+import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.jaredrummler.materialspinner.MaterialSpinner
+import kotlinx.android.synthetic.main.fragment_add_question.*
 import java.util.ArrayList
 
-class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionListener {
+class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClickListener {
 
     private var imageUri: Uri? = null
 
     lateinit var test: Test
     private lateinit var question: Question
-    private var addTestView: AddTestView? = null
     private var number: Int = 0
-
-    private var tiQuestion: TextInputLayout? = null
-    private var liAnswers: LinearLayout? = null
-    private var btnAddAnswer: Button? = null
-    private var btnNextQuestion: Button? = null
-    private var btnFinish: Button? = null
-    private var etQuestion: EditText? = null
-    private var spinner: MaterialSpinner? = null
 
     private var answers: MutableList<Answer> = ArrayList()
     private var answerSize: Int = 0
@@ -50,13 +50,13 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
 
     private lateinit var checkListener: View.OnClickListener
 
-    override fun onBackPressed() {
+/*    override fun onBackPressed() {
 
         if(number != 0) {
             beforeQuestion()
         } else {
             val args: Bundle = Bundle()
-            args.putString(TEST_JSON, gsonConverter.toJson(test))
+            args.putString(TEST_ITEM, gson.toJson(test))
             val fragment = AddTestFragment.newInstance(args)
             (activity as BaseBackActivity).changeFragment(fragment, ADD_TEST_FRAGMENT)
         }
@@ -91,23 +91,21 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
         args.putInt(QUESTION_NUMBER, --number)
         val fragment = AddQuestionFragment.newInstance(args)
         (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
-    }
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
 
-        test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
+        test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
 
         number = arguments?.getInt(QUESTION_NUMBER)!!
-        addTestView = activity as AddTestView?
 
-        (activity as BaseBackActivity).currentTag = ADD_QUESTION_FRAGMENT + number
-        (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
+       /* (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
         if(number >= 2) {
             (activity as ChangeToolbarListener).showOk(true)
         } else {
             (activity as ChangeToolbarListener).showOk(false)
-        }
+        }*/
 
         return view
     }
@@ -128,7 +126,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
 
     private fun setQuestionData() {
         Log.d(TAG_LOG,"set question data")
-        etQuestion?.setText(question.question)
+        et_question.setText(question.question)
         for(i in question.answers.indices) {
             if(i >= checkBoxes.size) {
                 addAnswer()
@@ -139,14 +137,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
     }
 
     private fun initViews(view: View) {
-        etQuestion = view.findViewById(R.id.et_question)
-        tiQuestion = view.findViewById(R.id.ti_question)
-        liAnswers = view.findViewById(R.id.li_answers)
-        btnAddAnswer = view.findViewById(R.id.btn_add_answer)
-        btnNextQuestion = view.findViewById(R.id.btn_next_question)
-        btnFinish = view.findViewById(R.id.btn_finish_questions)
-        spinner = view.findViewById(R.id.spinner)
-        spinner!!.setItems(getString(R.string.test_type_one), getString(R.string.test_type_many))
+        spinner.setItems(getString(R.string.test_type_one), getString(R.string.test_type_many))
 
         answers = ArrayList()
         editTexts = ArrayList()
@@ -177,9 +168,9 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
 
 
     private fun setListeners() {
-        btnAddAnswer!!.setOnClickListener(this)
-        btnNextQuestion!!.setOnClickListener(this)
-        btnFinish!!.setOnClickListener(this)
+        btn_add_answer.setOnClickListener(this)
+        btn_next_question.setOnClickListener(this)
+        btn_finish_questions.setOnClickListener(this)
         spinner?.setOnItemSelectedListener(object : MaterialSpinner.OnItemSelectedListener<Any> {
             override fun onItemSelected(view: MaterialSpinner?, position: Int, id: Long, item: Any?) {
                 when (position) {
@@ -239,9 +230,9 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
             prepareQuestion()
             if(checkQuestion()) {
                 val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
+                args.putString(TEST_ITEM, gson.toJson(test))
                 args.putInt(QUESTION_NUMBER, ++number)
-                val fragment = AddQuestionFragment.newInstance(args)
+                val fragment = AddQuestionTestFragment.newInstance(args)
                 (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
             }
         }
@@ -250,10 +241,10 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
     private fun checkQuestion(): Boolean {
         var flag: Boolean = true
         if(question.question == null || question.question?.trim().equals("")) {
-            tiQuestion?.error = "Введите вопрос!"
+            ti_question.error = "Введите вопрос!"
             flag = false
         } else {
-            tiQuestion?.error = null
+            ti_question.error = null
         }
         var count: Int = 0
         for(i in question.answers.indices) {
@@ -269,7 +260,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
         }
         if(count == 0) {
             flag = false
-            (activity as NavigationBaseActivity).showSnackBar("Выберите хотя бы один ответ!")
+            showSnackBar("Выберите хотя бы один ответ!")
         }
 
         answers.clear()
@@ -309,7 +300,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
  */
     private fun addAnswer() {
         answerSize++
-        val view: View = layoutInflater.inflate(R.layout.layout_item_add_question,liAnswers,false)
+        val view: View = layoutInflater.inflate(R.layout.layout_item_add_question,li_answers,false)
         val editText: EditText = view.findViewById(R.id.et_answer)
         val checkBox: CheckBox = view.findViewById(R.id.checkbox)
 
@@ -318,7 +309,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
         editTexts?.add(editText)
         checkBoxes?.add(checkBox)
 
-        liAnswers?.addView(view)
+        li_answers.addView(view)
     }
 
 
@@ -333,7 +324,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
             answers!!.add(answer)
         }
 
-        question!!.question = etQuestion!!.text.toString()
+        question!!.question = et_question.text.toString()
         question!!.answers = answers.toMutableList()
         question.id = number.toString()
 
@@ -359,7 +350,7 @@ class AddQuestionTestFragment : Fragment(), View.OnClickListener, OnFourActionLi
         private val RESULT_LOAD_IMG = 0
 
         fun newInstance(args: Bundle): Fragment {
-            val fragment = AddQuestionFragment()
+            val fragment = AddQuestionTestFragment()
             fragment.arguments = args
             return fragment
         }

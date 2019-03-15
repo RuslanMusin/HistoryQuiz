@@ -13,4 +13,7 @@
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#434343</color>
 
+    <color name="highlight_text">#17a1d7</color>
+
+
 </resources>

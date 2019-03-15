@@ -1,31 +1,19 @@
 package com.example.historyquiz.ui.profile.item
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.model.wiki_api.query.Page
-import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.navigation.NavigationPresenter
-import com.example.historyquiz.ui.navigation.NavigationView
-import com.example.historyquiz.utils.ApplicationHelper
-import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_KEY
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import javax.inject.Inject
 
@@ -64,7 +52,7 @@ class ProfileFragment: BaseFragment(), ProfileView {
             val userJson = it.getString(USER_KEY)
             val user = gson.fromJson(userJson, User::class.java)
             tv_name.text = user.username
-            ApplicationHelper.loadUserPhoto(iv_profile, user.photoUrl)
+            AppHelper.loadUserPhoto(iv_profile, user.photoUrl)
         }
     }
 

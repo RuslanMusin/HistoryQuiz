@@ -16,31 +16,24 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
-import com.summer.itis.cardsproject.R
-import com.summer.itis.cardsproject.R.string.answer
-import com.summer.itis.cardsproject.model.Answer
-import com.summer.itis.cardsproject.model.Question
-import com.summer.itis.cardsproject.model.Test
-import com.summer.itis.cardsproject.repository.RepositoryProvider.Companion.userRepository
-import com.summer.itis.cardsproject.ui.base.BaseBackActivity
-import com.summer.itis.cardsproject.ui.base.OnBackPressedListener
-import com.summer.itis.cardsproject.ui.base.OnFourActionListener
-import com.summer.itis.cardsproject.ui.tests.ChangeToolbarListener
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
-import com.summer.itis.cardsproject.ui.tests.test_item.fragments.finish.FinishFragment
-import com.summer.itis.cardsproject.ui.tests.test_item.fragments.main.TestFragment
-import com.summer.itis.cardsproject.utils.Const
-import com.summer.itis.cardsproject.utils.Const.ONLINE_STATUS
-import com.summer.itis.cardsproject.utils.Const.TAG_LOG
-import com.summer.itis.cardsproject.utils.Const.gsonConverter
+import com.example.historyquiz.R
+import com.example.historyquiz.model.test.Answer
+import com.example.historyquiz.model.test.Question
+import com.example.historyquiz.model.test.Test
+import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
+import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.TEST_ITEM
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.util.ArrayList
+import javax.inject.Inject
 
-class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
+class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
+
+    @Inject
+    lateinit var gson: Gson
 
     private lateinit var question: Question
     private lateinit var test: Test
@@ -55,7 +48,7 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
     private var checkBoxes: MutableList<CheckBox>? = null
     private var radioButtons: MutableList<RadioButton>? = null
 
-    override fun onBackPressed() {
+   /* override fun onBackPressed() {
         beforeQuestion()
     }
 
@@ -69,15 +62,15 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
     override fun onOk() {
         finishQuestions()
-    }
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
 
         type = arguments?.getString(ANSWERS_TYPE)!!
-        val testStr: String = arguments?.getString(TEST_JSON)!!
+        val testStr: String = arguments?.getString(TEST_ITEM)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
-        test = gsonConverter.fromJson(testStr, Test::class.java)
+        test = gson.fromJson(testStr, Test::class.java)
         if(type.equals(RIGHT_ANSWERS)) {
             question =  test.rightQuestions[number]
             listSize = test.rightQuestions.size
@@ -87,8 +80,8 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
         }
 
-        (activity as BaseBackActivity).currentTag = TestActivity.ANSWERS_FRAGMENT + number
-        (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT,"Вопрос ${number+1}/${listSize}")
+        /*(activity as BaseBackActivity).currentTag = TestActivity.ANSWERS_FRAGMENT + number
+        (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT,"Вопрос ${number+1}/${listSize}")*/
         return view
     }
 
@@ -107,7 +100,7 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
         if(number == (listSize-1)) {
             btn_next_question.visibility = View.GONE
             btn_finish_questions.visibility = View.VISIBLE
-            (activity as ChangeToolbarListener).showOk(true)
+//            (activity as ChangeToolbarListener).showOk(true)
         }
 
         tv_question.text = question.question
@@ -134,7 +127,7 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
             addAnswer(answer)
         }
         for(tv in textViews!!) {
-            Log.d(Const.TAG_LOG,"text = " + tv.text)
+            Log.d(TAG_LOG,"content = " + tv.text)
         }
 
 
@@ -151,11 +144,11 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
     private fun beforeQuestion() {
         if(number > 0) {
             val args: Bundle = Bundle()
-            args.putString(TEST_JSON, gsonConverter.toJson(test))
+            args.putString(TEST_ITEM, gson.toJson(test))
             args.putString(ANSWERS_TYPE, type)
             args.putInt(QUESTION_NUMBER, --number)
             val fragment = AnswersFragment.newInstance(args)
-            (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+//            (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
         } else {
             finishQuestions()
         }
@@ -163,17 +156,19 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
     private fun finishQuestions() {
         val args: Bundle = Bundle()
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putString(TEST_ITEM, gson.toJson(test))
         val fragment = FinishFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)    }
+        pushFragments(fragment, true)
+//        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)
+    }
 
     private fun nextQuestion() {
         val args: Bundle = Bundle()
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putString(TEST_ITEM, gson.toJson(test))
         args.putString(ANSWERS_TYPE,type)
         args.putInt(QUESTION_NUMBER, ++number)
         val fragment = AnswersFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+//        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
     }
 
     override fun onClick(v: View) {
@@ -222,7 +217,7 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
         li_answers.addView(view)
         if(type.equals(WRONG_ANSWERS) && !answer.isRight && answer.userClicked != answer.isRight) {
             Log.d(TAG_LOG,"change checkbox color")
-            Log.d(Const.TAG_LOG,"text tv = ${tvAnswer.text}")
+            Log.d(Const.TAG_LOG,"content tv = ${tvAnswer.text}")
             Log.d(TAG_LOG,"answer.isRight = ${answer.isRight} and userClick = ${answer.userClicked}")
             CompoundButtonCompat.setButtonTintList(checkBox, colorStateList)
             checkBox.isChecked = true

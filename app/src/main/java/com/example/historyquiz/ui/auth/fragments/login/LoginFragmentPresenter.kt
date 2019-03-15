@@ -1,14 +1,12 @@
 package com.example.historyquiz.ui.auth.fragments.login
 
-import android.content.Context
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Toast
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.RepositoryProvider
-import com.example.historyquiz.repository.UserRepository
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.Const.TAG_LOG

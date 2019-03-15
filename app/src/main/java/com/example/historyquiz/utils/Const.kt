@@ -47,8 +47,45 @@ object Const {
     const val NAMESPACE = "0"
     const val SEARCH = "Лев Толстой"
 
+    //TestRelation
+    const val WIN_GAME = "win_game"
+    const val WIN_AFTER_WIN = "after_win_test"
+    const val LOSE_AFTER_WIN = "ore_after_test"
+    const val TEST_AFTER_WIN = ""
+
+    const val AFTER_TEST = "after_test"
+    const val WIN_AFTER_TEST = "after_win_test"
+    const val TEST_AFTER_TEST = "ore_after_test"
+    const val LOSE_AFTER_TEST = ""
+
+    const val LOSE_GAME = "lose_game"
+    const val WIN_AFTER_LOSE = "after_win_test"
+    const val LOSE_AFTER_LOSE = "ore_after_test"
+    const val TEST_AFTER_LOSE = ""
+
+    const val BEFORE_TEST = "before_test"
+
+    //comment types
+    const val CARD_COMMENT_TYPE = "CARD_COMMENT_TYPE"
+
     //items
     const val PHOTO_ITEM = "PHOTO_ITEM"
     const val USER_KEY = "USER_KEY"
+    const val TEST_ITEM = "TEST_ITEM"
+    const val CARD_ITEM = "CARD_ITEM"
+    const val ITEM_ITEM = "ITEM_ITEM"
+
+    //id's
+    const val TEST_ID = "TEST_ID"
+
+    //args
+    const val QUESTION_NUMBER = "queston_number"
+
+    //result nums
+    const val ADD_CARD = 0
+
+
+
+
 
 }

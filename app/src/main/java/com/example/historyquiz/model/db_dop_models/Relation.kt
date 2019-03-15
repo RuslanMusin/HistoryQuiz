@@ -1,5 +1,6 @@
 package com.example.historyquiz.model.db_dop_models
 
+import com.example.historyquiz.utils.Const.BEFORE_TEST
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.gson.annotations.Expose
 
@@ -9,7 +10,7 @@ import java.util.HashMap
 @IgnoreExtraProperties
 class Relation : ElementId() {
 
-//    var relation: String = BEFORE_TEST
+    var relation: String = BEFORE_TEST
 
     @Expose
     var relBefore: String? = null

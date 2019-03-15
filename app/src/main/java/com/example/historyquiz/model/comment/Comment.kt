@@ -10,7 +10,7 @@ import java.util.Calendar
 class Comment {
 
     var id: String? = null
-    var text: String? = null
+    var content: String? = null
     var authorId: String? = null
     var createdDate: Long = 0
 
@@ -26,7 +26,7 @@ class Comment {
     constructor() {}
 
     constructor(text: String) {
-        this.text = text
+        this.content = text
         this.createdDate = Calendar.getInstance().timeInMillis
     }
 }

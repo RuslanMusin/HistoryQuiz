@@ -74,7 +74,7 @@
             android:padding="12dp"
             android:background="@color/primary"
             android:textColor="@color/white"
-            android:text="@string/next_question"/>
+            android:content="@string/next_question"/>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_finish_questions"
@@ -85,7 +85,7 @@
             android:padding="12dp"
             android:background="@color/primary"
             android:textColor="@color/white"
-            android:text="@string/finish_questions"/>-->
+            android:content="@string/finish_questions"/>-->
 
     </LinearLayout>
 

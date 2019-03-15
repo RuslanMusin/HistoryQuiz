@@ -1,5 +1,4 @@
-package com.summer.itis.curatorapp.widget
-
+package com.example.historyquiz.widget
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter

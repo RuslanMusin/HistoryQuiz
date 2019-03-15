@@ -9,7 +9,7 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.RepositoryProvider
 import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
-import com.example.historyquiz.utils.ApplicationHelper
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AVATAR
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -65,7 +65,7 @@ class SignUpPresenter: BasePresenter<SignUpView>() {
 
     private fun uploadPhoto(user: User, imageUri: Uri) {
 
-            val childRef = ApplicationHelper.storageReference.child(user.photoUrl!!)
+            val childRef = AppHelper.storageReference.child(user.photoUrl!!)
 
             //uploading the image
             val uploadTask = childRef.putFile(imageUri)

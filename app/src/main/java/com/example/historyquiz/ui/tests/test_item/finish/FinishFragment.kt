@@ -10,52 +10,49 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.summer.itis.cardsproject.R
-import com.summer.itis.cardsproject.model.Question
-import com.summer.itis.cardsproject.model.Test
-import com.summer.itis.cardsproject.repository.RepositoryProvider
-import com.summer.itis.cardsproject.repository.RepositoryProvider.Companion.testRepository
-import com.summer.itis.cardsproject.ui.base.BaseBackActivity
-import com.summer.itis.cardsproject.ui.base.OnBackPressedListener
-import com.summer.itis.cardsproject.ui.base.OnOkListener
-import com.summer.itis.cardsproject.ui.tests.ChangeToolbarListener
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
-import com.summer.itis.cardsproject.ui.tests.test_item.TestActivity.Companion.WINNED_FRAGMENT
-import com.summer.itis.cardsproject.ui.tests.test_item.fragments.check_answers.AnswersFragment
-import com.summer.itis.cardsproject.ui.tests.test_item.fragments.winned_card.TestCardFragment
-import com.summer.itis.cardsproject.utils.ApplicationHelper
-import com.summer.itis.cardsproject.utils.Const
-import com.summer.itis.cardsproject.utils.Const.TAG_LOG
-import com.summer.itis.cardsproject.utils.Const.gsonConverter
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.example.historyquiz.R
+import com.example.historyquiz.model.test.Question
+import com.example.historyquiz.model.test.Test
+import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
+import com.example.historyquiz.ui.tests.test_item.main.TestFragment
+import com.example.historyquiz.ui.tests.test_item.winned_card.TestCardFragment
+import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.TEST_ITEM
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_finish_test.*
+import javax.inject.Inject
 
-class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, OnOkListener {
+class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
+
+    @Inject
+    lateinit var gson: Gson
+
+    @InjectPresenter
+    lateinit var presenter: FinishPresenter
 
     lateinit var test: Test
     var rightQuestions: MutableList<Question> = ArrayList()
     var wrongQuestions: MutableList<Question> = ArrayList()
     var procent: Long = 0
 
-    override fun onBackPressed() {
-       /* val args: Bundle = Bundle()
+   /* override fun onBackPressed() {
+       *//* val args: Bundle = Bundle()
         args.putString(TEST_JSON, gsonConverter.toJson(test))
         val fragment = FinishFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment)*/
+        (activity as BaseBackActivity).changeFragment(fragment)*//*
     }
 
     override fun onOk() {
         btn_finish_test.performClick()
-    }
+    }*/
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_finish_test, container, false)
-        (activity as BaseBackActivity).currentTag = TestActivity.FINISH_FRAGMENT
-        (activity as ChangeToolbarListener).changeToolbar(FINISH_FRAGMENT,"Результат")
+       /* (activity as BaseBackActivity).currentTag = TestActivity.FINISH_FRAGMENT
+        (activity as ChangeToolbarListener).changeToolbar(FINISH_FRAGMENT,"Результат")*/
 
-        test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
+        test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
         for(question in test.questions) {
             if(question.userRight) {
                 rightQuestions.add(question)
@@ -90,7 +87,8 @@ class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, 
             Log.d(TAG_LOG, "finish it")
             tv_winned_card.text = test.card?.abstractCard?.name
             test.testDone = true
-            ApplicationHelper.currentUser?.let { testRepository.finishTest(test, it).subscribe() }
+            presenter.finishTest(test)
+
 
         } else {
             tv_winned_card.text = getText(R.string.test_failed)
@@ -109,7 +107,11 @@ class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, 
                         answer.userClicked = false
                     }
                 }
-                TestActivity.start(activity as Activity,test)
+                val args: Bundle = Bundle()
+                args.putString(TEST_ITEM, gson.toJson(test))
+                val fragment = TestFragment.newInstance(args)
+                pushFragments(fragment, true)
+//                TestActivity.start(activity as Activity,test)
             }
 
             R.id.li_wrong_answers -> {
@@ -127,9 +129,10 @@ class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, 
             R.id.li_winned_card -> {
                 if(procent >= 80) {
                     val args: Bundle = Bundle()
-                    args.putString(TEST_JSON, gsonConverter.toJson(test))
+                    args.putString(TEST_ITEM, gson.toJson(test))
                     val fragment = TestCardFragment.newInstance(args)
-                    (activity as BaseBackActivity).changeFragment(fragment, WINNED_FRAGMENT)
+                    pushFragments(fragment, true)
+//                    (activity as BaseBackActivity).changeFragment(fragment, WINNED_FRAGMENT)
                 }
 
             }
@@ -139,9 +142,10 @@ class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, 
     fun prepareAnswers(type: String) {
         val args: Bundle = Bundle()
         args.putString(ANSWERS_TYPE, type)
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putString(TEST_ITEM, gson.toJson(test))
         val fragment = AnswersFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + 0)
+        pushFragments(fragment, true)
+//        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + 0)
       /*  activity!!.supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, AnswersFragment.newInstance(args))

@@ -1,4 +1,4 @@
-package com.summer.itis.curatorapp.widget
+package com.example.historyquiz.widget
 
 import android.content.Context
 import android.support.annotation.VisibleForTesting

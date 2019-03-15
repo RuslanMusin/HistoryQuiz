@@ -2,11 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="wrap_content" app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
 
-    <com.summer.itis.cardsproject.ui.widget.EmptyStateRecyclerView
-        android:id="@+id/rv_comics_list"
+    <com.example.historyquiz.widget.EmptyStateRecyclerView
+        android:id="@+id/rv_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -24,7 +24,7 @@
         tools:visibility="visible" />
 
     <ProgressBar
-        android:id="@+id/pg_comics_list"
+        android:id="@+id/pg_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
