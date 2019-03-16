@@ -1,8 +1,5 @@
 package com.example.historyquiz.ui.tests.test_item.finish
 
-import QuestionFragment.Companion.ANSWERS_TYPE
-import QuestionFragment.Companion.RIGHT_ANSWERS
-import QuestionFragment.Companion.WRONG_ANSWERS
 import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,6 +13,9 @@ import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
+import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.ANSWERS_TYPE
+import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.RIGHT_ANSWERS
+import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.WRONG_ANSWERS
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_item.winned_card.TestCardFragment
 import com.example.historyquiz.utils.Const.TAG_LOG

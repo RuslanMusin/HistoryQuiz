@@ -1,6 +1,8 @@
 package com.example.historyquiz.ui.tests.add_test.main
 
 import android.app.Activity
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,8 +21,12 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
+import com.example.historyquiz.ui.tests.add_test.AddTestViewModel
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.QUESTION_NUMBER
+import com.example.historyquiz.utils.Const.ADD_CARD_CODE
+import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
@@ -35,14 +41,14 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     @InjectPresenter
     lateinit var presenter: AddMainTestPresenter
 
+    lateinit var model: AddTestViewModel
+
     private var imageUri: Uri? = null
 
-    private var test: Test? = null
+    lateinit var test: Test
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_test, container, false)
-
-
         return view
     }
 
@@ -57,12 +63,24 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         initViews(view)
         setListeners()
 
-        if(arguments == null) {
+        model = activity?.run {
+            ViewModelProviders.of(this).get(AddTestViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
+
+        model.test.observe(this, Observer<Test> { item ->
+            if(item == null) {
+                test = Test()
+            } else {
+                test = item
+                setTestData()
+            }
+        })
+     /*   if(arguments == null) {
             test = Test()
         } else {
             test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
             setTestData()
-        }
+        }*/
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -89,6 +107,8 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                     val args: Bundle = Bundle()
                     args.putString(TEST_ITEM, gson.toJson(test))
                     args.putInt(QUESTION_NUMBER, 0)
+                    model.selectNumber(0)
+                    model.selectTest(test)
                     val fragment = AddQuestionTestFragment.newInstance(args)
                     pushFragments(fragment, true)
 //                    (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + 0)
@@ -98,8 +118,9 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
             }
 
             R.id.btn_add_card -> {
-                val intent = Intent(activity, AddCardListActivity::class.java)
-                startActivityForResult(intent, ADD_CARD)
+               val fragment = AddCardListFragment.newInstance()
+                fragment.setTargetFragment(this, ADD_CARD_CODE)
+                showFragment(this, fragment)
 
             }
         }
@@ -136,8 +157,8 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (reqCode == ADD_CARD && resultCode == Activity.RESULT_OK) {
-            val card = gson.fromJson(data!!.getStringExtra(CARD_EXTRA), Card::class.java)
+        if (reqCode == ADD_CARD_CODE && resultCode == Activity.RESULT_OK) {
+            val card = gson.fromJson(data!!.getStringExtra(CARD_ITEM), Card::class.java)
             tv_added_cards.text = card.abstractCard.name
             test!!.card = card
             Glide.with(this)
@@ -148,8 +169,6 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     }
 
     companion object {
-
-        const val ADD_CARD: Int = 1
 
         fun newInstance(args: Bundle): Fragment {
             val fragment = AddMainTestFragment()

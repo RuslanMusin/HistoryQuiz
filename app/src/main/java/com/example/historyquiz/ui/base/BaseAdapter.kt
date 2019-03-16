@@ -4,7 +4,7 @@ import android.support.annotation.CallSuper
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
-import com.summer.itis.curatorapp.widget.EmptyStateRecyclerView
+import com.example.historyquiz.widget.EmptyStateRecyclerView
 
 abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>) : RecyclerView.Adapter<VH>() {
 

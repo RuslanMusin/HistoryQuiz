@@ -1,6 +1,8 @@
 package com.example.historyquiz.ui.tests.add_test.question
 
 import android.app.Activity
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -8,25 +10,42 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.add_test.AddTestViewModel
+import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
+import com.example.historyquiz.ui.tests.add_test.main.AddMainTestPresenter
+import com.example.historyquiz.ui.tests.test_item.main.TestFragment
+import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
+import com.example.historyquiz.utils.Const.TEST_MANY_TYPE
+import com.example.historyquiz.utils.Const.TEST_ONE_TYPE
+import com.google.gson.Gson
 import com.jaredrummler.materialspinner.MaterialSpinner
 import kotlinx.android.synthetic.main.fragment_add_question.*
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import java.util.ArrayList
+import javax.inject.Inject
 
 class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClickListener {
+
+    @Inject
+    lateinit var gson: Gson
+
+    @InjectPresenter
+    lateinit var presenter: AddQuestionTestPresenter
+
+    lateinit var model: AddTestViewModel
 
     private var imageUri: Uri? = null
 
@@ -96,16 +115,27 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
 
-        test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
+        model = activity?.run {
+            ViewModelProviders.of(this).get(AddTestViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
 
-        number = arguments?.getInt(QUESTION_NUMBER)!!
+       /* test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
+        number = arguments?.getInt(QUESTION_NUMBER)!!*/
+        model.test.observe(this, Observer<Test> { item ->
+            test = item!!
+        })
+        model.number.observe(this, Observer<Int> { item ->
+            number = item!!
+        })
 
-       /* (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
+//        (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
         if(number >= 2) {
-            (activity as ChangeToolbarListener).showOk(true)
+            btn_ok.visibility = View.VISIBLE
+//            (activity as ChangeToolbarListener).showOk(true)
         } else {
-            (activity as ChangeToolbarListener).showOk(false)
-        }*/
+            btn_ok.visibility = View.GONE
+//            (activity as ChangeToolbarListener).showOk(false)
+        }
 
         return view
     }
@@ -169,8 +199,9 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private fun setListeners() {
         btn_add_answer.setOnClickListener(this)
-        btn_next_question.setOnClickListener(this)
-        btn_finish_questions.setOnClickListener(this)
+        btn_back.setOnClickListener(this)
+        btn_forward.setOnClickListener(this)
+        btn_cancel.setOnClickListener(this)
         spinner?.setOnItemSelectedListener(object : MaterialSpinner.OnItemSelectedListener<Any> {
             override fun onItemSelected(view: MaterialSpinner?, position: Int, id: Long, item: Any?) {
                 when (position) {
@@ -217,12 +248,15 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         prepareQuestion()
 //        addTestView!!.createTest()
         if(checkQuestion()) {
-            ApplicationHelper.currentUser?.let {
-                testRepository
-                    .createTest(test, it)
-                    .subscribe { e -> TestActivity.start(activity as Activity, test) }
-            }
+            presenter.createTest(test)
         }
+    }
+
+    override fun navigateToTest() {
+        val args = Bundle()
+        args.putString(TEST_ITEM, gson.toJson(test))
+        val fragment = TestFragment.newInstance(args)
+        pushFragments(fragment, true)
     }
 
     private fun nextQuestion() {
@@ -233,7 +267,10 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
                 args.putString(TEST_ITEM, gson.toJson(test))
                 args.putInt(QUESTION_NUMBER, ++number)
                 val fragment = AddQuestionTestFragment.newInstance(args)
-                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
+                model.selectTest(test)
+                model.selectNumber(++number)
+                showFragment(this, fragment)
+//                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
             }
         }
     }
@@ -273,13 +310,44 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
         when (v.id) {
 
-            R.id.btn_finish_questions -> {
+            R.id.btn_ok -> {
                 finishQuestions()
-
             }
 
-            R.id.btn_next_question -> {
+            R.id.btn_forward -> {
                 nextQuestion()
+            }
+
+            R.id.btn_back -> {
+                model.selectTest(test)
+                model.selectNumber(--number)
+                hideFragment()
+                /*if(number != 0) {
+                    beforeQuestion()
+                } else {
+                    val args: Bundle = Bundle()
+                    args.putString(TEST_ITEM, gson.toJson(test))
+                    val fragment = AddMainTestFragment.newInstance(args)
+
+//                    (activity as BaseBackActivity).changeFragment(fragment, ADD_TEST_FRAGMENT)
+                }*/
+            }
+
+            R.id.btn_cancel -> {
+                MaterialDialog.Builder(activity as Context)
+                    .title(R.string.question_dialog_title)
+                    .content(R.string.question_dialog_content)
+                    .positiveText(R.string.agree)
+                    .negativeText(R.string.disagree)
+                    .onPositive(object : MaterialDialog.SingleButtonCallback {
+                        override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                            val fragment = TestListFragment.newInstance()
+                            pushFragments(fragment, true)
+//                            TestListActivity.start(activity as Activity)
+                        }
+
+                    })
+                    .show()
             }
 
             R.id.btn_add_answer -> {

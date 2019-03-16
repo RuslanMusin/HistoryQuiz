@@ -6,21 +6,25 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.Menu
+import android.view.*
 import android.widget.SeekBar
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
+import com.example.historyquiz.model.wiki_api.query.Page
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const.ADD_CARD_CODE
+import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.layout_add_card.*
 import javax.inject.Inject
 
 class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeListener {
 
     private var card: Card? = null
-
-    private var toolbar: Toolbar? = null
 
     private lateinit var seekBars: List<SeekBar>
     var seekChanged: SeekBar? = null
@@ -39,25 +43,15 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     @Inject
     lateinit var gson: Gson
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setStatus(EDIT_STATUS)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.activity_add_card, container, false)
+        return view
+    }
 
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_card)
-
-        card = Card()
-        seekBars = listOf<SeekBar>(seekBarSupport, seekBarIntelligence, seekBarPrestige, seekBarHp, seekBarStrength)
-        arguments?.let {
-            seeksChanges = ArrayList()
-            item = gson.fromJson(it.getString(ITEM_ITEM), Item::class.java)
-            card?.abstractCard?.wikiUrl = item!!.url!!.content
-            card?.abstractCard?.description = item!!.description!!.content
-            item!!.text!!.content?.let { presenter.query(it) }
-            setBalance()
-            initViews()
-            setListeners()
-        }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        setStatus(EDIT_STATUS)
+        initViews()
 
     }
 
@@ -71,19 +65,25 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     }
 
     private fun initViews() {
-        findViews()
-        //        supportActionBar(toolbar);
-        setSupportActionBar(toolbar)
-        setBackArrow(toolbar!!)
-        setToolbarTitle("Статистика карты")
+        card = Card()
+        seekBars = listOf<SeekBar>(seekBarSupport, seekBarIntelligence, seekBarPrestige, seekBarHp, seekBarStrength)
+        arguments?.let {
+            seeksChanges = ArrayList()
+            item = gson.fromJson(it.getString(ITEM_ITEM), Item::class.java)
+            card?.abstractCard?.wikiUrl = item!!.url!!.content
+            card?.abstractCard?.description = item!!.description!!.content
+            item!!.text!!.content?.let { presenter.query(it) }
+            setBalance()
+            setListeners()
+        }
 
     }
 
-    override fun onBackPressed() {
+   /* override fun onBackPressed() {
         val intent = Intent()
         setResult(Activity.RESULT_CANCELED, intent)
         finish()
-    }
+    }*/
 
     private fun setListeners() {
         seekBarStrength!!.setOnSeekBarChangeListener(this)
@@ -190,28 +190,22 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
 
     }
 
-    private fun findViews() {
-        toolbar = findViewById(R.id.toolbar)
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.edit_menu, menu)
-
-        val checkItem = menu.findItem(R.id.action_check)
-        checkItem.setOnMenuItemClickListener {
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.edit_menu, menu)
+        val checkItem = menu?.findItem(R.id.action_check)
+        checkItem?.setOnMenuItemClickListener {
             prepareCard()
             val intent = Intent()
             Log.d(TAG_LOG,"wiki url = " + card?.abstractCard?.wikiUrl)
-            val cardJson = gsonConverter.toJson(card)
-            intent.putExtra(CARD_EXTRA, cardJson)
-            setResult(Activity.RESULT_OK, intent)
-            finish()
+            val cardJson = gson.toJson(card)
+            intent.putExtra(CARD_ITEM, cardJson)
+            targetFragment?.onActivityResult(ADD_CARD_CODE, Activity.RESULT_OK, intent)
+            hideFragment()
 
             true
         }
-
-        return super.onCreateOptionsMenu(menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun prepareCard() {

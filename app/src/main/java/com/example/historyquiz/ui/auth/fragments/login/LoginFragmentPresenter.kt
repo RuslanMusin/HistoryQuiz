@@ -25,10 +25,6 @@ class LoginFragmentPresenter: BasePresenter<LoginFragmentView>() {
         App.sAppComponent.inject(this)
     }
 
-
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
-
-
     @Inject
     lateinit var fireAuth: FirebaseAuth
 

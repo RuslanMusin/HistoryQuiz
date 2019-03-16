@@ -5,8 +5,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 import java.util.HashMap
+import javax.inject.Inject
 
-class QuestionRepository {
+class QuestionRepositoryImpl @Inject constructor(){
 
     var databaseReference: DatabaseReference? = null
         private set

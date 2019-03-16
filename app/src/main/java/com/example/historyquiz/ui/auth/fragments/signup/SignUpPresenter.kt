@@ -24,9 +24,6 @@ class SignUpPresenter: BasePresenter<SignUpView>() {
         App.sAppComponent.inject(this)
     }
 
-
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
-
     @Inject
     lateinit var fireAuth: FirebaseAuth
 

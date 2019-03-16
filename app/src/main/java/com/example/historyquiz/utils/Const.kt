@@ -68,6 +68,10 @@ object Const {
     //comment types
     const val CARD_COMMENT_TYPE = "CARD_COMMENT_TYPE"
 
+    //TestType
+    const val TEST_ONE_TYPE = "test_one_type"
+    const val TEST_MANY_TYPE = "test_many_type"
+
     //items
     const val PHOTO_ITEM = "PHOTO_ITEM"
     const val USER_KEY = "USER_KEY"
@@ -82,7 +86,7 @@ object Const {
     const val QUESTION_NUMBER = "queston_number"
 
     //result nums
-    const val ADD_CARD = 0
+    const val ADD_CARD_CODE = 0
 
 
 

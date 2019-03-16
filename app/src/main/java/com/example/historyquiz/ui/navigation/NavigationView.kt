@@ -17,10 +17,6 @@ interface NavigationView: BasicFunctional {
 
     fun supportActionBar(toolbar: Toolbar)
 
-
-
-    fun hideFragment()
-
     fun onBackPressed()
 
 }

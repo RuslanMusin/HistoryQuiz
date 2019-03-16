@@ -82,7 +82,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/primary_dark"
                 android:padding="6dp"
-                android:text="@string/desc"
+                android:text="@string/description"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"

@@ -6,4 +6,5 @@ import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 
 interface AddQuestionTestView: BasicFunctional {
 
+    fun navigateToTest()
 }

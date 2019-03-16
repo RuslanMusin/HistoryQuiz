@@ -1,25 +1,23 @@
 package com.example.historyquiz.ui.comment
-import com.example.historyquiz.R
 import com.example.historyquiz.model.comment.Comment
-import com.example.historyquiz.repository.card.CardCommentRepository
+import com.example.historyquiz.repository.card.CardCommentRepositoryImpl
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.Const.CARD_COMMENT_TYPE
 import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
 import retrofit2.adapter.rxjava2.Result
 import javax.inject.Inject
 
 open class CommentPresenter: BasePresenter<CommentView>() {
 
     @Inject
-    lateinit var commentRepository: CardCommentRepository
+    lateinit var commentRepositoryImpl: CardCommentRepositoryImpl
 
     fun loadComments(map: HashMap<String, String>, type: String) {
 //        viewState.startTimeout(R.string.failed_load_comments)
         var single: Single<Result<List<Comment>>>? = null
         when(type) {
             CARD_COMMENT_TYPE -> {
-               /* single = commentRepository
+               /* single = commentRepositoryImpl
                     .findStepComments(map.getValue(CURATOR_KEY), map.getValue(WORK_KEY), map.getValue(STEP_KEY))*/
             }
         }
@@ -42,7 +40,7 @@ open class CommentPresenter: BasePresenter<CommentView>() {
         var single: Single<Result<Comment>>? = null
         when(type) {
             CARD_COMMENT_TYPE -> {
-              /*  single = commentRepository
+              /*  single = commentRepositoryImpl
                     .postStepComment(map.getValue(CURATOR_KEY), map.getValue(WORK_KEY), map.getValue(STEP_KEY), comment)*/
             }
         }

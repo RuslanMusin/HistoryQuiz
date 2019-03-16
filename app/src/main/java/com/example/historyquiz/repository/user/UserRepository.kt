@@ -9,8 +9,9 @@ import com.google.firebase.database.*
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.*
+import javax.inject.Inject
 
-class UserRepository {
+class UserRepository @Inject constructor(){
     private val databaseReference: DatabaseReference
 
     init {

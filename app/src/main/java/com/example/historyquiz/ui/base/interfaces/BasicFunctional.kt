@@ -31,6 +31,8 @@ interface BasicFunctional: MvpView {
 
     fun showFragment(lastFragment: Fragment, fragment: Fragment)
 
+    fun hideFragment()
+
     fun openLoginPage()
 
     fun openNavigationPage()

@@ -64,11 +64,19 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
         (activity as NavigationView).showFragment(lastFragment, fragment)
     }
 
+    override fun hideFragment() {
+        (activity as NavigationView).hideFragment()
+    }
+
     override fun openLoginPage() {
         (activity as NavigationView).openLoginPage()
     }
 
     override fun openNavigationPage() {
         (activity as NavigationView).openNavigationPage()
+    }
+
+    protected open fun backFragment() {
+        activity?.onBackPressed()
     }
 }

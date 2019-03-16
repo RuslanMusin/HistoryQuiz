@@ -19,6 +19,7 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.comment.CommentFragment
 import com.example.historyquiz.ui.comment.CommentPresenter
+import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.AFTER_TEST
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER

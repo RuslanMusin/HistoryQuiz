@@ -1,8 +1,5 @@
 package com.example.historyquiz.ui.tests.test_item.check_answers
 
-import QuestionFragment.Companion.ANSWERS_TYPE
-import QuestionFragment.Companion.RIGHT_ANSWERS
-import QuestionFragment.Companion.WRONG_ANSWERS
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle

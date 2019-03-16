@@ -6,25 +6,30 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import com.annimon.stream.Stream
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.utils.AppHelper
-import com.example.historyquiz.utils.Const.ADD_CARD
+import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
+import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.ArrayList
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 class AddCardListFragment: BaseFragment(), AddCardListView {
+
+    @Inject
+    lateinit var gson: Gson
 
     private var card: Card? = null
 
@@ -54,6 +59,18 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         pg_list.visibility = View.GONE
     }
 
+    override fun changeDataSet(tests: List<Item>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun loadNextElements(i: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun setNotLoading() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun setOpenSearchList(list: List<Item>) {
         var itemList = list
 
@@ -67,7 +84,7 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         val sep = "-----------"
         Log.d(TAG_LOG, sep)
 
-        val names: List<String> = AppHelper.readFileFromAssets("regular.txt",this)
+        val names: List<String> = AppHelper.readFileFromAssets("regular.txt",this.requireContext())
         for(name in names) {
             Log.d(TAG_LOG,"name = " + name)
         }
@@ -132,15 +149,8 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
 
     }
 
-    override fun onBackPressed() {
-        val intent = Intent()
-        setResult(Activity.RESULT_CANCELED, intent)
-        finish()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_menu, menu)
-
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.search_menu, menu)
         val searchItem = menu.findItem(R.id.action_search)
 
         var searchView: android.support.v7.widget.SearchView? = null
@@ -152,8 +162,8 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
             searchView.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
 
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    Log.d(TAG_LOG,"opensearch")
-                    if(checkSearch(query)) {
+                    Log.d(TAG_LOG, "opensearch")
+                    if (checkSearch(query)) {
                         presenter.opensearch(query)
                         if (!finalSearchView.isIconified) {
                             finalSearchView.isIconified = true
@@ -170,7 +180,7 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
                 }
             })
         }
-        return super.onCreateOptionsMenu(menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun checkSearch(query: String): Boolean {
@@ -180,7 +190,7 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
 
     private fun initRecycler() {
         adapter = AddCardListAdapter(ArrayList())
-        val manager = LinearLayoutManager(this)
+        val manager = LinearLayoutManager(this.activity)
         rv_list.layoutManager = manager
         rv_list.setEmptyView(tv_empty)
         adapter!!.attachToRecyclerView(rv_list)
@@ -191,23 +201,26 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
 
 
     override fun onItemClick(item: Item) {
-     /*   val intent = Intent(this, AddCardActivity::class.java)
-        val itemJson = gsonConverter.toJson(item)
-        intent.putExtra(ITEM_JSON, itemJson)
-        startActivityForResult(intent, ADD_CARD)*/
+        val args = Bundle()
+        val itemJson = gson.toJson(item)
+        args.putString(ITEM_ITEM, itemJson)
+        val fragment = AddCardFragment.newInstance(args)
+        fragment.setTargetFragment(this, ADD_CARD_CODE)
+        showFragment(this, fragment)
     }
 
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (reqCode == ADD_CARD && resultCode == Activity.RESULT_OK) {
+        if (reqCode == ADD_CARD_CODE && resultCode == Activity.RESULT_OK) {
             val card = data?.getStringExtra(CARD_ITEM)
             targetFragment?.onActivityResult(reqCode, resultCode, data)
+            hideFragment()
             /*val intent = Intent()
             intent.putExtra(CARD_EXTRA, card)
             setResult(Activity.RESULT_OK, intent)*/
         } else {
-            onBackPressed()
+            hideFragment()
         }
     }
 

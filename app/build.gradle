@@ -39,6 +39,7 @@ ext {
     okhttp = "3.9.1"
     retrofit = "2.3.0"
     nav_version = "1.0.0-alpha11"
+    archLifecycleVersion = '1.1.1'
 
 }
 
@@ -112,4 +113,12 @@ dependencies {
     //MaterialDesign
     implementation 'com.jaredrummler:material-spinner:1.2.5'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
+    //Stream
+    implementation 'com.annimon:stream:1.2.0'
+
+    // Lifecycle components
+    implementation "android.arch.lifecycle:extensions:$archLifecycleVersion"
+    kapt "android.arch.lifecycle:compiler:$archLifecycleVersion"
+
 }
