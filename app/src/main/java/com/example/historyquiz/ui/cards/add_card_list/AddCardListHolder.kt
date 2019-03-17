@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.historyquiz.R
 import com.example.historyquiz.model.wiki_api.opensearch.Item
+import com.example.historyquiz.utils.AppHelper
 
 import kotlinx.android.synthetic.main.item_member.view.*
 
@@ -21,15 +22,18 @@ class AddCardListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         } else {
             itemView.tv_description.text = itemView.context.getText(R.string.description_default)
         }
-        if (item.image != null) {
-            /* if(items.getPhotoUrl().equals(String.valueOf(R.drawable.book_default))) {
+        item.image?.source?.let {
+            AppHelper.loadImage(itemView.iv_cover, it)
+        }
+        /*if (item.image != null) {
+            *//* if(items.getPhotoUrl().equals(String.valueOf(R.drawable.book_default))) {
                 ImageLoadHelper.loadPictureByDrawableDefault(imageView,R.drawable.book_default);
             } else {
                 ImageLoadHelper.loadPicture(imageView, items.getPhotoUrl());
-            }*/
+            }*//*
 //            ImageLoadHelper.loadPicture(itemView.iv_cover, item.image!!.source!!)
 
-        }
+        }*/
     }
 
     private fun cutLongDescription(description: String): String {

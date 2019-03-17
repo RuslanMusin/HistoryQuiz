@@ -69,66 +69,34 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private lateinit var checkListener: View.OnClickListener
 
-/*    override fun onBackPressed() {
-
-        if(number != 0) {
-            beforeQuestion()
-        } else {
-            val args: Bundle = Bundle()
-            args.putString(TEST_ITEM, gson.toJson(test))
-            val fragment = AddTestFragment.newInstance(args)
-            (activity as BaseBackActivity).changeFragment(fragment, ADD_TEST_FRAGMENT)
-        }
+    override fun performBackPressed() {
+        beforeQuestion()
     }
-
-    override fun onCancel() {
-        MaterialDialog.Builder(activity as Context)
-            .title(R.string.question_dialog_title)
-            .content(R.string.question_dialog_content)
-            .positiveText(R.string.agree)
-            .negativeText(R.string.disagree)
-            .onPositive(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    TestListActivity.start(activity as Activity)
-                }
-
-            })
-            .show()
-    }
-
-    override fun onForward() {
-        nextQuestion()
-    }
-
-    override fun onOk() {
-        finishQuestions()
-    }
-
-    private fun beforeQuestion() {
-        val args: Bundle = Bundle()
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
-        args.putInt(QUESTION_NUMBER, --number)
-        val fragment = AddQuestionFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
-    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
-
+        hideLoading()
         model = activity?.run {
             ViewModelProviders.of(this).get(AddTestViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
 
        /* test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
         number = arguments?.getInt(QUESTION_NUMBER)!!*/
-        model.test.observe(this, Observer<Test> { item ->
-            test = item!!
-        })
-        model.number.observe(this, Observer<Int> { item ->
-            number = item!!
-        })
+        model.test.value?.let {
+            test = it
+        }
+        model.number.value?.let {
+            number = it
+        }
 
-//        (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
+//
+        return view
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initViews(view)
+        setListeners()
         if(number >= 2) {
             btn_ok.visibility = View.VISIBLE
 //            (activity as ChangeToolbarListener).showOk(true)
@@ -137,13 +105,6 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 //            (activity as ChangeToolbarListener).showOk(false)
         }
 
-        return view
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initViews(view)
-        setListeners()
         if(test.questions.size > number) {
             question = test.questions[number]
             setQuestionData()
@@ -167,6 +128,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     }
 
     private fun initViews(view: View) {
+        setActionBar(toolbar_back_cancel_forward)
         spinner.setItems(getString(R.string.test_type_one), getString(R.string.test_type_many))
 
         answers = ArrayList()
@@ -199,6 +161,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private fun setListeners() {
         btn_add_answer.setOnClickListener(this)
+        btn_ok.setOnClickListener(this)
         btn_back.setOnClickListener(this)
         btn_forward.setOnClickListener(this)
         btn_cancel.setOnClickListener(this)
@@ -247,12 +210,15 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     private fun finishQuestions() {
         prepareQuestion()
 //        addTestView!!.createTest()
+        Log.d(TAG_LOG, "after preparing")
         if(checkQuestion()) {
+            Log.d(TAG_LOG, "create test")
             presenter.createTest(test)
         }
     }
 
     override fun navigateToTest() {
+        removeStackDownTo()
         val args = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         val fragment = TestFragment.newInstance(args)
@@ -269,7 +235,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
                 val fragment = AddQuestionTestFragment.newInstance(args)
                 model.selectTest(test)
                 model.selectNumber(++number)
-                showFragment(this, fragment)
+                pushFragments(fragment, true)
 //                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
             }
         }
@@ -305,12 +271,20 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         return flag
     }
 
+    private fun beforeQuestion() {
+//        removeStackDownTo(1)
+        model.selectTest(test)
+        model.selectNumber(--number)
+        super.performBackPressed()
+    }
+
     override fun onClick(v: View) {
 
 
         when (v.id) {
 
             R.id.btn_ok -> {
+                Log.d(TAG_LOG, "finish quetions")
                 finishQuestions()
             }
 
@@ -319,9 +293,8 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
             }
 
             R.id.btn_back -> {
-                model.selectTest(test)
-                model.selectNumber(--number)
-                hideFragment()
+                beforeQuestion()
+
                 /*if(number != 0) {
                     beforeQuestion()
                 } else {

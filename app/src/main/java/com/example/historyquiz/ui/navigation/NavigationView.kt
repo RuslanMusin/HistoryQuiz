@@ -7,9 +7,7 @@ import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 
 interface NavigationView: BasicFunctional {
 
-    fun showLoading()
 
-    fun hideLoading()
 
     fun setRequest(request: () -> Unit)
 

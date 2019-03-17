@@ -33,8 +33,8 @@ class AddCardListPresenter : MvpPresenter<AddCardListView>() {
         Log.d(TAG_LOG,"pres opensearch")
         wikiApiRepository
                 .opensearch(opensearch)
-                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
-                .doAfterTerminate(Action { viewState.hideLoading() })
+                .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading(it) })
+                .doAfterTerminate(Action { viewState.hideListLoading() })
                 .subscribe({ viewState.setOpenSearchList(it) }, { viewState.handleError(it) })
     }
 }

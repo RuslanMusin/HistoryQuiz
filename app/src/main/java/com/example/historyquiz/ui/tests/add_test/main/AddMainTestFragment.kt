@@ -31,6 +31,7 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_test.*
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import javax.inject.Inject
 
 class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListener {
@@ -67,14 +68,11 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
             ViewModelProviders.of(this).get(AddTestViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
 
-        model.test.observe(this, Observer<Test> { item ->
-            if(item == null) {
-                test = Test()
-            } else {
-                test = item
-                setTestData()
-            }
-        })
+        test = Test()
+        model.test.value?.let {
+            test = it
+        }
+        hideLoading()
      /*   if(arguments == null) {
             test = Test()
         } else {
@@ -109,7 +107,9 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                     args.putInt(QUESTION_NUMBER, 0)
                     model.selectNumber(0)
                     model.selectTest(test)
+                    Log.d(TAG_LOG, "Create quesitons")
                     val fragment = AddQuestionTestFragment.newInstance(args)
+//                    showFragment(this, fragment)
                     pushFragments(fragment, true)
 //                    (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + 0)
                 } else {
@@ -154,6 +154,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         Log.d(TAG_LOG, "flag = $flag")
         return flag
     }
+
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 

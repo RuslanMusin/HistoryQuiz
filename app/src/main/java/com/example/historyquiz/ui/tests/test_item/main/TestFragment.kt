@@ -20,6 +20,7 @@ import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.comment.CommentFragment
 import com.example.historyquiz.ui.comment.CommentPresenter
 import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
+import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.AFTER_TEST
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
@@ -33,9 +34,11 @@ import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_add_test.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.fragment_test.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_test.*
+import kotlinx.android.synthetic.main.toolbar_back.*
 import java.util.*
 import javax.inject.Inject
 
@@ -66,6 +69,12 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
 
         TestListActivity.start(activity as Activity)
     }*/
+
+    override fun performBackPressed() {
+        removeStackDownTo()
+        val fragment = TestListFragment.newInstance()
+        pushFragments(fragment, true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test, container, false)
@@ -104,9 +113,8 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         } else {
             tv_card_done.text = getText(R.string.test_wasnt_done)
         }
-        tv_author.text = test.authorName
         expand_text_view.text = test.desc
-        et_test_name.setText(test.title)
+        tv_name.text = test.title
         test.card?.abstractCard?.photoUrl?.let {
             Glide.with(iv_portrait.context)
                 .load(it)
@@ -115,6 +123,8 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
     }
 
     private fun initViews(view: View) {
+        setActionBar(toolbar_back)
+        test.title?.let { setToolbarTitle(toolbar_title, it) }
     }
 
     private fun setListeners() {

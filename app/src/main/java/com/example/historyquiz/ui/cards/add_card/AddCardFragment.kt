@@ -19,6 +19,7 @@ import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_add_card.*
 import kotlinx.android.synthetic.main.layout_add_card.*
 import javax.inject.Inject
 
@@ -51,8 +52,9 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        setStatus(EDIT_STATUS)
+        setHasOptionsMenu(true)
         initViews()
-
+        hideLoading()
     }
 
     fun setBalance() {
@@ -65,6 +67,7 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     }
 
     private fun initViews() {
+        setActionBar(toolbar)
         card = Card()
         seekBars = listOf<SeekBar>(seekBarSupport, seekBarIntelligence, seekBarPrestige, seekBarHp, seekBarStrength)
         arguments?.let {

@@ -76,8 +76,12 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
         setSupportActionBar(toolbar)
     }
 
-    override fun setToolbarTitle(id: Int) {
+    override fun setActionBarTitle(id: Int) {
         supportActionBar?.title = getString(id)
+    }
+
+    override fun setToolbarTitle(tvToolbar: TextView, title: String) {
+        tvToolbar.text = title
     }
 
     override fun hideBottomNavigation() {

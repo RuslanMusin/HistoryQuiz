@@ -22,6 +22,7 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_finish_test.*
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import javax.inject.Inject
 
 class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
@@ -68,6 +69,7 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setToolbar()
         tv_right_answers.text = rightQuestions.size.toString()
         tv_wrong_answers.text = wrongQuestions.size.toString()
         setCardText()
@@ -78,6 +80,11 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
         li_winned_card.setOnClickListener(this)
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun setToolbar() {
+        setActionBar(toolbar)
+        setActionBarTitle(R.string.test_result)
     }
 
     fun setCardText() {

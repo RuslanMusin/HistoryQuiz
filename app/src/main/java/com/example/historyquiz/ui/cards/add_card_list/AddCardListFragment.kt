@@ -21,6 +21,7 @@ import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_add_list.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.ArrayList
 import java.util.regex.Pattern
@@ -38,24 +39,29 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
     private var adapter: AddCardListAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_question, container, false)
+        val view = inflater.inflate(R.layout.activity_add_list, container, false)
         return view
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initRecycler()
+        hideLoading()
+        hideListLoading()
+        setActionBar(toolbar)
+        setHasOptionsMenu(true)
     }
 
     override fun handleError(throwable: Throwable) {
 
     }
 
-    override fun showLoading(disposable: Disposable) {
+    override fun showListLoading(disposable: Disposable) {
         pg_list.visibility = View.VISIBLE
     }
 
-    override fun hideLoading() {
+    override fun hideListLoading() {
         pg_list.visibility = View.GONE
     }
 

@@ -124,5 +124,11 @@
     <string name="duration_days_shortest">%1$d d</string>
     <string name="duration_week_shortest">%1$d w</string>
     <string name="description_default">Описание по умолчанию</string>
+    <string name="logout">Выйти</string>
+    <string name="test">Тест</string>
+
+    <string name="question_number">Вопрос %1$d/%2$d</string>
+    <string name="test_result">Результат</string>
+
 
 </resources>

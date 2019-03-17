@@ -1,7 +1,6 @@
 package com.example.historyquiz.ui.auth.fragments.signup
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,22 +11,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.Navigation
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.PhotoItem
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
-import com.example.historyquiz.ui.auth.fragments.login.LoginFragment.Companion.KEY
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.navigation.NavigationActivity
 import com.example.historyquiz.ui.navigation.NavigationView
-import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.STUB_PATH
-import com.example.historyquiz.utils.Const.USER_KEY
+import com.example.historyquiz.utils.Const.USER_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.dialog_pick_image.*
 import kotlinx.android.synthetic.main.fragment_sign_up.*
@@ -131,7 +125,7 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
 
     override fun goToProfile(user: User) {
         val args = Bundle()
-        args.putString(USER_KEY, gson.toJson(user))
+        args.putString(USER_ITEM, gson.toJson(user))
         openNavigationPage()
        /* Navigation.findNavController(btn_sign_up)
             .navigate(R.id.action_signUpFragment_to_profileFragment,args)*/

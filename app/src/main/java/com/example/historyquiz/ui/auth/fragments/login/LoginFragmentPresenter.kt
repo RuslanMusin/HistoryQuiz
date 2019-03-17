@@ -9,6 +9,7 @@ import com.example.historyquiz.repository.RepositoryProvider
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -99,6 +100,7 @@ class LoginFragmentPresenter: BasePresenter<LoginFragmentView>() {
                     val user = dataSnapshot.getValue(User::class.java)
                     user?.let {
                         Log.d(TAG_LOG, "have user")
+                        AppHelper.currentUser = user
                         viewState.goToProfile(it) }
                 }
 

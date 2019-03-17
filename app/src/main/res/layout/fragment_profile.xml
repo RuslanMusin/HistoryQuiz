@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:id="@+id/main_content"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
+<android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         xmlns:tools="http://schemas.android.com/tools"
+         android:id="@+id/main_content"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+
 >
 
 
@@ -203,14 +206,32 @@
 
                     <include layout="@layout/layout_expandable_text_view"/>
 
-                    <ProgressBar
-                            android:id="@+id/progress_loader"
-                            style="?android:attr/progressBarStyle"
+                    <include layout="@layout/layout_divider"/>
+
+                    <LinearLayout
+                            android:id="@+id/li_logout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.small"
-                            android:visibility="gone"
-                            tools:visibility="visible"/>
+                            android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="@dimen/padding_small"
+                                android:paddingBottom="@dimen/padding_small"
+                                android:src="@drawable/ic_exit_to_app_black_24dp"/>
+
+                        <TextView
+                                android:id="@+id/tv_logout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/padding_small"
+                                android:paddingTop="@dimen/padding_small"
+                                android:paddingBottom="@dimen/padding_small"
+                                android:text="@string/logout"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>

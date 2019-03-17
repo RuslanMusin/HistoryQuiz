@@ -13,7 +13,6 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.navigation.NavigationView
-import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG
 import com.example.historyquiz.utils.Const.USER_DATA_PREFERENCES
@@ -130,7 +129,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
     override fun goToProfile(user: User) {
         Log.d(TAG,"login")
         val args = Bundle()
-        args.putString(Const.USER_KEY, gson.toJson(user))
+        args.putString(Const.USER_ITEM, gson.toJson(user))
         openNavigationPage()
        /* Navigation.findNavController(btn_enter)
             .navigate(R.id.action_loginFragment_to_profileFragment, args)*/

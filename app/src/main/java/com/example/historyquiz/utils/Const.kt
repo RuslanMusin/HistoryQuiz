@@ -10,7 +10,7 @@ object Const {
     const val MAX_LENGTH = 80
     const val MORE_TEXT = "..."
 
-    const val BASE_URL = "http://mobilelab-backend.herokuapp.com/api/v1/"
+    const val BASE_URL = "https://ru.wikipedia.org/w/api.php/"
 
     //image path
     const val IMAGE_START_PATH = "images/users/"
@@ -74,7 +74,7 @@ object Const {
 
     //items
     const val PHOTO_ITEM = "PHOTO_ITEM"
-    const val USER_KEY = "USER_KEY"
+    const val USER_ITEM = "USER_ITEM"
     const val TEST_ITEM = "TEST_ITEM"
     const val CARD_ITEM = "CARD_ITEM"
     const val ITEM_ITEM = "ITEM_ITEM"

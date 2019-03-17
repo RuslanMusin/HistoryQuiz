@@ -282,16 +282,8 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun findOfficialTests(userId: String): Single<List<Test>> {
-        return findTestsByType(userId)
-    }
-
-    override fun findOfficialTestsByQuery(query: String, userId: String): Single<List<Test>> {
-        return findTestsByTypeByQuery(query, userId)
-    }
-
-    override fun findTestsByType(userId: String): Single<List<Test>> {
-        var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
+    override fun findTests(): Single<List<Test>> {
+        var query: Query = databaseReference
         val single: Single<List<Test>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -310,7 +302,6 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
                             val cards: MutableList<Test> = ArrayList()
                             for(snapshot in dataSnapshot.children) {
                                 val card = snapshot.getValue(Test::class.java)
-                                if(!card?.authorId.equals(userId)) {
                                     if (relations.keys.contains(card?.id)) {
                                         if(LOSE_GAME.equals(relations[card?.id]?.relation) || AFTER_TEST.equals(relations[card?.id]?.relation)) {
                                             card?.testDone = true
@@ -321,10 +312,10 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
                                         card?.testRelation = Relation()
                                     }
                                     card?.let { cards.add(it) }
-                                }
+
 
                             }
-                           e.onSuccess(cards)
+                            e.onSuccess(cards)
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {}
@@ -339,8 +330,8 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun findTestsByTypeByQuery(userQuery: String, userId: String): Single<List<Test>> {
-        var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
+    override fun findTestsByQuery(userQuery: String): Single<List<Test>> {
+        var query: Query = databaseReference
         val single: Single<List<Test>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -360,12 +351,10 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
                             val cards: MutableList<Test> = ArrayList()
                             for(snapshot in dataSnapshot.children) {
                                 val card = snapshot.getValue(Test::class.java)
-                                if(!card?.authorId.equals(userId)) {
                                     if (elementIds.contains(card?.id)) {
                                         card?.testDone = true
                                     }
                                     card?.let { cards.add(it) }
-                                }
 
                             }
                             e.onSuccess(cards)

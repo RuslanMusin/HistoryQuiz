@@ -106,25 +106,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin.normal"
-                android:text="@string/authorName"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
-
-            <TextView
-                android:id="@+id/tv_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.small"
-                android:textColor="@color/secondary_text"
-                android:textSize="@dimen/text.14"
-                tools:text="Authors" />
-
-            <include layout="@layout/layout_divider"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.normal"
                 android:text="@string/test_done"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text.16" />
@@ -170,23 +151,10 @@
 
            <include layout="@layout/layout_expandable_text_view"/>
 
-            <include layout="@layout/layout_divider"/>
-
-            <TextView
-                android:id="@+id/tv_comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.normal"
-                android:text="@string/comments"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
-
-            <include layout="@layout/fragment_recycler_list" />
-
         </LinearLayout>
 
     </ScrollView>
 
-    <include layout="@layout/layout_add_comment"/>
+    <!--<include layout="@layout/layout_add_comment"/>-->
 
 </RelativeLayout>

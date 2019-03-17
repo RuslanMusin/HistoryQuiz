@@ -24,11 +24,7 @@ interface TestRepository {
 
     fun findTests(cardsIds: List<String>): Single<List<Test>>
 
-    fun findOfficialTests(userId: String): Single<List<Test>>
+    fun findTests(): Single<List<Test>>
 
-    fun findOfficialTestsByQuery(query: String, userId: String): Single<List<Test>>
-
-    fun findTestsByType(userId: String): Single<List<Test>>
-
-    fun findTestsByTypeByQuery(userQuery: String, userId: String): Single<List<Test>>
+    fun findTestsByQuery(userQuery: String): Single<List<Test>>
 }

@@ -12,7 +12,7 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
-import com.example.historyquiz.utils.Const.USER_KEY
+import com.example.historyquiz.utils.Const.USER_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_profile.*
 import javax.inject.Inject
@@ -34,22 +34,24 @@ class ProfileFragment: BaseFragment(), ProfileView {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         setUserData()
+        hideLoading()
     }
 
     private fun initViews() {
 //        setBottomVisibility(true)
         setActionBar(toolbar)
-        setToolbarTitle(R.string.menu_profile)
+        setActionBarTitle(R.string.menu_profile)
         setListeners()
     }
 
     private fun setListeners() {
-
+        btn_add_friend.visibility = View.GONE
+        btn_play_game.visibility = View.GONE
     }
 
     private fun setUserData() {
         arguments?.let {
-            val userJson = it.getString(USER_KEY)
+            val userJson = it.getString(USER_ITEM)
             val user = gson.fromJson(userJson, User::class.java)
             tv_name.text = user.username
             AppHelper.loadUserPhoto(iv_profile, user.photoUrl)

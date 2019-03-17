@@ -15,16 +15,25 @@ import com.example.historyquiz.R
 import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.base.BaseActivity
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 import com.example.historyquiz.ui.profile.item.ProfileFragment
+import com.example.historyquiz.ui.tests.test_list.TestListFragment
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.USER_ITEM
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.layout_connectivity.*
 import java.util.*
+import javax.inject.Inject
 
 open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var navigationPresenter: NavigationPresenter
+
+    @Inject
+    lateinit var gson: Gson
 
     private lateinit var stacks: HashMap<String, Stack<Fragment>>
     private lateinit var relativeTabs: HashMap<String, String>
@@ -86,18 +95,22 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
 //        bottom_navigation.selectedItemId = R.id.action_profile
     }
 
+
+
     override fun openLoginPage() {
         currentTab = TAB_AUTH
         showTab = SHOW_AUTH
         val fragment = LoginFragment.newInstance()
         pushFragments(fragment, true)
+
+
     }
 
     override fun openNavigationPage() {
         currentTab = TAB_PROFILE
         showTab = SHOW_PROFILE
-        val fragment = ProfileFragment.newInstance()
-        pushFragments(fragment, true)
+        bottom_navigation.selectedItemId = R.id.action_profile
+
     }
 
     private fun initListeners() {
@@ -239,12 +252,33 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     override fun onBackPressed() {
+        val fragment: Fragment? = getCurrentFragment()
+        (fragment as BasicFunctional).performBackPressed()
+    }
+
+    override fun performBackPressed() {
         showBottomNavigation(this)
         if(stacks[showTab]?.size!! > 1) {
             hideFragment()
         } else {
             popCurrentFragment()
         }
+    }
+
+    override fun removeStackDownTo() {
+        stacks[showTab]?.clear()
+    }
+
+    override fun removeStackDownTo(number: Int) {
+        for(i in 1..number) {
+            stacks[showTab]?.pop()
+        }
+    }
+
+    private fun getCurrentFragment(): Fragment? {
+        val fragment = stacks[currentTab]?.size?.minus(1)?.let { stacks[currentTab]?.elementAt(it) }
+        return fragment
+
     }
 
     private fun popCurrentFragment() {
@@ -308,26 +342,29 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     private fun showProfile(tabId: String) {
         Log.d(TAG_NAVIG_ACT, "curator start")
         val args: Bundle = Bundle()
+        args.putString(USER_ITEM, gson.toJson(AppHelper.currentUser))
+        val fragment = ProfileFragment.newInstance(args)
+        pushFragments(fragment, true)
         /*args.putString(ID_KEY, AppHelper.currentCurator.id)
         val fragment = CuratorFragment.newInstance(args, this)
         pushFragments(fragment, true)*/
     }
 
     private fun showGame(tabId: String) {
+        showTests(tabId)
        /* val fragment = StudentListFragment.newInstance(this)
         pushFragments(fragment, true)*/
     }
 
     private fun showCards(tabId: String) {
+        showTests(tabId)
      /*   val fragment = ThemeListFragment.newInstance(this)
         pushFragments(fragment, true)*/
     }
 
     private fun showTests(tabId: String) {
-       /* val args = Bundle()
-        args.putString(ID_KEY, AppHelper.currentCurator.id)
-        val fragment = WorkListFragment.newInstance(args,this)
-        pushFragments(fragment, true)*/
+        val fragment = TestListFragment.newInstance()
+        pushFragments(fragment, true)
     }
 
 }

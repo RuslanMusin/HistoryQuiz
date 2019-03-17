@@ -1,7 +1,5 @@
 package com.example.historyquiz.ui.tests.test_list
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -13,17 +11,15 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.utils.Const.TAG_LOG
-import com.example.historyquiz.utils.Const.TEST_ID
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import java.util.ArrayList
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
@@ -56,13 +52,14 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
     }
 
     private fun initViews() {
-        setToolbarData()
+        setToolbar()
         initRecycler()
         setListeners()
     }
 
-    private fun setToolbarData() {
-
+    private fun setToolbar() {
+        setActionBar(toolbar)
+        setActionBarTitle(R.string.menu_tests)
     }
 
     private fun setListeners() {
@@ -72,12 +69,12 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     }
 
-    override fun showLoading(disposable: Disposable) {
+    override fun showListLoading(disposable: Disposable) {
 //        pb_list.visibility = View.VISIBLE
     }
 
-    override fun hideLoading() {
-//        pb_list.visibility = View.GONE
+    override fun hideListLoading() {
+        pg_list.visibility = View.GONE
     }
 
     override fun loadNextElements(i: Int) {
@@ -86,7 +83,9 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     override fun changeDataSet(tests: List<Test>) {
         adapter.changeDataSet(tests)
+        hideListLoading()
         hideLoading()
+        Log.d(TAG_LOG, "test loaded")
     }
 
     override fun handleError(throwable: Throwable) {
@@ -116,6 +115,8 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
         floating_button.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 Log.d(TAG_LOG,"act float btn")
+                val fragment = AddMainTestFragment.newInstance()
+                pushFragments(fragment, true)
 //                AddTestActivity.start(activity as Activity)
             }
         })

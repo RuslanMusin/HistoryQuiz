@@ -9,9 +9,9 @@ interface BaseRecyclerView<Entity> : BaseAdapter.OnItemClickListener<Entity> {
 
     fun setNotLoading()
 
-    fun showLoading(disposable: Disposable)
+    fun showListLoading(disposable: Disposable)
 
-    fun hideLoading()
+    fun hideListLoading()
 
     fun loadNextElements(i: Int)
 

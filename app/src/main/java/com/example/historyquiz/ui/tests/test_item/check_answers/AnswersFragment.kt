@@ -24,6 +24,7 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_question.*
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import java.util.ArrayList
 import javax.inject.Inject
 
@@ -89,14 +90,23 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    private fun setToolbar() {
+        setActionBar(toolbar_back_cancel_forward)
+        setToolbarTitle(toolbar_title, getString(R.string.question_number, number + 1, listSize))
+    }
+
     private fun initViews(view: View) {
+        setToolbar()
         textViews = ArrayList()
         radioButtons = ArrayList()
         checkBoxes = ArrayList()
 
         if(number == (listSize-1)) {
             btn_next_question.visibility = View.GONE
+            btn_forward.visibility = View.GONE
+            btn_cancel.visibility = View.GONE
             btn_finish_questions.visibility = View.VISIBLE
+            btn_ok.visibility = View.VISIBLE
 //            (activity as ChangeToolbarListener).showOk(true)
         }
 
@@ -165,6 +175,7 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
         args.putString(ANSWERS_TYPE,type)
         args.putInt(QUESTION_NUMBER, ++number)
         val fragment = AnswersFragment.newInstance(args)
+        pushFragments(fragment, true)
 //        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
     }
 
@@ -196,6 +207,10 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
                         .addToBackStack("AddQuestionFragment")
                         .commit()*/
             }
+
+            R.id.btn_cancel -> finishQuestions()
+
+            R.id.btn_back -> beforeQuestion()
 
         }
     }

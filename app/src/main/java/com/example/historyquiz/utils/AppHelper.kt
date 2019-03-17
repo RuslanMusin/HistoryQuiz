@@ -55,10 +55,14 @@ class AppHelper {
                     .load(imageReference)
                     .into(photoView)
             } else {
-                Glide.with(photoView.context)
-                    .load(photoUrl)
-                    .into(photoView)
+                loadImage(photoView, photoUrl)
             }
+        }
+
+        fun loadImage(imageView: ImageView, photoUrl: String) {
+            Glide.with(imageView.context)
+                .load(photoUrl)
+                .into(imageView)
         }
 
         fun readFileFromAssets(fileName: String, context: Context): List<String> {

@@ -3,6 +3,7 @@ package com.example.historyquiz.ui.base
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
+import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 import com.example.historyquiz.ui.navigation.NavigationView
@@ -39,8 +40,12 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
         (activity as BasicFunctional).setActionBar(toolbar)
     }
 
-    override fun setToolbarTitle(id: Int) {
-        (activity as BasicFunctional).setToolbarTitle(id)
+    override fun setActionBarTitle(id: Int) {
+        (activity as BasicFunctional).setActionBarTitle(id)
+    }
+
+    override fun setToolbarTitle(tvToolbar: TextView, title: String) {
+        (activity as BasicFunctional).setToolbarTitle(tvToolbar, title)
     }
 
     override fun hideBottomNavigation() {
@@ -78,5 +83,25 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
 
     protected open fun backFragment() {
         activity?.onBackPressed()
+    }
+
+    override fun showLoading() {
+        (activity as BasicFunctional).showLoading()
+    }
+
+    override fun hideLoading() {
+        (activity as BasicFunctional).hideLoading()
+    }
+
+    override fun performBackPressed() {
+        (activity as BasicFunctional).performBackPressed()
+    }
+
+    override fun removeStackDownTo() {
+        (activity as BasicFunctional).removeStackDownTo()
+    }
+
+    override fun removeStackDownTo(number: Int) {
+        (activity as BasicFunctional).removeStackDownTo(number)
     }
 }

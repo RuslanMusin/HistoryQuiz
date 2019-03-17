@@ -22,10 +22,12 @@ import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
+import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import javax.inject.Inject
 
 
@@ -71,6 +73,10 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
                                 answer.userClicked = false
                             }
                         }
+                        val args = Bundle()
+                        args.putString(TEST_ITEM, gson.toJson(test))
+                        val fragment = TestFragment.newInstance(args)
+                        pushFragments(fragment, true)
 //                        TestActivity.start(activity as Activity,test)
                     }
 
@@ -99,10 +105,22 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun initViews(view: View) {
-
+        setToolbar()
+        if(number + 1 == test.questions.size) {
+            btn_ok.visibility = View.VISIBLE
+//            (activity as ChangeToolbarListener).showOk(true)
+        } else {
+            btn_ok.visibility = View.GONE
+//            (activity as ChangeToolbarListener).showOk(false)
+        }
         tv_question.text = question.question
 
         setStartAnswers()
+    }
+
+    private fun setToolbar() {
+        setActionBar(toolbar_back_cancel_forward)
+        setToolbarTitle(toolbar_title, getString(R.string.question_number, number + 1, test.questions.size))
     }
 
     private fun setStartAnswers() {
@@ -125,6 +143,11 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
     private fun setListeners() {
         btn_finish_questions!!.setOnClickListener(this)
         btn_next_question!!.setOnClickListener(this)
+        btn_ok.setOnClickListener(this)
+        btn_cancel.setOnClickListener(this)
+        btn_forward.setOnClickListener(this)
+
+        btn_back.visibility = View.GONE
     }
 
     private fun finishQuestions() {
@@ -167,6 +190,14 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
                         .addToBackStack("AddQuestionFragment")
                         .commit()*/
             }
+
+            R.id.btn_ok -> finishQuestions()
+
+            R.id.btn_cancel -> shouldCancel()
+
+            R.id.btn_back -> shouldCancel()
+
+            R.id.btn_forward -> nextQuestion()
 
         }
     }

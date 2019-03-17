@@ -11,8 +11,6 @@ interface CommentView: BasicFunctional, BaseAdapter.OnItemClickListener<Comment>
 
     fun showLoading(disposable: Disposable)
 
-    fun hideLoading()
-
     fun onReplyClick(position: Int)
 
     fun onAuthorClick(userId: String)
