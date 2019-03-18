@@ -126,6 +126,7 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
         val args = Bundle()
         args.putString(TEST_ITEM, gson.toJson(item))
         val fragment = TestFragment.newInstance(args)
+        showLoading()
         pushFragments(fragment, true)
     }
 

@@ -351,13 +351,13 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     private fun showGame(tabId: String) {
-        showTests(tabId)
+        showProfile(tabId)
        /* val fragment = StudentListFragment.newInstance(this)
         pushFragments(fragment, true)*/
     }
 
     private fun showCards(tabId: String) {
-        showTests(tabId)
+        showProfile(tabId)
      /*   val fragment = ThemeListFragment.newInstance(this)
         pushFragments(fragment, true)*/
     }

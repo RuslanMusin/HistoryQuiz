@@ -1,6 +1,7 @@
 package com.example.historyquiz.ui.tests.test_item.main
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -19,6 +20,7 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.comment.CommentFragment
 import com.example.historyquiz.ui.comment.CommentPresenter
+import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
@@ -48,6 +50,7 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
     lateinit var gson: Gson
 
     lateinit var test: Test
+    lateinit var model: TestViewModel
 
     @InjectPresenter
     lateinit var presenter: TestPresenter
@@ -120,6 +123,7 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
                 .load(it)
                 .into(iv_portrait)
         }
+        hideLoading()
     }
 
     private fun initViews(view: View) {
@@ -128,14 +132,19 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
     }
 
     private fun setListeners() {
-        btn_do_test.setOnClickListener(this)
+        tv_do_test.setOnClickListener(this)
+        btn_back.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
 
-            R.id.btn_do_test -> {
-
+            R.id.tv_do_test -> {
+                model = activity?.run {
+                    ViewModelProviders.of(this).get(TestViewModel::class.java)
+                } ?: throw Exception("Invalid Activity")
+                model.selectNumber(0)
+                model.selectTest(test)
                 val args: Bundle = Bundle()
                 args.putString(TEST_ITEM, gson.toJson(test))
                 args.putInt(QUESTION_NUMBER,0)
@@ -144,6 +153,8 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
 //                (activity as BaseBackActivity).changeFragment(fragment, QUESTION_FRAGMENT + 0)
 
             }
+
+            R.id.btn_back -> performBackPressed()
         }
     }
 

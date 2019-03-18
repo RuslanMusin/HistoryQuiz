@@ -1,13 +1,11 @@
 package com.example.historyquiz.ui.tests.add_test.question
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.*
@@ -20,9 +18,7 @@ import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.tests.add_test.AddTestViewModel
-import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
-import com.example.historyquiz.ui.tests.add_test.main.AddMainTestPresenter
+import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
@@ -45,7 +41,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     @InjectPresenter
     lateinit var presenter: AddQuestionTestPresenter
 
-    lateinit var model: AddTestViewModel
+    lateinit var model: TestViewModel
 
     private var imageUri: Uri? = null
 
@@ -77,11 +73,8 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
         hideLoading()
         model = activity?.run {
-            ViewModelProviders.of(this).get(AddTestViewModel::class.java)
+            ViewModelProviders.of(this).get(TestViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
-
-       /* test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
-        number = arguments?.getInt(QUESTION_NUMBER)!!*/
         model.test.value?.let {
             test = it
         }
@@ -129,6 +122,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private fun initViews(view: View) {
         setActionBar(toolbar_back_cancel_forward)
+        setToolbarTitle(toolbar_title, getString(R.string.add_question_number, number + 1))
         spinner.setItems(getString(R.string.test_type_one), getString(R.string.test_type_many))
 
         answers = ArrayList()

@@ -98,6 +98,7 @@ class SignUpPresenter: BasePresenter<SignUpView>() {
 
     private fun updateUI(user: User) {
         viewState.hideProgressDialog()
+        AppHelper.currentUser = user
         viewState.goToProfile(user)
     }
 }

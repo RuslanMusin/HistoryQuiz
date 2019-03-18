@@ -21,9 +21,10 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_add_card.*
 import kotlinx.android.synthetic.main.layout_add_card.*
+import kotlinx.android.synthetic.main.toolbar_back_done.*
 import javax.inject.Inject
 
-class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeListener {
+class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private var card: Card? = null
 
@@ -52,7 +53,7 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        setStatus(EDIT_STATUS)
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
         initViews()
         hideLoading()
     }
@@ -67,7 +68,8 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     }
 
     private fun initViews() {
-        setActionBar(toolbar)
+        setActionBar(toolbar_back_done)
+        setToolbarTitle(toolbar_title, getString(R.string.card_stats))
         card = Card()
         seekBars = listOf<SeekBar>(seekBarSupport, seekBarIntelligence, seekBarPrestige, seekBarHp, seekBarStrength)
         arguments?.let {
@@ -94,6 +96,9 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
         seekBarPrestige!!.setOnSeekBarChangeListener(this)
         seekBarIntelligence!!.setOnSeekBarChangeListener(this)
         seekBarSupport!!.setOnSeekBarChangeListener(this)
+
+        btn_ok.setOnClickListener(this)
+        btn_back.setOnClickListener(this)
 
     }
 
@@ -194,22 +199,16 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+   /* override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.edit_menu, menu)
         val checkItem = menu?.findItem(R.id.action_check)
         checkItem?.setOnMenuItemClickListener {
-            prepareCard()
-            val intent = Intent()
-            Log.d(TAG_LOG,"wiki url = " + card?.abstractCard?.wikiUrl)
-            val cardJson = gson.toJson(card)
-            intent.putExtra(CARD_ITEM, cardJson)
-            targetFragment?.onActivityResult(ADD_CARD_CODE, Activity.RESULT_OK, intent)
-            hideFragment()
+
 
             true
         }
         super.onCreateOptionsMenu(menu, inflater)
-    }
+    }*/
 
     private fun prepareCard() {
         card?.hp = seekBarHp.progress
@@ -219,10 +218,24 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
         card?.intelligence = seekBarIntelligence.progress
     }
 
-    /* override fun onClick(view: View) {
+     override fun onClick(v: View) {
+            when(v.id) {
 
+                R.id.btn_ok -> addCard()
+
+                R.id.btn_back -> performBackPressed()
          }
-     }*/
+     }
+
+    private fun addCard() {
+        prepareCard()
+        val intent = Intent()
+        Log.d(TAG_LOG,"wiki url = " + card?.abstractCard?.wikiUrl)
+        val cardJson = gson.toJson(card)
+        intent.putExtra(CARD_ITEM, cardJson)
+        targetFragment?.onActivityResult(ADD_CARD_CODE, Activity.RESULT_OK, intent)
+        hideFragment()
+    }
 
     companion object {
 

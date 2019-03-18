@@ -1,6 +1,7 @@
 package com.example.historyquiz.ui.tests.test_item.question
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -21,6 +22,7 @@ import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
@@ -35,6 +37,7 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
 
     @Inject
     lateinit var gson: Gson
+    lateinit var model: TestViewModel
 
     private lateinit var question: Question
     private lateinit var test: Test
@@ -59,6 +62,10 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
         finishQuestions()
     }*/
 
+    override fun performBackPressed() {
+        shouldCancel()
+    }
+
     fun shouldCancel() {
         MaterialDialog.Builder(activity as Context)
                 .title(R.string.question_dialog_title)
@@ -73,6 +80,7 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
                                 answer.userClicked = false
                             }
                         }
+                        removeStackDownTo()
                         val args = Bundle()
                         args.putString(TEST_ITEM, gson.toJson(test))
                         val fragment = TestFragment.newInstance(args)
@@ -87,9 +95,18 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
 
-        val testStr: String = arguments?.getString(TEST_ITEM)!!
+        /*val testStr: String = arguments?.getString(TEST_ITEM)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
-        test = gson.fromJson(testStr, Test::class.java)
+        test = gson.fromJson(testStr, Test::class.java)*/
+        model = activity?.run {
+            ViewModelProviders.of(this).get(TestViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
+        model.test.value?.let {
+            test = it
+        }
+        model.number.value?.let {
+            number = it
+        }
         question = test.questions[number]
 
        /* (activity as BaseBackActivity).currentTag = TestActivity.QUESTION_FRAGMENT + number
@@ -151,6 +168,7 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun finishQuestions() {
+        removeStackDownTo()
         checkAnswers()
         val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
@@ -161,6 +179,8 @@ class QuestionFragment : BaseFragment(), View.OnClickListener {
 
     private fun nextQuestion() {
         checkAnswers()
+        model.selectTest(test)
+        model.selectNumber(++number)
         val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         args.putInt(QUESTION_NUMBER, ++number)

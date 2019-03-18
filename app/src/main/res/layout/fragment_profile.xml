@@ -97,7 +97,27 @@
                                     android:textSize="@dimen/text.22"
                             />
 
-                            <android.support.v7.widget.AppCompatButton
+                            <TextView
+                                    android:id="@+id/tv_add_friend"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/add_friend"
+                                    android:textSize="@dimen/text.16"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/primary"
+                                    android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                    android:id="@+id/tv_play_game"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/play_game"
+                                    android:textSize="@dimen/text.16"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/primary"
+                                    android:layout_marginTop="8dp"/>
+
+                           <!-- <android.support.v7.widget.AppCompatButton
                                     android:id="@+id/btn_add_friend"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -119,7 +139,7 @@
                                     android:background="@color/primary"
                                     android:padding="@dimen/padding_small"
                                     android:textColor="@color/white"
-                            />
+                            />-->
 
                         </LinearLayout>
 
@@ -136,14 +156,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginTop="@dimen/margin.normal"
                 >
 
                     <LinearLayout
                             android:id="@+id/li_tests"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.normal"
                             android:orientation="horizontal">
 
                         <ImageView
@@ -171,7 +189,6 @@
                             android:id="@+id/li_cards"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.normal"
                             android:orientation="horizontal">
 
                         <ImageView
@@ -195,18 +212,17 @@
 
                     <include layout="@layout/layout_divider"/>
 
-                    <TextView
-                            android:id="@+id/tv_desc_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.normal"
-                            android:text="@string/description"
-                            android:textColor="@color/primary_text"
-                            android:textSize="@dimen/text.16" />
+                    <!--<TextView-->
+                            <!--android:id="@+id/tv_desc_name"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="@string/description"-->
+                            <!--android:textColor="@color/primary_text"-->
+                            <!--android:textSize="@dimen/text.16" />-->
 
-                    <include layout="@layout/layout_expandable_text_view"/>
+                    <!--<include layout="@layout/layout_expandable_text_view"/>-->
 
-                    <include layout="@layout/layout_divider"/>
+                    <!--<include layout="@layout/layout_divider"/>-->
 
                     <LinearLayout
                             android:id="@+id/li_logout"

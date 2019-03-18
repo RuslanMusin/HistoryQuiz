@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:id="@+id/main_content"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:fitsSystemWindows="true"
+>
+
+    <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <include layout="@layout/toolbar_back"/>
+
+    </android.support.design.widget.AppBarLayout>
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:fitsSystemWindows="true">
+>
 
     <LinearLayout
         android:orientation="vertical"
@@ -50,7 +68,7 @@
                         android:hint="@string/test_name"/>
                 </android.support.design.widget.TextInputLayout>
 
-                <android.support.v7.widget.AppCompatButton
+               <!-- <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_add_card"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -58,7 +76,7 @@
                     android:padding="12dp"
                     android:background="@color/primary"
                     android:textColor="@color/white"
-                    android:text="@string/add_card"/>
+                    android:text="@string/add_card"/>-->
 
             </LinearLayout>
 
@@ -78,7 +96,61 @@
                 android:hint="@string/test_desc"/>
         </android.support.design.widget.TextInputLayout>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+    >
+
         <TextView
+                android:id="@+id/tv_test_card_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/added_cards"
+                android:textColor="@color/primary_text"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textSize="@dimen/text.18" />
+
+        <LinearLayout
+                android:id="@+id/li_added_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <TextView
+                        android:id="@+id/tv_added_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/text.16"
+                        android:text="@string/menu_cards"
+                />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/tv_add_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_card"
+                android:textSize="@dimen/text.16"
+                android:textColor="@color/primary"
+                android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+        <!--<TextView
             android:id="@+id/tv_test_card_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,7 +167,7 @@
             android:layout_marginTop="@dimen/margin.small"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/text.16"
-           />
+           />-->
 
 
 
@@ -114,3 +186,5 @@
 
     </LinearLayout>
 </ScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

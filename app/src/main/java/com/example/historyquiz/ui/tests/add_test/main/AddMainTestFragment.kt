@@ -1,20 +1,15 @@
 package com.example.historyquiz.ui.tests.add_test.main
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
@@ -22,7 +17,7 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
-import com.example.historyquiz.ui.tests.add_test.AddTestViewModel
+import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
@@ -31,7 +26,7 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_test.*
-import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
+import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
 
 class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListener {
@@ -42,7 +37,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     @InjectPresenter
     lateinit var presenter: AddMainTestPresenter
 
-    lateinit var model: AddTestViewModel
+    lateinit var model: TestViewModel
 
     private var imageUri: Uri? = null
 
@@ -56,7 +51,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     private fun setTestData() {
         et_test_name.setText(test?.title)
         et_test_desc.setText(test?.desc)
-        tv_added_cards.text =test?.card?.abstractCard?.name
+        tv_added_card.text =test?.card?.abstractCard?.name
     }
 
 
@@ -65,7 +60,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         setListeners()
 
         model = activity?.run {
-            ViewModelProviders.of(this).get(AddTestViewModel::class.java)
+            ViewModelProviders.of(this).get(TestViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
 
         test = Test()
@@ -84,12 +79,18 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     }
 
     private fun initViews(view: View) {
+        setToolbar()
+    }
 
+    private fun setToolbar() {
+        setActionBar(toolbar_back)
+        setToolbarTitle(toolbar_title, getString(R.string.add_test))
     }
 
     private fun setListeners() {
         btn_create_questions.setOnClickListener(this)
-        btn_add_card.setOnClickListener(this)
+        tv_add_card.setOnClickListener(this)
+        btn_back.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -117,12 +118,14 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 }
             }
 
-            R.id.btn_add_card -> {
+            R.id.tv_add_card -> {
                val fragment = AddCardListFragment.newInstance()
                 fragment.setTargetFragment(this, ADD_CARD_CODE)
                 showFragment(this, fragment)
 
             }
+
+            R.id.btn_back -> performBackPressed()
         }
     }
 
@@ -159,8 +162,9 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         super.onActivityResult(reqCode, resultCode, data)
 
         if (reqCode == ADD_CARD_CODE && resultCode == Activity.RESULT_OK) {
+            li_added_card.visibility = View.VISIBLE
             val card = gson.fromJson(data!!.getStringExtra(CARD_ITEM), Card::class.java)
-            tv_added_cards.text = card.abstractCard.name
+            tv_added_card.text = card.abstractCard.name
             test!!.card = card
             Glide.with(this)
                 .load(card.abstractCard.photoUrl)

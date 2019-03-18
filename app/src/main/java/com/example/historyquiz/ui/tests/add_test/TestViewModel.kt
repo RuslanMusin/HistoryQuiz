@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.historyquiz.model.test.Test
 
-class AddTestViewModel : ViewModel() {
+class TestViewModel : ViewModel() {
     val test = MutableLiveData<Test>()
     val number = MutableLiveData<Int>()
 

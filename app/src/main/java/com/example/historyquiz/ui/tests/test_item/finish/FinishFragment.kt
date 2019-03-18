@@ -1,6 +1,7 @@
 package com.example.historyquiz.ui.tests.test_item.finish
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -12,6 +13,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.ANSWERS_TYPE
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.RIGHT_ANSWERS
@@ -29,6 +31,8 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
 
     @Inject
     lateinit var gson: Gson
+
+    lateinit var model: TestViewModel
 
     @InjectPresenter
     lateinit var presenter: FinishPresenter
@@ -114,6 +118,7 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
                         answer.userClicked = false
                     }
                 }
+                removeStackDownTo()
                 val args: Bundle = Bundle()
                 args.putString(TEST_ITEM, gson.toJson(test))
                 val fragment = TestFragment.newInstance(args)
@@ -147,6 +152,11 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
     }
 
     fun prepareAnswers(type: String) {
+        model = activity?.run {
+            ViewModelProviders.of(this).get(TestViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
+        model.selectNumber(0)
+        model.selectTest(test)
         val args: Bundle = Bundle()
         args.putString(ANSWERS_TYPE, type)
         args.putString(TEST_ITEM, gson.toJson(test))

@@ -15,6 +15,7 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_ITEM
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import javax.inject.Inject
 
 class ProfileFragment: BaseFragment(), ProfileView {
@@ -45,8 +46,8 @@ class ProfileFragment: BaseFragment(), ProfileView {
     }
 
     private fun setListeners() {
-        btn_add_friend.visibility = View.GONE
-        btn_play_game.visibility = View.GONE
+        tv_add_friend.visibility = View.GONE
+        tv_play_game.visibility = View.GONE
     }
 
     private fun setUserData() {

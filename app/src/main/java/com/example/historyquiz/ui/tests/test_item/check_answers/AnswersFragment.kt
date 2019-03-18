@@ -1,5 +1,6 @@
 package com.example.historyquiz.ui.tests.test_item.check_answers
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -18,6 +19,7 @@ import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -32,6 +34,8 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
 
     @Inject
     lateinit var gson: Gson
+    lateinit var model: TestViewModel
+
 
     private lateinit var question: Question
     private lateinit var test: Test
@@ -46,29 +50,26 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
     private var checkBoxes: MutableList<CheckBox>? = null
     private var radioButtons: MutableList<RadioButton>? = null
 
-   /* override fun onBackPressed() {
+    override fun performBackPressed() {
         beforeQuestion()
     }
-
-    override fun onCancel() {
-        finishQuestions()
-    }
-
-    override fun onForward() {
-        nextQuestion()
-    }
-
-    override fun onOk() {
-        finishQuestions()
-    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
 
         type = arguments?.getString(ANSWERS_TYPE)!!
-        val testStr: String = arguments?.getString(TEST_ITEM)!!
+        model = activity?.run {
+            ViewModelProviders.of(this).get(TestViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
+        model.test.value?.let {
+            test = it
+        }
+        model.number.value?.let {
+            number = it
+        }
+        /*val testStr: String = arguments?.getString(TEST_ITEM)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
-        test = gson.fromJson(testStr, Test::class.java)
+        test = gson.fromJson(testStr, Test::class.java)*/
         if(type.equals(RIGHT_ANSWERS)) {
             question =  test.rightQuestions[number]
             listSize = test.rightQuestions.size
@@ -145,6 +146,11 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
         btn_finish_questions!!.setOnClickListener(this)
         btn_next_question!!.setOnClickListener(this)
 
+        btn_ok.setOnClickListener(this)
+        btn_cancel.setOnClickListener(this)
+        btn_forward.setOnClickListener(this)
+        btn_back.setOnClickListener(this)
+
         btn_next_question.text = getString(R.string.next_question)
     }
 
@@ -162,6 +168,7 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
     }
 
     private fun finishQuestions() {
+        removeStackDownTo()
         val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         val fragment = FinishFragment.newInstance(args)
@@ -170,6 +177,8 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
     }
 
     private fun nextQuestion() {
+        model.selectTest(test)
+        model.selectNumber(++number)
         val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         args.putString(ANSWERS_TYPE,type)
@@ -211,6 +220,10 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
             R.id.btn_cancel -> finishQuestions()
 
             R.id.btn_back -> beforeQuestion()
+
+            R.id.btn_ok -> finishQuestions()
+
+            R.id.btn_forward -> nextQuestion()
 
         }
     }

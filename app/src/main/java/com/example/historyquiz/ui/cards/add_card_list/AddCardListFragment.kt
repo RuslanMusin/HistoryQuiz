@@ -50,6 +50,7 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         hideLoading()
         hideListLoading()
         setActionBar(toolbar)
+        setActionBarTitle(R.string.search_card)
         setHasOptionsMenu(true)
     }
 
