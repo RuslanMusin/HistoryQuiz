@@ -3,6 +3,7 @@ package com.example.historyquiz.repository.card
 import android.util.Log
 import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.CARD_COMMENT_TYPE
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Single
@@ -11,14 +12,16 @@ import java.util.HashMap
 import javax.inject.Inject
 
 
-class CardCommentRepositoryImpl @Inject constructor(){
+class CommentRepositoryImpl @Inject constructor() : CommentRepository {
 
     val databaseReference: DatabaseReference
 
     private val TABLE_NAME = "card_comments"
 
+    val map: Map<String, String> = HashMap()
+
     init {
-        this.databaseReference = FirebaseDatabase.getInstance().reference.child(TABLE_NAME)
+        this.databaseReference = FirebaseDatabase.getInstance().reference
     }
 
     fun readComment(pointId: String): DatabaseReference {
@@ -34,9 +37,9 @@ class CardCommentRepositoryImpl @Inject constructor(){
 //        databaseReference.child(comment.id).updateChildren(updatedValues)
     }
 
-    fun getComments(testId: String): Single<List<Comment>> {
+    override fun getComments(type: String, testId: String): Single<List<Comment>> {
         val single: Single<List<Comment>> = Single.create { e ->
-            val query: Query = databaseReference.child(testId)
+            val query: Query = getRef(type).child(testId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val comments: MutableList<Comment> = ArrayList()
@@ -56,14 +59,20 @@ class CardCommentRepositoryImpl @Inject constructor(){
 
     }
 
-    fun createComment(testId: String, comment: Comment): Single<Boolean> {
+    override fun createComment(type: String, elemId: String, comment: Comment): Single<Boolean> {
         val single: Single<Boolean> = Single.create { e ->
-            val key = databaseReference.child(testId).push().key
+            val key = getRef(type).child(elemId).push().key
             comment.id = key
-            databaseReference.child(testId).child(key!!).setValue(comment)
+            getRef(type).child(elemId).child(key!!).setValue(comment)
             e.onSuccess(true)
         }
         return single.compose(RxUtils.asyncSingle())
     }
+
+    private fun getRef(type: String): DatabaseReference {
+        return databaseReference.child(type)
+    }
+
+
 
 }

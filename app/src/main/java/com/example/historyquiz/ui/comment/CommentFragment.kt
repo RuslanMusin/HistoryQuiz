@@ -24,6 +24,7 @@ abstract class CommentFragment: BaseFragment(), CommentView {
     abstract var commentPresenter: CommentPresenter
 
     protected abstract var type: String
+    protected abstract var elemId: String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,6 +54,7 @@ abstract class CommentFragment: BaseFragment(), CommentView {
         })
 
         sendButton.setOnClickListener {
+            sendComment(elemId)
            /* if (hasInternetConnection()) {
                 sendComment()
             } else {
@@ -104,7 +106,7 @@ abstract class CommentFragment: BaseFragment(), CommentView {
         adapter.changeDataSet(comments)
     }
 
-    override fun sendComment() {
+    override fun sendComment(elemId: String) {
         Log.d(TAG_LOG, "focus down")
         val commentText = et_comment.getText().toString()
         Log.d(TAG_LOG, "send comment = $commentText")
@@ -116,7 +118,7 @@ abstract class CommentFragment: BaseFragment(), CommentView {
                 comment.authorId = user.id
 //                comment.authorName = "${user.lastname} ${user.name} ${user.patronymic}"
                 comment.createdDate = (Date()).time
-                commentPresenter.createComment(type, comment)
+                commentPresenter.createComment(type, elemId, comment)
             }
             addComment(comment)
         }

@@ -19,7 +19,7 @@ interface CommentView: BasicFunctional, BaseAdapter.OnItemClickListener<Comment>
 
     fun addComment(comment: Comment)
 
-    fun sendComment()
+    fun sendComment(elemId: String)
 
     fun clearAfterSendComment()
 

@@ -162,7 +162,7 @@ class AbstractCardRepositoryImpl @Inject constructor() : AbstractCardRepository{
         return single.compose(RxUtils.asyncSingle())
     }
 
-    fun findMyAbstractCards(userId: String): Single<List<AbstractCard>> {
+    override fun findMyAbstractCards(userId: String): Single<List<AbstractCard>> {
         val single: Single<List<AbstractCard>> = Single.create { e ->
             val query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -220,7 +220,7 @@ class AbstractCardRepositoryImpl @Inject constructor() : AbstractCardRepository{
         return single.compose(RxUtils.asyncSingle())
     }
 
-    fun findMyAbstractCardsByQuery(queryPart: String, userId: String): Single<List<AbstractCard>> {
+    override fun findMyAbstractCardsByQuery(queryPart: String, userId: String): Single<List<AbstractCard>> {
         val single: Single<List<AbstractCard>> = Single.create { e ->
             val query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {

@@ -3,6 +3,9 @@ import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
 import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
+import com.example.historyquiz.ui.cards.card_item.CardFragment
+import com.example.historyquiz.ui.cards.card_list.CardListFragment
+import com.example.historyquiz.ui.cards.wiki_page.WikiPageFragment
 import com.example.historyquiz.ui.navigation.NavigationActivity
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
@@ -78,4 +81,17 @@ interface AppModule {
     @FragmentScope
     @ContributesAndroidInjector()
     fun testListFragmentInjector(): TestListFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun cardListFragmentInjector(): CardListFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun cardFragmentInjector(): CardFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun wikiPageFragmentInjector(): WikiPageFragment
 }
+

@@ -20,7 +20,7 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class CardRepositoryImpl @Inject constructor() : CardRepository{
+class CardRepositoryImpl @Inject constructor() : CardRepository {
 
     @Inject
     lateinit var testRepository: TestRepository

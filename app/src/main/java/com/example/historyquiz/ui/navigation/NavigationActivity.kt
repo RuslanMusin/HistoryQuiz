@@ -11,17 +11,21 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.crashlytics.android.Crashlytics
 import com.example.historyquiz.R
 import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
 import com.example.historyquiz.ui.base.BaseActivity
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
+import com.example.historyquiz.ui.cards.card_list.CardListFragment
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.USER_ITEM
 import com.google.gson.Gson
+import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.layout_connectivity.*
 import java.util.*
@@ -68,6 +72,8 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Fabric.with(this, Crashlytics())
+
         setContentView(R.layout.activity_navigation)
         initBottomNavigation()
         initListeners()
@@ -357,9 +363,11 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     private fun showCards(tabId: String) {
-        showProfile(tabId)
-     /*   val fragment = ThemeListFragment.newInstance(this)
-        pushFragments(fragment, true)*/
+//        showProfile(tabId)
+        val args = Bundle()
+        args.putString(USER_ID, AppHelper.currentUser.id)
+        val fragment = CardListFragment.newInstance(args)
+        pushFragments(fragment, true)
     }
 
     private fun showTests(tabId: String) {

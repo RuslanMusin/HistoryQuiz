@@ -77,10 +77,12 @@ object Const {
     const val USER_ITEM = "USER_ITEM"
     const val TEST_ITEM = "TEST_ITEM"
     const val CARD_ITEM = "CARD_ITEM"
+    const val ABS_CARD = "ABS_CARD"
     const val ITEM_ITEM = "ITEM_ITEM"
 
     //id's
     const val TEST_ID = "TEST_ID"
+    const val USER_ID = "USER_ID"
 
     //args
     const val QUESTION_NUMBER = "queston_number"

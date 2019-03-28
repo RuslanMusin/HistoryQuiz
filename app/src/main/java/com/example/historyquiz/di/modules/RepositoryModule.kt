@@ -4,10 +4,7 @@ import com.example.historyquiz.repository.api.WikiApiRepository
 import com.example.historyquiz.repository.api.WikiApiRepositoryImpl
 import com.example.historyquiz.repository.auth.AuthRepository
 import com.example.historyquiz.repository.auth.AuthRepositoryImpl
-import com.example.historyquiz.repository.card.AbstractCardRepository
-import com.example.historyquiz.repository.card.AbstractCardRepositoryImpl
-import com.example.historyquiz.repository.card.CardRepository
-import com.example.historyquiz.repository.card.CardRepositoryImpl
+import com.example.historyquiz.repository.card.*
 import com.example.historyquiz.repository.test.TestRepository
 import com.example.historyquiz.repository.test.TestRepositoryImpl
 import dagger.Binds
@@ -37,5 +34,9 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun testRepository(repository: TestRepositoryImpl): TestRepository
+
+    @Singleton
+    @Binds
+    fun commentRepository(repository: CommentRepositoryImpl): CommentRepository
 
 }

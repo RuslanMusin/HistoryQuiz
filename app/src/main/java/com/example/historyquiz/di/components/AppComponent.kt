@@ -8,6 +8,10 @@ import com.example.historyquiz.ui.auth.fragments.signup.SignUpPresenter
 import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.cards.add_card.AddCardPresenter
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListPresenter
+import com.example.historyquiz.ui.cards.card_item.CardPresenter
+import com.example.historyquiz.ui.cards.card_list.CardListPresenter
+import com.example.historyquiz.ui.cards.wiki_page.WikiPagePresenter
+import com.example.historyquiz.ui.comment.CommentPresenter
 import com.example.historyquiz.ui.profile.item.ProfilePresenter
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestPresenter
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestPresenter
@@ -54,6 +58,13 @@ interface AppComponent {
     fun inject(presenter: QuestionPresenter)
     fun inject(presenter: TestCardPresenter)
     fun inject(presenter: AnswersPresenter)
+
+    fun inject(presenter: CardPresenter)
+    fun inject(presenter: CardListPresenter)
+    fun inject(presenter: WikiPagePresenter)
+
+    fun inject(presenter: CommentPresenter)
+
 
 
 
