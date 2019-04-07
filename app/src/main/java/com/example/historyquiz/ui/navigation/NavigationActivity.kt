@@ -9,35 +9,46 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.crashlytics.android.Crashlytics
 import com.example.historyquiz.R
-import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
+import com.example.historyquiz.model.game.GameData
+import com.example.historyquiz.model.game.Lobby
+import com.example.historyquiz.ui.auth.fragments.signin.SignInFragment
 import com.example.historyquiz.ui.base.BaseActivity
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 import com.example.historyquiz.ui.cards.card_list.CardListFragment
+import com.example.historyquiz.ui.game.game_list.GameListFragment
+import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.userStatus
+import com.example.historyquiz.utils.Const.OFFLINE_STATUS
+import com.example.historyquiz.utils.Const.STOP_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.USER_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.layout_connectivity.*
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListener {
 
     @InjectPresenter
-    lateinit var navigationPresenter: NavigationPresenter
-
+    lateinit var presenter: NavigationPresenter
     @Inject
-    lateinit var gson: Gson
+    lateinit var presenterProvider: Provider<NavigationPresenter>
+    @ProvidePresenter
+    fun providePresenter(): NavigationPresenter = presenterProvider.get()
 
     private lateinit var stacks: HashMap<String, Stack<Fragment>>
     private lateinit var relativeTabs: HashMap<String, String>
@@ -46,6 +57,8 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     private var showTab: String = SHOW_AUTH
 
     var lastRequest: (() -> Unit)? = null
+
+    lateinit var dialog: MaterialDialog
 
     companion object {
 
@@ -97,16 +110,46 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         relativeTabs[TAB_TESTS] = SHOW_TESTS
         relativeTabs[TAB_CARDS] = SHOW_CARDS
 
+        dialog = MaterialDialog.Builder(this)
+            .title(R.string.game_dialog)
+            .content(R.string.game_dialog_content)
+            .positiveText(R.string.agree)
+            .negativeText(R.string.disagree)
+            .build()
+
+        dialog.setCancelable(false)
         openLoginPage()
 //        bottom_navigation.selectedItemId = R.id.action_profile
     }
 
+    override fun setDialog(gameData: GameData, lobby: Lobby) {
+        dialog = dialog
+            .builder
+            .onPositive(object : MaterialDialog.SingleButtonCallback {
+                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                    presenter.chooseDialogDecision(gameData, lobby)
+                }
 
+            })
+            .onNegative { dialog: MaterialDialog, which: DialogAction ->
+                dialog.hide()
+                refuseAndWait(lobby) }
+            .build()
+    }
+
+    override fun goToGame() {
+        val fragment = PlayGameFragment.newInstance()
+        pushFragments(fragment, true)
+    }
+
+    override fun hideDialog() {
+        dialog.hide()
+    }
 
     override fun openLoginPage() {
         currentTab = TAB_AUTH
         showTab = SHOW_AUTH
-        val fragment = LoginFragment.newInstance()
+        val fragment = SignInFragment.newInstance()
         pushFragments(fragment, true)
 
 
@@ -357,9 +400,9 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     private fun showGame(tabId: String) {
-        showProfile(tabId)
-       /* val fragment = StudentListFragment.newInstance(this)
-        pushFragments(fragment, true)*/
+//        showProfile(tabId)
+        val fragment = GameListFragment.newInstance()
+        pushFragments(fragment, true)
     }
 
     private fun showCards(tabId: String) {
@@ -373,6 +416,65 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     private fun showTests(tabId: String) {
         val fragment = TestListFragment.newInstance()
         pushFragments(fragment, true)
+    }
+
+    override fun setStatus(status: String) {
+        AppHelper.onlineFunction = onlineMode()
+        AppHelper.offlineFunction = offlineMode()
+        presenter.setStatus(status)
+    }
+
+    fun offlineMode(): () -> (Unit) {
+        return {
+            Log.d(TAG_LOG,"offline mode")
+            if(li_offline != null && container != null) {
+                li_offline.visibility = View.VISIBLE
+                container.visibility = View.GONE
+            }
+        }
+    }
+
+    fun onlineMode(): () -> (Unit) {
+        return {
+            Log.d(TAG_LOG,"online mode")
+            if(li_offline != null && container != null) {
+                container.visibility = View.VISIBLE
+                li_offline.visibility = View.GONE
+            }
+        }
+    }
+
+    fun waitEnemy() {
+        Log.d(TAG_LOG,"wait enemy")
+        presenter.waitEnemy()
+    }
+
+    fun refuseAndWait(lobby: Lobby) {
+        presenter.refuseGame(lobby)
+    }
+
+    override fun onResume() {
+        Log.d(TAG_LOG,"onResume")
+        presenter.isStopped = false
+        setStatus(userStatus)
+        super.onResume()
+    }
+
+
+    final override fun onStop() {
+        presenter.isStopped = true
+        super.onStop()
+    }
+
+    override fun onPause() {
+        Log.d(TAG_LOG,"on stop status = $OFFLINE_STATUS")
+        presenter.changeJustUserStatus(STOP_STATUS)
+        super.onPause()
+    }
+
+    override fun setOfflineChecking() {
+        presenter.checkUserConnection(offlineMode())
+
     }
 
 }

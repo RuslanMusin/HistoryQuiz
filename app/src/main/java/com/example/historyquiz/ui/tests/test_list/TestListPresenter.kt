@@ -3,7 +3,6 @@ package com.example.historyquiz.ui.tests.test_list
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.repository.test.TestRepository
-import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -13,18 +12,14 @@ import io.reactivex.functions.Consumer
 import javax.inject.Inject
 
 @InjectViewState
-class TestListPresenter: BasePresenter<TestListView>() {
+class TestListPresenter @Inject constructor() : BasePresenter<TestListView>() {
 
     @Inject
-    lateinit var testRepositoryImpl: TestRepository
-
-    init {
-        App.sAppComponent.inject(this)
-    }
+    lateinit var testRepository: TestRepository
 
     fun loadOfficialTestsByQUery(query: String) {
         AppHelper.currentUser?.id?.let {
-            val disposable = testRepositoryImpl
+            val disposable = testRepository
                 .findTestsByQuery(query)
                 .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading(it) })
                 .doAfterTerminate(Action { viewState.hideListLoading() })
@@ -36,7 +31,7 @@ class TestListPresenter: BasePresenter<TestListView>() {
     fun loadOfficialTests() {
         Log.d(TAG_LOG, "load tests")
         AppHelper.currentUser?.id?.let {
-            testRepositoryImpl
+            testRepository
                 .findTests()
                 .doOnSubscribe({ viewState.showListLoading(it) })
                 .doAfterTerminate({ viewState.hideListLoading() })

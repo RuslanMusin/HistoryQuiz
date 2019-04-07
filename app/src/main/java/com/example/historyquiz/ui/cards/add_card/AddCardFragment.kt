@@ -1,14 +1,15 @@
 package com.example.historyquiz.ui.cards.add_card
 
-import android.support.v7.app.AppCompatActivity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
@@ -18,8 +19,11 @@ import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.layout_add_card.*
+import kotlinx.android.synthetic.main.toolbar_back_done.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
@@ -34,13 +38,14 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
 
     @InjectPresenter
     lateinit var presenter: AddCardPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<AddCardPresenter>
+    @ProvidePresenter
+    fun providePresenter(): AddCardPresenter = presenterProvider.get()
 
     private var item: Item? = null
 
     private var isBalanced: Boolean = true
-
-    @Inject
-    lateinit var gson: Gson
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.activity_add_card, container, false)

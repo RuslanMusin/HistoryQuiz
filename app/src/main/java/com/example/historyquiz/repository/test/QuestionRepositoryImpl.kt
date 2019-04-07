@@ -3,8 +3,7 @@ package com.example.historyquiz.repository.test
 import com.example.historyquiz.model.test.Question
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 class QuestionRepositoryImpl @Inject constructor(){

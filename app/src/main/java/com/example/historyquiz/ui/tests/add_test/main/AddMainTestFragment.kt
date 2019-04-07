@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
@@ -23,18 +24,20 @@ import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_add_test.*
 import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListener {
 
-    @Inject
-    lateinit var gson: Gson
-
     @InjectPresenter
     lateinit var presenter: AddMainTestPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<AddMainTestPresenter>
+    @ProvidePresenter
+    fun providePresenter(): AddMainTestPresenter = presenterProvider.get()
 
     lateinit var model: TestViewModel
 

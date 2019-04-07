@@ -3,11 +3,11 @@ package com.example.historyquiz.ui.cards.card_list
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.*
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.AbstractCard
 import com.example.historyquiz.model.card.Card
@@ -15,15 +15,15 @@ import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.USER_ID
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import io.reactivex.disposables.Disposable
-import java.util.ArrayList
+import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.fragment_test_list.*
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
-
-    @Inject
-    lateinit var gson: Gson
 
     lateinit var userId: String
     private lateinit var adapter: CardAdapter
@@ -32,6 +32,10 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var presenter: CardListPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<CardListPresenter>
+    @ProvidePresenter
+    fun providePresenter(): CardListPresenter = presenterProvider.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

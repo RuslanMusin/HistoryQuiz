@@ -12,7 +12,7 @@ import io.reactivex.functions.Consumer
 import javax.inject.Inject
 
 @InjectViewState
-class AddPhotoPresenter : BasePresenter<AddPhotoView>() {
+class AddPhotoPresenter @Inject constructor() : BasePresenter<AddPhotoView>() {
 
     @Inject
     lateinit var abstractCardRepository: AbstractCardRepository

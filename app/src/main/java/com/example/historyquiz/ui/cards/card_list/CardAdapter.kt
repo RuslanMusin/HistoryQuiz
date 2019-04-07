@@ -2,9 +2,7 @@ package com.example.historyquiz.ui.cards.card_list
 
 import android.view.ViewGroup
 import com.example.historyquiz.model.card.AbstractCard
-import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseAdapter
-import com.example.historyquiz.ui.tests.test_list.TestItemHolder
 
 class CardAdapter(items: MutableList<AbstractCard>) : BaseAdapter<AbstractCard, CardViewHolder>(items) {
 

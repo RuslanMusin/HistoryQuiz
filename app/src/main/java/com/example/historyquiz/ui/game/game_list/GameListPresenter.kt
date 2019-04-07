@@ -7,11 +7,11 @@ import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.game.GameData
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.game.LobbyPlayerData
-import com.example.historyquiz.repository.RepositoryProvider.Companion.userRepository
 import com.example.historyquiz.repository.card.CardRepository
 import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.FIELD_CREATOR
 import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.FIELD_INVITED
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
@@ -28,7 +28,7 @@ import io.reactivex.functions.Consumer
 import javax.inject.Inject
 
 @InjectViewState
-class GameListPresenter : BasePresenter<GameListView>() {
+class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
 
     lateinit var timer: CountDownTimer
 
@@ -38,6 +38,9 @@ class GameListPresenter : BasePresenter<GameListView>() {
     @Inject
     lateinit var cardRepository: CardRepository
 
+    @Inject
+    lateinit var userRepository: UserRepository
+
     fun removeLobby(lobbyId: String) {
         gameRepository.removeLobby(lobbyId)
     }
@@ -46,7 +49,7 @@ class GameListPresenter : BasePresenter<GameListView>() {
         AppHelper.currentUser?.id?.let {
             gameRepository
                 .findOfficialTestsByQuery(query, it)
-                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
+                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
                 .doAfterTerminate(Action { viewState.hideLoading() })
                 .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
         }
@@ -57,7 +60,7 @@ class GameListPresenter : BasePresenter<GameListView>() {
         AppHelper.currentUser?.id?.let {
             gameRepository
                 .findOfficialTests(it)
-                .doOnSubscribe({ viewState.showLoading(it) })
+                .doOnSubscribe({ viewState.showLoading() })
                 .doAfterTerminate({ viewState.hideLoading() })
                 .doAfterTerminate({ viewState.setNotLoading() })
                 .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })

@@ -8,7 +8,6 @@ import com.example.historyquiz.model.game.GameData
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.game.LobbyPlayerData
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.Companion.userRepository
 import com.example.historyquiz.repository.card.CardRepository
 import com.example.historyquiz.repository.epoch.UserEpochRepository
 import com.example.historyquiz.repository.user.UserRepositoryImpl
@@ -27,14 +26,13 @@ import com.example.historyquiz.utils.Const.ONLINE_GAME
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.QUERY_END
 import com.example.historyquiz.utils.Const.TAG_LOG
-import com.example.historyquiz.utils.Const.USER_TYPE
 import com.example.historyquiz.utils.RxUtils
 import com.example.historyquiz.utils.getRandom
 import com.google.firebase.database.*
 import io.reactivex.Single
 import javax.inject.Inject
 
-class GameRepositoryImpl : GameRepository {
+class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     @Inject
     lateinit var cardRepository: CardRepository
@@ -999,7 +997,7 @@ class GameRepositoryImpl : GameRepository {
 
     }
 
-    fun watchMyStatus() {
+    override fun watchMyStatus() {
         val myConnect = databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(currentId).child(UserRepositoryImpl.FIELD_STATUS)
         myConnect.addValueEventListener(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {

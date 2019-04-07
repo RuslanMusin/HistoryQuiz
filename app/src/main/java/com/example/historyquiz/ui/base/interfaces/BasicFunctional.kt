@@ -49,4 +49,8 @@ interface BasicFunctional: MvpView {
     fun removeStackDownTo()
 
     fun removeStackDownTo(number: Int)
+
+    fun setStatus(status: String)
+
+    fun setOfflineChecking()
 }

@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.tests.add_test.question
 
-import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -8,11 +7,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.*
-import android.widget.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RadioButton
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
@@ -26,18 +31,22 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.TEST_MANY_TYPE
 import com.example.historyquiz.utils.Const.TEST_ONE_TYPE
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import com.jaredrummler.materialspinner.MaterialSpinner
-import java.util.ArrayList
+import kotlinx.android.synthetic.main.fragment_add_question.*
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClickListener {
 
-    @Inject
-    lateinit var gson: Gson
-
     @InjectPresenter
     lateinit var presenter: AddQuestionTestPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<AddQuestionTestPresenter>
+    @ProvidePresenter
+    fun providePresenter(): AddQuestionTestPresenter = presenterProvider.get()
 
     lateinit var model: TestViewModel
 

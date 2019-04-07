@@ -6,10 +6,8 @@ import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.historyquiz.R
 import com.example.historyquiz.model.game.Lobby
-import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.ui.base.BaseAdapter
 import kotlinx.android.synthetic.main.item_game.view.*
-import javax.inject.Inject
 
 class GameAdapter(items: MutableList<Lobby>) : BaseAdapter<Lobby, GameItemHolder>(items) {
 
@@ -20,7 +18,6 @@ class GameAdapter(items: MutableList<Lobby>) : BaseAdapter<Lobby, GameItemHolder
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameItemHolder {
-//        return TestItemHolder.create(parent.context)
         return GameItemHolder.create(parent)
     }
 

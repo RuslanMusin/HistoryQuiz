@@ -3,12 +3,10 @@ package com.example.historyquiz.repository.card
 import android.util.Log
 import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.CARD_COMMENT_TYPE
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Single
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 

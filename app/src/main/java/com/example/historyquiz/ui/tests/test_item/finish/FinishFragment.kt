@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.tests.test_item.finish
 
-import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
@@ -22,18 +22,21 @@ import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_item.winned_card.TestCardFragment
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.fragment_finish_test.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
-
-    @Inject
-    lateinit var gson: Gson
 
     lateinit var model: TestViewModel
 
     @InjectPresenter
     lateinit var presenter: FinishPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<FinishPresenter>
+    @ProvidePresenter
+    fun providePresenter(): FinishPresenter = presenterProvider.get()
 
     lateinit var test: Test
     var rightQuestions: MutableList<Question> = ArrayList()

@@ -1,54 +1,48 @@
 package com.example.historyquiz.ui.cards.card_item
 
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.AbstractCard
-import com.example.historyquiz.model.test.Test
-import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.wiki_page.WikiPageFragment
-import com.example.historyquiz.ui.cards.wiki_page.WikiPagePresenter
 import com.example.historyquiz.ui.comment.CommentFragment
 import com.example.historyquiz.ui.comment.CommentPresenter
 import com.example.historyquiz.ui.navigation.NavigationView
-import com.example.historyquiz.ui.tests.add_test.TestViewModel
-import com.example.historyquiz.ui.tests.test_item.main.TestPresenter
-import com.example.historyquiz.ui.tests.test_item.main.TestView
-import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
-import com.example.historyquiz.ui.tests.test_list.TestListFragment
-import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ABS_CARD
 import com.example.historyquiz.utils.Const.CARD_COMMENT_TYPE
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_card.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class CardFragment : CommentFragment(), CardView, View.OnClickListener {
-
-    @Inject
-    lateinit var gson: Gson
 
     lateinit var card: AbstractCard
 
     @InjectPresenter
     lateinit var presenter: CardPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<CardPresenter>
+    @ProvidePresenter
+    fun providePresenter(): CardPresenter = presenterProvider.get()
 
     @InjectPresenter
     override lateinit var commentPresenter: CommentPresenter
+    @Inject
+    lateinit var commentProvider: Provider<CommentPresenter>
+    @ProvidePresenter
+    fun provideCommentPresenter(): CommentPresenter = commentProvider.get()
 
     override var type: String = CARD_COMMENT_TYPE
     override lateinit var elemId: String

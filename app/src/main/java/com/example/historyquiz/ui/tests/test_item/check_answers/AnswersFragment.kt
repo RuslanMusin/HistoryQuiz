@@ -14,6 +14,8 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
@@ -24,19 +26,23 @@ import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_question.*
 import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
 
+    @InjectPresenter
+    lateinit var presenter: AnswersPresenter
     @Inject
-    lateinit var gson: Gson
+    lateinit var presenterProvider: Provider<AnswersPresenter>
+    @ProvidePresenter
+    fun providePresenter(): AnswersPresenter = presenterProvider.get()
+
     lateinit var model: TestViewModel
-
-
     private lateinit var question: Question
     private lateinit var test: Test
     private lateinit var type: String

@@ -17,5 +17,7 @@ interface UserRepository {
 
     fun changeJustUserStatus(status: String): Single<Boolean>
 
+    fun checkUserStatus(userId: String): Single<Boolean>
+
     fun checkUserConnection(checkIt: () -> (Unit))
 }

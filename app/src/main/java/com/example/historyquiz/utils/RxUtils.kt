@@ -1,11 +1,6 @@
 package com.example.historyquiz.utils
 
-import io.reactivex.CompletableTransformer
-import io.reactivex.FlowableTransformer
-import io.reactivex.MaybeTransformer
-import io.reactivex.ObservableTransformer
-import io.reactivex.Scheduler
-import io.reactivex.SingleTransformer
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 

@@ -1,7 +1,6 @@
 package com.example.historyquiz.utils
 
 import android.util.Log
-
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.Key
@@ -10,11 +9,8 @@ import com.bumptech.glide.load.data.DataFetcher
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.StreamDownloadTask
-
 import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset

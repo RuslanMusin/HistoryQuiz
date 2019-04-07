@@ -2,21 +2,15 @@ package com.example.historyquiz.ui.comment
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.repository.card.CommentRepository
-import com.example.historyquiz.repository.card.CommentRepositoryImpl
-import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
 import io.reactivex.Single
 import javax.inject.Inject
 
 @InjectViewState
-open class CommentPresenter: BasePresenter<CommentView>() {
+open class CommentPresenter @Inject constructor() : BasePresenter<CommentView>() {
 
     @Inject
     lateinit var commentRepository: CommentRepository
-
-    init {
-        App.sAppComponent.inject(this)
-    }
 
     fun loadComments(type: String, elemId: String) {
 //        viewState.startTimeout(R.string.failed_load_comments)

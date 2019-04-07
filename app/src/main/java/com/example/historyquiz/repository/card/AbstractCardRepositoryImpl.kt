@@ -1,6 +1,5 @@
 package com.example.historyquiz.repository.card
 
-import android.os.Build.VERSION_CODES.O
 import android.util.Log
 import com.example.historyquiz.model.card.AbstractCard
 import com.example.historyquiz.model.db_dop_models.ElementId
@@ -10,8 +9,7 @@ import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Observable
 import io.reactivex.Single
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 

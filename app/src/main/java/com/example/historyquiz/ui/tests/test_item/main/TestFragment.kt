@@ -1,16 +1,15 @@
 package com.example.historyquiz.ui.tests.test_item.main
 
-import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Test
@@ -24,24 +23,24 @@ import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.WIN_GAME
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_test.*
 import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class TestFragment : BaseFragment(), TestView, View.OnClickListener {
-
-    @Inject
-    lateinit var gson: Gson
 
     lateinit var test: Test
     lateinit var model: TestViewModel
 
     @InjectPresenter
     lateinit var presenter: TestPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<TestPresenter>
+    @ProvidePresenter
+    fun providePresenter(): TestPresenter = presenterProvider.get()
 
     companion object {
 

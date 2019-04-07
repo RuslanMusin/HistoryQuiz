@@ -7,8 +7,9 @@ import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Single
+import javax.inject.Inject
 
-class LeaderStatRepositoryImpl : LeaderStatRepository {
+class LeaderStatRepositoryImpl @Inject constructor() : LeaderStatRepository {
 
     var databaseReference: DatabaseReference
 

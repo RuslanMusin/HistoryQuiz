@@ -11,9 +11,9 @@ import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
 import io.reactivex.disposables.Disposable
-import java.util.*
-import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.layout_add_comment.*
+import java.util.*
 
 abstract class CommentFragment: BaseFragment(), CommentView {
 

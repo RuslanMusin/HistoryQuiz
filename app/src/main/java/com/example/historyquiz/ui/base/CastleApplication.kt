@@ -1,15 +1,20 @@
 package com.example.historyquiz.ui.base
 
-import android.support.v7.app.AppCompatActivity
-import android.app.Application
-import com.example.historyquiz.di.components.AppComponent
 import com.example.historyquiz.di.components.DaggerAppComponent
-import com.google.firebase.FirebaseApp
 import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import javax.inject.Inject
+import dagger.android.DaggerApplication
 
+class CastleApplication : DaggerApplication() {
+
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent.builder().application(this).create(this)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+    }
+}
+/*
 class App : Application(), HasActivityInjector {
 
     @Inject
@@ -35,4 +40,4 @@ class App : Application(), HasActivityInjector {
     companion object {
         lateinit var sAppComponent: AppComponent
     }
-}
+}*/

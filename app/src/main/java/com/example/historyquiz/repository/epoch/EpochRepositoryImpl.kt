@@ -7,8 +7,9 @@ import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Single
+import javax.inject.Inject
 
-class EpochRepositoryImpl : EpochRepository {
+class EpochRepositoryImpl @Inject constructor() : EpochRepository {
 
     var databaseReference: DatabaseReference
 

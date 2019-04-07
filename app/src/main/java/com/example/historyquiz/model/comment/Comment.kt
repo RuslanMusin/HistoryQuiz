@@ -3,8 +3,7 @@ package com.example.historyquiz.model.comment
 
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-
-import java.util.Calendar
+import java.util.*
 
 @IgnoreExtraProperties
 class Comment {

@@ -8,6 +8,7 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.*
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
@@ -15,17 +16,15 @@ import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
-
-    @Inject
-    lateinit var gson: Gson
 
     lateinit var userId: String
     private lateinit var adapter: TestAdapter
@@ -34,6 +33,10 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var presenter: TestListPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<TestListPresenter>
+    @ProvidePresenter
+    fun providePresenter(): TestListPresenter = presenterProvider.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

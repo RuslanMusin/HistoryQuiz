@@ -1,9 +1,7 @@
 package com.example.historyquiz.ui.game.add_game
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -12,44 +10,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
-import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.db_dop_models.PhotoItem
 import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.game.LobbyPlayerData
-import com.example.historyquiz.model.test.Test
-import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
 import com.example.historyquiz.ui.game.add_photo.AddPhotoFragment
 import com.example.historyquiz.ui.game.game_list.GameListFragment
-import com.example.historyquiz.ui.tests.add_test.TestViewModel
-import com.example.historyquiz.ui.tests.add_test.main.AddMainTestPresenter
-import com.example.historyquiz.ui.tests.add_test.main.AddMainTestView
-import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
-import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.ADD_EPOCH_CODE
 import com.example.historyquiz.utils.Const.CARD_NUMBER
 import com.example.historyquiz.utils.Const.EDIT_STATUS
-import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
-import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.gson
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_game.*
 import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var presenter: AddGamePresenter
+    @Inject
+    lateinit var presenterProvider: Provider<AddGamePresenter>
+    @ProvidePresenter
+    fun providePresenter(): AddGamePresenter = presenterProvider.get()
 
     lateinit var lobby: Lobby
 

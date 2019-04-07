@@ -13,7 +13,7 @@ import com.example.historyquiz.utils.Const
 import javax.inject.Inject
 
 @InjectViewState
-class AddGamePresenter : BasePresenter<AddGameView>() {
+class AddGamePresenter @Inject constructor() : BasePresenter<AddGameView>() {
 
     @Inject
     lateinit var gamesRepository: GameRepository

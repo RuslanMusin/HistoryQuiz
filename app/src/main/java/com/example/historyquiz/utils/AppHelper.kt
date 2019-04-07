@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.utils.Const.MAX_LENGTH
 import com.example.historyquiz.utils.Const.MORE_TEXT
+import com.example.historyquiz.utils.Const.OFFLINE_STATUS
 import com.example.historyquiz.utils.Const.STUB_PATH
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
@@ -32,8 +33,14 @@ class AppHelper {
 
         var userInSession: Boolean = false
 
+        var userStatus: String = OFFLINE_STATUS
+
         val currentId: String
             get() = Objects.requireNonNull<FirebaseUser>(FirebaseAuth.getInstance().currentUser).getUid()
+
+        var onlineFunction: (() -> Unit)? = null
+
+        var offlineFunction: (() -> Unit)? = null
 
         val storageReference: StorageReference
             get() = FirebaseStorage.getInstance().reference
@@ -125,4 +132,6 @@ class AppHelper {
             }
         }
     }
+
+
 }

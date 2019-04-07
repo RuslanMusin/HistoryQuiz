@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.GravityEnum
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
@@ -44,6 +45,7 @@ import kotlinx.android.synthetic.main.toolbar_game.*
 import kotlinx.android.synthetic.main.toolbar_game.view.*
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class PlayGameFragment : BaseFragment(), PlayGameView {
 
@@ -51,6 +53,10 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     @InjectPresenter
     lateinit var presenter: PlayGamePresenter
+    @Inject
+    lateinit var presenterProvider: Provider<PlayGamePresenter>
+    @ProvidePresenter
+    fun providePresenter(): PlayGamePresenter = presenterProvider.get()
 
     @Inject
     lateinit var gameRepository: GameRepository
@@ -628,6 +634,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         fun newInstance(args: Bundle): Fragment {
             val fragment = PlayGameFragment()
             fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(): Fragment {
+            val fragment = PlayGameFragment()
             return fragment
         }
 

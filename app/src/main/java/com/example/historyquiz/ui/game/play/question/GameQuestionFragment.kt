@@ -12,8 +12,9 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.ui.game.play.PlayView
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_question.*
-import java.util.ArrayList
+import java.util.*
 
 class GameQuestionFragment : Fragment(), View.OnClickListener {
 
@@ -25,7 +26,7 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
 
-        question = gsonConverter.fromJson(arguments?.getString(QUESTION_JSON)!!, Question::class.java)
+        question = gson.fromJson(arguments?.getString(QUESTION_JSON)!!, Question::class.java)
 
         return view
     }
@@ -98,7 +99,7 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
         fun newInstance(question: Question): Fragment {
             val fragment = GameQuestionFragment()
             val args: Bundle = Bundle()
-            args.putString(QUESTION_JSON, gsonConverter.toJson(question))
+            args.putString(QUESTION_JSON, gson.toJson(question))
             fragment.arguments = args
             return fragment
         }

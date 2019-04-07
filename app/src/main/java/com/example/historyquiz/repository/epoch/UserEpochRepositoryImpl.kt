@@ -7,7 +7,7 @@ import com.example.historyquiz.model.epoch.UserEpoch
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.RepositoryProvider.Companion.userRepository
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.GAME_LOSE_POINTS
@@ -18,13 +18,16 @@ import com.google.firebase.database.*
 import io.reactivex.Single
 import javax.inject.Inject
 
-class UserEpochRepositoryImpl : UserEpochRepository {
+class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
 
     @Inject
     lateinit var epochRepository: EpochRepository
 
     @Inject
     lateinit var leaderStatRepository: LeaderStatRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     var databaseReference: DatabaseReference
 

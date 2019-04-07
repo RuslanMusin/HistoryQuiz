@@ -7,24 +7,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class ProfileFragment: BaseFragment(), ProfileView {
 
-    @Inject
-    lateinit var gson: Gson
-
     @InjectPresenter
     lateinit var profilePresenter: ProfilePresenter
+    @Inject
+    lateinit var presenterProvider: Provider<ProfilePresenter>
+    @ProvidePresenter
+    fun providePresenter(): ProfilePresenter = presenterProvider.get()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)

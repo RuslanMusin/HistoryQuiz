@@ -2,16 +2,14 @@ package com.example.historyquiz.repository.user
 
 import android.util.Log
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.TABLE_LOBBIES
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.AppHelper.Companion.userInSession
 import com.example.historyquiz.utils.Const.OFFLINE_STATUS
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.RxUtils
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -94,6 +92,19 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 //                    databaseReference.root.child(GamesRepository.USERS_LOBBIES).child(user.id).child(it).child(FIELD_STATUS).setValue(user.status)
                     }
                     e.onSuccess(true)
+                }
+            }
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    override fun checkUserStatus(userId: String): Single<Boolean> {
+        val single: Single<Boolean> = Single.create{e ->
+            readUserById(userId).subscribe{user ->
+                if(user.status.equals(ONLINE_STATUS)) {
+                    e.onSuccess(true)
+                } else {
+                    e.onSuccess(false)
                 }
             }
         }

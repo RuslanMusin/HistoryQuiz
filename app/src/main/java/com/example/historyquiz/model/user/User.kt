@@ -1,7 +1,7 @@
 package com.example.historyquiz.model.user
 
-import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.epoch.UserEpoch
+import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.utils.Const.OFFLINE_STATUS
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties

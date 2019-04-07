@@ -6,25 +6,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_test_card.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 
 class TestCardFragment: BaseFragment(), TestCardView {
 
-    @Inject
-    lateinit var gson: Gson
-
     @InjectPresenter
     lateinit var presenter: TestCardPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<TestCardPresenter>
+    @ProvidePresenter
+    fun providePresenter(): TestCardPresenter = presenterProvider.get()
 
     lateinit var test: Test
     lateinit var card: Card

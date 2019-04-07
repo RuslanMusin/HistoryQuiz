@@ -1,5 +1,6 @@
 package com.example.historyquiz.ui.base
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
@@ -14,6 +15,16 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        (activity as BasicFunctional).setOfflineChecking()
+
+    }
+
+    override fun setOfflineChecking() {
+
     }
 
     override fun showProgressDialog(message: String) {
@@ -105,5 +116,9 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
         (activity as BasicFunctional).removeStackDownTo(number)
     }
 
+    override fun setStatus(status: String) {
+        (activity as BasicFunctional).setStatus(status)
+
+    }
 
 }

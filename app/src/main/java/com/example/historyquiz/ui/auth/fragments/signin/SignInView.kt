@@ -1,9 +1,9 @@
-package com.example.historyquiz.ui.auth.fragments.login
+package com.example.historyquiz.ui.auth.fragments.signin
 
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 
-interface LoginFragmentView: BasicFunctional {
+interface SignInView: BasicFunctional {
 
     fun showEmailError(hasError: Boolean)
 

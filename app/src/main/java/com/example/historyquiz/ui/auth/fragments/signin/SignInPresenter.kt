@@ -1,11 +1,10 @@
-package com.example.historyquiz.ui.auth.fragments.login
+package com.example.historyquiz.ui.auth.fragments.signin
 
 import android.text.TextUtils
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
 import com.example.historyquiz.repository.user.UserRepository
-import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
@@ -15,14 +14,10 @@ import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
 @InjectViewState
-class LoginFragmentPresenter: BasePresenter<LoginFragmentView>() {
+class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
 
     @Inject
     lateinit var userRepository: UserRepository
-
-    init {
-        App.sAppComponent.inject(this)
-    }
 
     @Inject
     lateinit var fireAuth: FirebaseAuth

@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.tests.test_item.question
 
-import android.support.v7.app.AppCompatActivity
+
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
@@ -9,13 +9,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-
-import java.util.ArrayList
-
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
@@ -27,14 +27,23 @@ import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.fragment_question.*
+import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 
-class QuestionFragment : BaseFragment(), View.OnClickListener {
+class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
 
+    @InjectPresenter
+    lateinit var presenter: QuestionPresenter
     @Inject
-    lateinit var gson: Gson
+    lateinit var presenterProvider: Provider<QuestionPresenter>
+    @ProvidePresenter
+    fun providePresenter(): QuestionPresenter = presenterProvider.get()
+
     lateinit var model: TestViewModel
 
     private lateinit var question: Question

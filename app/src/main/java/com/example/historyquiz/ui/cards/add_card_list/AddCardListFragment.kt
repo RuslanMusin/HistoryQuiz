@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.cards.add_card_list
 
-import android.support.v7.app.AppCompatActivity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,6 +8,7 @@ import android.util.Log
 import android.view.*
 import com.annimon.stream.Stream
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
@@ -19,21 +19,26 @@ import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import io.reactivex.disposables.Disposable
-import java.util.ArrayList
+import kotlinx.android.synthetic.main.activity_add_list.*
+import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
+import javax.inject.Provider
 
 class AddCardListFragment: BaseFragment(), AddCardListView {
-
-    @Inject
-    lateinit var gson: Gson
 
     private var card: Card? = null
 
     @InjectPresenter
     lateinit var presenter: AddCardListPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<AddCardListPresenter>
+    @ProvidePresenter
+    fun providePresenter(): AddCardListPresenter = presenterProvider.get()
+
     private var adapter: AddCardListAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

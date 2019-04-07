@@ -1,5 +1,5 @@
 package com.example.historyquiz.di.modules
-import com.example.historyquiz.ui.auth.fragments.login.LoginFragment
+import com.example.historyquiz.ui.auth.fragments.signin.SignInFragment
 import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
 import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
@@ -10,7 +10,6 @@ import com.example.historyquiz.ui.navigation.NavigationActivity
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
-import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestPresenter
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
 import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
@@ -23,7 +22,13 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 
-@Module(includes = [AndroidSupportInjectionModule::class, FirebaseModule::class, RepositoryModule::class])
+@Module(
+    includes =
+    [AndroidSupportInjectionModule::class,
+    FirebaseModule::class,
+    RepositoryModule::class,
+    AppContextModule::class]
+)
 interface AppModule {
 
     @ActivityScope
@@ -32,7 +37,7 @@ interface AppModule {
 
     @FragmentScope
     @ContributesAndroidInjector()
-    fun loginFragmentInjector(): LoginFragment
+    fun loginFragmentInjector(): SignInFragment
 
     @FragmentScope
     @ContributesAndroidInjector()

@@ -1,7 +1,6 @@
 package com.example.historyquiz.ui.game.game_list
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,25 +9,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.game.Lobby
-import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
 import com.example.historyquiz.ui.game.add_game.AddGameFragment
+import com.example.historyquiz.ui.game.bot_play.BotGameFragment
+import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class GameListFragment : BaseFragment(), GameListView {
 
@@ -38,7 +36,12 @@ class GameListFragment : BaseFragment(), GameListView {
 
     @Inject
     lateinit var presenter: GameListPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<GameListPresenter>
+    @ProvidePresenter
+    fun providePresenter(): GameListPresenter = presenterProvider.get()
 
+    var isClickable: Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
@@ -48,10 +51,10 @@ class GameListFragment : BaseFragment(), GameListView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initViews(view)
         initRecycler()
         presenter.loadOfficialTests()
-        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun initViews(view: View) {
@@ -133,14 +136,33 @@ class GameListFragment : BaseFragment(), GameListView {
 
     }
 
+    override fun hideListLoading() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showListLoading(disposable: Disposable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onItemClick(item: Lobby) {
+        if(isClickable) {
+            presenter!!.onItemClick(item)
+            isClickable = false
+        }
+    }
+
     override fun onGameFinded(){
         Log.d(TAG_LOG, "start usual game")
+        val fragment = PlayGameFragment.newInstance()
+        pushFragments(fragment, true)
+
 //            hideProgressDialog()
 //        PlayGameActivity.start(this)
     }
 
     override fun hideProgressDialog() {
         showSnackBar("Противник не принял приглашение")
+        isClickable = true
         /*if (mProgressDialog != null && mProgressDialog!!.isShowing) {
             mProgressDialog!!.dismiss()
         }
@@ -149,6 +171,8 @@ class GameListFragment : BaseFragment(), GameListView {
 
     override fun onBotGameFinded() {
         Log.d(TAG_LOG,"start bot")
+        val fragment = BotGameFragment.newInstance()
+        pushFragments(fragment, true)
 //        BotGameActivity.start(this)
     }
 

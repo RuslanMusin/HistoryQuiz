@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.ui.base.BaseAdapter
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.getRandom
 
 class GameChangeListAdapter
     (items: MutableList<Card>, val allCards: MutableList<Card>, val size: Int, val onStop: () -> Unit)

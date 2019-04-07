@@ -6,12 +6,11 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.game.CardChoose
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.RepositoryProvider
-import com.example.historyquiz.repository.RepositoryProvider.Companion.userRepository
 import com.example.historyquiz.repository.card.CardRepository
 import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.ROUNDS_COUNT
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const
@@ -22,13 +21,16 @@ import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
-class BotGamePresenter() : BasePresenter<BotGameView>(), GameRepositoryImpl.InGameCallbacks {
+class BotGamePresenter @Inject constructor() : BasePresenter<BotGameView>(), GameRepositoryImpl.InGameCallbacks {
 
     @Inject
     lateinit var gameRepository: GameRepository
 
     @Inject
     lateinit var cardRepository: CardRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     lateinit var botCards: MutableList<Card>
     lateinit var myCards: MutableList<Card>
@@ -74,7 +76,7 @@ class BotGamePresenter() : BasePresenter<BotGameView>(), GameRepositoryImpl.InGa
         viewState.setCardChooseEnabled(true)
 
         lobby.gameData?.enemyId?.let {
-            RepositoryProvider.userRepository.readUserById(it)
+            userRepository.readUserById(it)
                 .subscribe { t: User? ->
                     viewState.setEnemyUserData(t!!)
                 }

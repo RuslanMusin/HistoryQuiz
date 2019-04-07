@@ -8,29 +8,27 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.AbstractCard
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.cards.card_item.CardFragment
-import com.example.historyquiz.ui.cards.card_item.CardView
-import com.example.historyquiz.ui.comment.CommentFragment
-import com.example.historyquiz.ui.comment.CommentPresenter
-import com.example.historyquiz.ui.tests.test_item.main.TestPresenter
 import com.example.historyquiz.utils.Const
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_wiki_page.*
 import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class WikiPageFragment : BaseFragment(), WikiPageView, View.OnClickListener {
-
-    @Inject
-    lateinit var gson: Gson
 
     lateinit var card: AbstractCard
 
     @InjectPresenter
     lateinit var presenter: WikiPagePresenter
+    @Inject
+    lateinit var presenterProvider: Provider<WikiPagePresenter>
+    @ProvidePresenter
+    fun providePresenter(): WikiPagePresenter = presenterProvider.get()
 
     companion object {
 

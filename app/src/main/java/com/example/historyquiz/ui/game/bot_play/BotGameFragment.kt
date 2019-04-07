@@ -1,7 +1,5 @@
 package com.example.historyquiz.ui.game.bot_play
 
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.v4.app.Fragment
@@ -18,11 +16,11 @@ import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.GravityEnum
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Question
-import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.ui.base.BaseFragment
@@ -30,21 +28,12 @@ import com.example.historyquiz.ui.game.game_list.GameListFragment
 import com.example.historyquiz.ui.game.play.change_list.GameChangeListAdapter
 import com.example.historyquiz.ui.game.play.list.GameCardsListAdapter
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
-import com.example.historyquiz.ui.tests.add_test.TestViewModel
-import com.example.historyquiz.ui.tests.test_item.main.TestFragment
-import com.example.historyquiz.ui.tests.test_item.main.TestPresenter
-import com.example.historyquiz.ui.tests.test_item.main.TestView
-import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
-import com.example.historyquiz.ui.tests.test_list.TestListFragment
-import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.MODE_CHANGE_CARDS
 import com.example.historyquiz.utils.Const.MODE_PLAY_GAME
-import com.example.historyquiz.utils.Const.gson
 import com.example.historyquiz.utils.getRandom
 import com.example.historyquiz.widget.CenterZoomLayoutManager
-import com.google.gson.Gson
 import com.ms.square.android.expandabletextview.ExpandableTextView
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.activity_navigation.*
@@ -52,15 +41,20 @@ import kotlinx.android.synthetic.main.dialog_end_game.view.*
 import kotlinx.android.synthetic.main.item_game_card_medium.view.*
 import kotlinx.android.synthetic.main.layout_change_card.*
 import kotlinx.android.synthetic.main.toolbar_game.*
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
-class BotGameFragment : BaseFragment(), BotGameView, View.OnClickListener {
+class BotGameFragment : BaseFragment(), BotGameView {
 
     var mode: String = MODE_PLAY_GAME
 
     @InjectPresenter
     lateinit var presenter: BotGamePresenter
+    @Inject
+    lateinit var presenterProvider: Provider<BotGamePresenter>
+    @ProvidePresenter
+    fun providePresenter(): BotGamePresenter = presenterProvider.get()
 
     lateinit var myCard: Card
     lateinit var enemyCard: Card
@@ -476,6 +470,11 @@ class BotGameFragment : BaseFragment(), BotGameView, View.OnClickListener {
         fun newInstance(args: Bundle): Fragment {
             val fragment = BotGameFragment()
             fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(): Fragment {
+            val fragment = BotGameFragment()
             return fragment
         }
 

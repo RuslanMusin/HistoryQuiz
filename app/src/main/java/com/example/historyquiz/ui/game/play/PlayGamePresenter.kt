@@ -2,25 +2,37 @@ package com.example.historyquiz.ui.game.play
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.game.CardChoose
 import com.example.historyquiz.model.game.Lobby
-import com.example.historyquiz.repository.RepositoryProvider
+import com.example.historyquiz.model.user.User
+import com.example.historyquiz.repository.card.CardRepository
+import com.example.historyquiz.repository.game.GameRepository
+import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
+import com.example.historyquiz.utils.AppHelper.Companion.currentId
+import com.example.historyquiz.utils.Const.BOT_GAME
+import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.MODE_PLAY_GAME
 import com.example.historyquiz.utils.Const.OFFICIAL_TYPE
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.getRandom
 import io.reactivex.Single
 import java.util.*
+import javax.inject.Inject
 
 @InjectViewState
-class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGameCallbacks {
+class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), GameRepositoryImpl.InGameCallbacks {
 
+    @Inject
+    lateinit var gameRepository: GameRepository
 
-    val gamesRepository = RepositoryProvider.gamesRepository
-    val cardsRepository = RepositoryProvider.cardRepository
+    @Inject
+    lateinit var cardRepository: CardRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     lateinit var botCards: MutableList<Card>
 
@@ -28,13 +40,13 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
 
     fun setInitState(initlobby: Lobby) {
         lobby = initlobby
-        gamesRepository.setLobbyRefs(lobby.id)
-        gamesRepository.watchMyStatus()
+        gameRepository.setLobbyRefs(lobby.id)
+        gameRepository.watchMyStatus()
         val single: Single<List<Card>>
         if(lobby.type.equals(OFFICIAL_TYPE)) {
-            single = cardsRepository.findOfficialMyCards(UserRepository.currentId, lobby.epochId)
+            single = cardRepository.findMyCards(currentId)
         } else {
-            single = cardsRepository.findMyCards(UserRepository.currentId)
+            single = cardRepository.findMyCards(currentId)
         }
         single.subscribe { cards: List<Card>? ->
             cards?.let {
@@ -60,12 +72,12 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
 
     fun waitEnemyGameMode(mode: String): Single<Boolean> {
         Log.d(TAG_LOG,"wait mode  = $mode")
-        return gamesRepository.waitGameMode(mode)
+        return gameRepository.waitGameMode(mode)
     }
 
     fun changeGameMode(mode: String) {
         Log.d(TAG_LOG,"change mode = $mode")
-        gamesRepository.changeGameMode(mode).subscribe()
+        gameRepository.changeGameMode(mode).subscribe()
     }
 
     fun setCardList(myCards: List<Card>, time: Long) {
@@ -80,24 +92,24 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
                     viewState.setEnemyUserData(t!!)
                 }*/
             lobby.gameData?.enemyId?.let {
-                RepositoryProvider.userRepository.readUserById(it)
+                userRepository.readUserById(it)
                     .subscribe { t: User? ->
                         viewState.setEnemyUserData(t!!)
                     }
             }
 
-            gamesRepository.startGame(lobby, this)
+            gameRepository.startGame(lobby, this)
 
             if (lobby.gameData?.gameMode.equals(BOT_GAME)) {
                 Log.d(TAG_LOG, "find bot cards")
                 val single: Single<List<Card>>
                 if (lobby.type.equals(OFFICIAL_TYPE)) {
-                    single = cardsRepository.findOfficialMyCards(BOT_ID, lobby.epochId)
+                    single = cardRepository.findMyCards(BOT_ID)
                 } else {
-                    single = cardsRepository.findMyCards(BOT_ID)
+                    single = cardRepository.findMyCards(BOT_ID)
                 }
                 single.subscribe { cards ->
-                    gamesRepository.selectOnBotLoseCard(cards)
+                    gameRepository.selectOnBotLoseCard(cards)
                     botCards = cards.toMutableList()
                 }
             }
@@ -105,9 +117,9 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
     }
 
     fun chooseCard(card: Card) {
-        gamesRepository.findLobby(lobby.id).subscribe { e ->
+        gameRepository.findLobby(lobby.id).subscribe { e ->
             viewState.setCardChooseEnabled(false)
-            gamesRepository.chooseNextCard(lobby, card.id!!)
+            gameRepository.chooseNextCard(lobby, card.id!!)
             viewState.showYouCardChoose(card)
             youCardChosed = true
             if (lobby.gameData?.gameMode.equals(BOT_GAME)) {
@@ -126,7 +138,7 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
         botCards.remove(card)
         card?.let {
             //            viewState.showEnemyCardChoose(it)
-            card.id?.let { it1 -> gamesRepository.botNextCard(lobby, it1) }
+            card.id?.let { it1 -> gameRepository.botNextCard(lobby, it1) }
         }
 //        enemyCardChosed = true
 //        showQuestion()
@@ -141,8 +153,8 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
 
         viewState.showYourAnswer(correct)
 
-        gamesRepository.findLobby(lobby.id).subscribe { e ->
-            gamesRepository.answerOnLastQuestion(lobby, correct)
+        gameRepository.findLobby(lobby.id).subscribe { e ->
+            gameRepository.answerOnLastQuestion(lobby, correct)
             enemyCardChosed = false
             youCardChosed = false
 
@@ -157,10 +169,10 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
 
     fun answerBot() {
         val correct: Boolean = Random().nextBoolean()
-        gamesRepository.botAnswer(lobby,correct)
+        gameRepository.botAnswer(lobby,correct)
     }
 
-    override fun onGameEnd(type: GamesRepository.GameEndType, card: Card) {
+    override fun onGameEnd(type: GameRepositoryImpl.GameEndType, card: Card) {
         Log.d("Alm", "Game End: " + type)
 
         viewState.showGameEnd(type,card)
@@ -183,20 +195,20 @@ class PlayGamePresenter() : BasePresenter<PlayGameView>(), GamesRepository.InGam
         Log.d("Alm", "enemy chosen question " + choose.questionId)
         enemyCardChosed = true
         lastEnemyChoose = choose
-        RepositoryProvider.cardRepository.readCard(choose.cardId).subscribe { card ->
+        cardRepository.readCard(choose.cardId).subscribe { card ->
             viewState.showEnemyCardChoose(card)
         }
 //        viewState.setCardChooseEnabled(true)
     }
 
     fun enemyDisconnected() {
-        gamesRepository.onEnemyDisconnectAndYouWin(lobby)
+        gameRepository.onEnemyDisconnectAndYouWin(lobby)
     }
 
     fun showQuestion() {
-        gamesRepository.findLobby(lobby.id).subscribe { e ->
+        gameRepository.findLobby(lobby.id).subscribe { e ->
             if (youCardChosed and enemyCardChosed) {
-                RepositoryProvider.cardRepository.readCard(lastEnemyChoose!!.cardId).subscribe { card ->
+                cardRepository.readCard(lastEnemyChoose!!.cardId).subscribe { card ->
                     viewState.showQuestionForYou(card.test.questions
                         .first { q -> q.id == lastEnemyChoose!!.questionId })
                 }

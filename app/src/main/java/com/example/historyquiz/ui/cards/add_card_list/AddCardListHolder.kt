@@ -3,12 +3,9 @@ package com.example.historyquiz.ui.cards.add_card_list
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import com.example.historyquiz.R
 import com.example.historyquiz.model.wiki_api.opensearch.Item
 import com.example.historyquiz.utils.AppHelper
-
 import kotlinx.android.synthetic.main.item_member.view.*
 
 

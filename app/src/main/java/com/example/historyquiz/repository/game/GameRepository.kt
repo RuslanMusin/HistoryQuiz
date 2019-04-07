@@ -66,4 +66,6 @@ interface GameRepository {
     fun findOfficialTests(userId: String): Single<List<Lobby>>
 
     fun findOfficialTestsByQuery(query: String, userId: String): Single<List<Lobby>>
+
+    fun watchMyStatus()
 }

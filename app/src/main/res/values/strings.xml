@@ -150,4 +150,15 @@
 
     <string name="level">Уровень: %1$d</string>
     <string name="cardnumber">3</string>
+
+    <string name="game_dialog">Приглашение сыграть</string>
+    <string name="game_dialog_content">Принять приглашение ?</string>
+
+    <string name="common_stats">Общая</string>
+    <string name="game_stats">Игровая</string>
+    <string name="leaderboard">Топ игроков</string>
+    <string name="update_list">Обновить список</string>
+    <string name="users">Пользователи</string>
+    <string name="all_users">Все</string>
+    <string name="requests">Запросы</string>
 </resources>

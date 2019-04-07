@@ -1,4 +1,4 @@
-package com.example.historyquiz.ui.auth.fragments.login
+package com.example.historyquiz.ui.auth.fragments.signin
 
 import android.content.Context
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
@@ -21,14 +22,19 @@ import com.example.historyquiz.utils.Const.USER_USERNAME
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_login.*
 import javax.inject.Inject
+import javax.inject.Provider
 
-class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
+class SignInFragment : BaseFragment(), SignInView, View.OnClickListener {
 
     @Inject
     lateinit var gson: Gson
 
     @InjectPresenter
-    lateinit var loginFragmentPresenter: LoginFragmentPresenter
+    lateinit var presenter: SignInPresenter
+    @Inject
+    lateinit var presenterProvider: Provider<SignInPresenter>
+    @ProvidePresenter
+    fun providePresenter(): SignInPresenter = presenterProvider.get()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
@@ -71,7 +77,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
             if (it.contains(USER_USERNAME)) {
                 val email: String = it.getString(USER_USERNAME, "")
                 val password: String = it.getString(USER_PASSWORD, "")
-                loginFragmentPresenter.signIn(email, password)
+                presenter.signIn(email, password)
             }
         }
     }
@@ -108,7 +114,7 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
             R.id.btn_enter -> {
                 val username = et_email.getText().toString();
                 val password = et_password.getText().toString();
-                loginFragmentPresenter.signIn(username, password)
+                presenter.signIn(username, password)
             }
 
             R.id.tv_name -> {
@@ -156,13 +162,13 @@ class LoginFragment : BaseFragment(), LoginFragmentView, View.OnClickListener {
         const val KEY = "TITLE"
 
         fun newInstance(args: Bundle): Fragment {
-            val fragment = LoginFragment()
+            val fragment = SignInFragment()
             fragment.arguments = args
             return fragment
         }
 
         fun newInstance(): Fragment {
-            return LoginFragment()
+            return SignInFragment()
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.auth.fragments.signup
 
-import android.support.v7.app.AppCompatActivity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.PhotoItem
@@ -22,17 +22,21 @@ import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.STUB_PATH
 import com.example.historyquiz.utils.Const.USER_ITEM
-import com.google.gson.Gson
+import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.dialog_pick_image.*
+import kotlinx.android.synthetic.main.fragment_sign_up.*
 import java.io.InputStream
 import javax.inject.Inject
+import javax.inject.Provider
 
 class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var signUpPresenter: SignUpPresenter
-
     @Inject
-    lateinit var gson: Gson
+    lateinit var presenterProvider: Provider<SignUpPresenter>
+    @ProvidePresenter
+    fun providePresenter(): SignUpPresenter = presenterProvider.get()
 
     lateinit var photoDialog: MaterialDialog
 

@@ -6,8 +6,6 @@ import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.card.AbstractCardRepository
-import com.example.historyquiz.repository.card.AbstractCardRepositoryImpl
-import com.example.historyquiz.repository.card.CardRepository
 import com.example.historyquiz.repository.card.CardRepositoryImpl
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AFTER_TEST
@@ -19,13 +17,9 @@ import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.WIN_GAME
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
-
-import java.util.ArrayList
-import java.util.HashMap
-
-import io.reactivex.Single
-
 import io.reactivex.Observable
+import io.reactivex.Single
+import java.util.*
 import javax.inject.Inject
 
 class TestRepositoryImpl @Inject constructor() : TestRepository{
