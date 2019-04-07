@@ -52,7 +52,7 @@
                             android:id="@+id/iv_reconnect"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:src="@drawable/ic_autorenew_black_24dp"
+                            app:srcCompat="@drawable/ic_autorenew_black_24dp"
                             android:layout_gravity="center"
                     />
 

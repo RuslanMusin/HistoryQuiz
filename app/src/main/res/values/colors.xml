@@ -15,5 +15,13 @@
 
     <color name="highlight_text">#17a1d7</color>
 
+    <!--game-->
+    <color name="game_cards_list_background">#e0e0e0</color>
+    <color name="game_selected_card_background">#eeeeee</color>
 
+    <color name="game_card_intelligence">#827eff</color>
+    <color name="game_card_support">#57ec54</color>
+    <color name="game_card_prestige">#fbff00</color>
+    <color name="game_card_hp">#ff5d5d</color>
+    <color name="game_card_strength">#990000</color>
 </resources>

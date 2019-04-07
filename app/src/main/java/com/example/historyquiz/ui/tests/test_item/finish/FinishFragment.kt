@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.tests.test_item.finish
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -23,8 +23,6 @@ import com.example.historyquiz.ui.tests.test_item.winned_card.TestCardFragment
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_finish_test.*
-import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import javax.inject.Inject
 
 class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {

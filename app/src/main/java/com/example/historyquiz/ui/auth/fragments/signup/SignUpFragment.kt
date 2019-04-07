@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.auth.fragments.signup
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,8 +23,6 @@ import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.STUB_PATH
 import com.example.historyquiz.utils.Const.USER_ITEM
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.dialog_pick_image.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -148,7 +146,7 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == android.support.v7.app.AppCompatActivity.RESULT_OK) {
             if(reqCode == GALLERY_PHOTO) {
                 imageUri = data?.data
                 activity?.let {

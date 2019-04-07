@@ -5,9 +5,7 @@ import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.model.db_dop_models.Relation
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import com.google.gson.annotations.Expose
-
-import java.util.ArrayList
+import java.util.*
 
 @IgnoreExtraProperties
 class Test {
@@ -31,6 +29,8 @@ class Test {
     var type: String? = null
 
     var imageUrl: String? = null
+
+    lateinit var epochId: String
 
     @Exclude
     var comments: MutableList<Comment> = ArrayList()

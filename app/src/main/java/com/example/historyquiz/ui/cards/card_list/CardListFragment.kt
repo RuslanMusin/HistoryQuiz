@@ -11,21 +11,12 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.AbstractCard
 import com.example.historyquiz.model.card.Card
-import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
-import com.example.historyquiz.ui.navigation.NavigationView
-import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
-import com.example.historyquiz.ui.tests.test_item.main.TestFragment
-import com.example.historyquiz.ui.tests.test_list.TestAdapter
-import com.example.historyquiz.ui.tests.test_list.TestListPresenter
-import com.example.historyquiz.ui.tests.test_list.TestListView
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.USER_ID
 import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_recycler_list.*
-import kotlinx.android.synthetic.main.fragment_test_list.*
 import java.util.ArrayList
 import javax.inject.Inject
 

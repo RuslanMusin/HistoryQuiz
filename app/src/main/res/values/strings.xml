@@ -136,4 +136,18 @@
     <string name="no_wiki_page">Не существует страницы в Википедии</string>
 
 
+    <string name="epoch">Эпоха</string>
+    <string name="choose_epoch">Выберите эпоху</string>
+
+    <string-array name="epoches">
+        <item>Древняя Русь, IX – XIIIвв</item>
+        <item>Татаро-монгольское иго, XIII – XVвв</item>
+        <item>Московское царство, XVI – XVI вв</item>
+        <item>Российская империя, XVIII – начало XXвв(1917)</item>
+        <item>СССР, 1917 – 1991</item>
+        <item>Российская федерация, 1991 - наст.время</item>
+    </string-array>
+
+    <string name="level">Уровень: %1$d</string>
+    <string name="cardnumber">3</string>
 </resources>

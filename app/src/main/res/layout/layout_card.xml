@@ -69,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/padding_small"
                         android:paddingBottom="@dimen/padding_small"
-                        android:src="@drawable/ic_book_black_24dp"/>
+                        app:srcCompat="@drawable/ic_book_black_24dp"/>
 
                 <TextView
                         android:id="@+id/tv_wiki"

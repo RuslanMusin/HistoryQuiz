@@ -1,25 +1,20 @@
 package com.example.historyquiz.ui.tests.test_item.main
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.comment.CommentFragment
-import com.example.historyquiz.ui.comment.CommentPresenter
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
@@ -33,15 +28,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
-import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_add_test.*
-import kotlinx.android.synthetic.main.fragment_recycler_list.*
-import kotlinx.android.synthetic.main.fragment_test.*
-import kotlinx.android.synthetic.main.layout_add_comment.*
-import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_test.*
 import kotlinx.android.synthetic.main.toolbar_back.*
-import java.util.*
 import javax.inject.Inject
 
 class TestFragment : BaseFragment(), TestView, View.OnClickListener {

@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.tests.add_test.question
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -28,8 +28,6 @@ import com.example.historyquiz.utils.Const.TEST_MANY_TYPE
 import com.example.historyquiz.utils.Const.TEST_ONE_TYPE
 import com.google.gson.Gson
 import com.jaredrummler.materialspinner.MaterialSpinner
-import kotlinx.android.synthetic.main.fragment_add_question.*
-import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import java.util.ArrayList
 import javax.inject.Inject
 
@@ -375,7 +373,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == android.support.v7.app.AppCompatActivity.RESULT_OK) {
             imageUri = data!!.data
         }
     }

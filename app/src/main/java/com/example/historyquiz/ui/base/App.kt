@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.base
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.app.Application
 import com.example.historyquiz.di.components.AppComponent
 import com.example.historyquiz.di.components.DaggerAppComponent
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class App : Application(), HasActivityInjector {
 
     @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<android.support.v7.app.AppCompatActivity>
 
     override fun onCreate() {
         super.onCreate()
@@ -28,7 +28,7 @@ class App : Application(), HasActivityInjector {
 
     }
 
-    override fun activityInjector(): AndroidInjector<Activity>? {
+    override fun activityInjector(): AndroidInjector<android.support.v7.app.AppCompatActivity>? {
         return dispatchingAndroidInjector
     }
 

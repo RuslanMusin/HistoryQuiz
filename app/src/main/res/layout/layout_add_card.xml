@@ -16,11 +16,11 @@
         android:paddingRight="24dp">
 
 
-        <ImageView android:src="@drawable/knight"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center_horizontal" />
+        <ImageView app:srcCompat="@drawable/knight"
+                   android:layout_width="wrap_content"
+                   android:layout_height="72dp"
+                   android:layout_marginBottom="4dp"
+                   android:layout_gravity="center_horizontal" />
 
 
         <TextView

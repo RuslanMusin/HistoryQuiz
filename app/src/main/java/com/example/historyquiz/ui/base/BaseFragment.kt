@@ -104,4 +104,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
     override fun removeStackDownTo(number: Int) {
         (activity as BasicFunctional).removeStackDownTo(number)
     }
+
+
 }

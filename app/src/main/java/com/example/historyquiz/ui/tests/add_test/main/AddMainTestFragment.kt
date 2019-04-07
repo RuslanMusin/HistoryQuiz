@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.tests.add_test.main
 
-import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
@@ -161,7 +160,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (reqCode == ADD_CARD_CODE && resultCode == Activity.RESULT_OK) {
+        if (reqCode == ADD_CARD_CODE && resultCode == android.support.v7.app.AppCompatActivity.RESULT_OK) {
             li_added_card.visibility = View.VISIBLE
             val card = gson.fromJson(data!!.getStringExtra(CARD_ITEM), Card::class.java)
             tv_added_card.text = card.abstractCard.name

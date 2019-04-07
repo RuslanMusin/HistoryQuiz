@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.cards.add_card_list
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -21,8 +21,6 @@ import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_add_list.*
-import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.ArrayList
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -219,7 +217,7 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (reqCode == ADD_CARD_CODE && resultCode == Activity.RESULT_OK) {
+        if (reqCode == ADD_CARD_CODE && resultCode == android.support.v7.app.AppCompatActivity.RESULT_OK) {
             val card = data?.getStringExtra(CARD_ITEM)
             targetFragment?.onActivityResult(reqCode, resultCode, data)
             hideFragment()

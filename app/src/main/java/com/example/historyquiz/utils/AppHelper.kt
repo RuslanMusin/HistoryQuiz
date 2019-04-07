@@ -1,6 +1,5 @@
 package com.example.historyquiz.utils
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.util.TypedValue
@@ -15,14 +14,13 @@ import com.example.historyquiz.utils.Const.MORE_TEXT
 import com.example.historyquiz.utils.Const.STUB_PATH
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.util.*
 
 //ОСНОВНОЙ КЛАСС HELPER приложения. ОТСЮДА БЕРЕМ ТЕКУЩЕГО ЮЗЕРА ИЗ БД, ГРУЗИМ ФОТКУ ЮЗЕРА В ПРОФИЛЬ,
 //ПОЛУЧАЕМ ССЫЛКУ НА ПУТЬ ФАЙЛОГО ХРАНИЛИЩА И СОЗДАЕМ СЕССИЮ. ПОКА ТАК ПУСТЬ БУДЕТ
@@ -31,6 +29,11 @@ class AppHelper {
     companion object {
 
         lateinit var currentUser: User
+
+        var userInSession: Boolean = false
+
+        val currentId: String
+            get() = Objects.requireNonNull<FirebaseUser>(FirebaseAuth.getInstance().currentUser).getUid()
 
         val storageReference: StorageReference
             get() = FirebaseStorage.getInstance().reference
@@ -105,12 +108,12 @@ class AppHelper {
 
         fun hideKeyboardFrom(context: Context, view: View) {
             Log.d(TAG_LOG,"hide keyboard")
-            val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = context.getSystemService(android.support.v7.app.AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
         }
 
         fun showKeyboard(context: Context, editText: EditText) {
-            val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = context.getSystemService(android.support.v7.app.AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
         }
 

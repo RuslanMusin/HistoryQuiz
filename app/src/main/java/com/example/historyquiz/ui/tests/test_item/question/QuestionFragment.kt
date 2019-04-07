@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.tests.test_item.question
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
@@ -15,7 +15,6 @@ import java.util.ArrayList
 
 import android.widget.*
 import com.afollestad.materialdialogs.DialogAction
-import kotlinx.android.synthetic.main.fragment_question.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
@@ -29,7 +28,6 @@ import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import javax.inject.Inject
 
 

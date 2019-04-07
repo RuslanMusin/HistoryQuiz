@@ -1,6 +1,6 @@
 package com.example.historyquiz.ui.cards.add_card
 
-import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -19,9 +19,6 @@ import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_add_card.*
-import kotlinx.android.synthetic.main.layout_add_card.*
-import kotlinx.android.synthetic.main.toolbar_back_done.*
 import javax.inject.Inject
 
 class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
@@ -233,7 +230,7 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
         Log.d(TAG_LOG,"wiki url = " + card?.abstractCard?.wikiUrl)
         val cardJson = gson.toJson(card)
         intent.putExtra(CARD_ITEM, cardJson)
-        targetFragment?.onActivityResult(ADD_CARD_CODE, Activity.RESULT_OK, intent)
+        targetFragment?.onActivityResult(ADD_CARD_CODE, android.support.v7.app.AppCompatActivity.RESULT_OK, intent)
         hideFragment()
     }
 

@@ -1,5 +1,7 @@
 package com.example.historyquiz.utils
 
+import com.google.gson.Gson
+
 object Const {
 
     const val TAG = "TAG"
@@ -25,11 +27,6 @@ object Const {
     const val USER_DATA_PREFERENCES = "user_data"
     const val USER_USERNAME = "user_username"
     const val USER_PASSWORD = "user_password"
-
-
-    //Gamer status
-    const val ONLINE_STATUS = "online_status"
-    const val OFFLINE_STATUS = "offline_status"
 
     //API
     //query
@@ -83,15 +80,46 @@ object Const {
     //id's
     const val TEST_ID = "TEST_ID"
     const val USER_ID = "USER_ID"
+    const val BOT_ID = "6n5OesjRMGN0jFAhP5jG9hxtaRg2"
 
     //args
     const val QUESTION_NUMBER = "queston_number"
 
     //result nums
     const val ADD_CARD_CODE = 0
+    const val ADD_EPOCH_CODE = 1
 
 
+    const val ONLINE_GAME = "online_game"
+    const val BOT_GAME = "bot_game"
+
+    //game modes/stadies
+    const val MODE_CHANGE_CARDS = "change_cards"
+    const val MODE_PLAY_GAME = "play_game"
+    const val MODE_CARD_VIEW = "card_view"
+    const val MODE_END_GAME = "end_game"
+
+    const val CARD_NUMBER = 3
+
+    //GameType
+    const val OFFICIAL_TYPE = "official_type"
+    const val USER_TYPE = "user_type"
+
+    //Gamer status
+    const val ONLINE_STATUS = "online_status"
+    const val OFFLINE_STATUS = "offline_status"
+    const val STOP_STATUS = "stop_status"
+    const val IN_GAME_STATUS = "in_game_status"
+    const val NOT_ACCEPTED = "not_accepted"
+    const val EDIT_STATUS = "edit_status"
+
+    const val GAME_WIN_POINTS = 20
+    const val GAME_LOSE_POINTS = 5
+    const val TEST_POINTS = 10
+
+    const val EPOCH_KEY = "EPOCH_KEY"
 
 
+    val gson = Gson()
 
 }

@@ -4,23 +4,21 @@ import android.text.TextUtils
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
-import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.RepositoryProvider
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.App
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 @InjectViewState
 class LoginFragmentPresenter: BasePresenter<LoginFragmentView>() {
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     init {
         App.sAppComponent.inject(this)
@@ -94,20 +92,13 @@ class LoginFragmentPresenter: BasePresenter<LoginFragmentView>() {
     fun updateUI(firebaseUser: FirebaseUser?) {
         viewState.hideProgressDialog()
         if (firebaseUser != null) {
-            val reference = RepositoryProvider.userRepository?.readUser(UserRepository.currentId)
-            reference?.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val user = dataSnapshot.getValue(User::class.java)
-                    user?.let {
-                        Log.d(TAG_LOG, "have user")
-                        AppHelper.currentUser = user
-                        viewState.goToProfile(it) }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
-            })
+            userRepository?.readUserById(currentId)
+                .subscribe { user ->
+                user?.let {
+                    Log.d(TAG_LOG, "have user")
+                    AppHelper.currentUser = user
+                    viewState.goToProfile(it) }
+            }
         } else {
             viewState.showError()
         }

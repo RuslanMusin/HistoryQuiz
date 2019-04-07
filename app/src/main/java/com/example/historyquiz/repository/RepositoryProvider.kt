@@ -1,13 +1,13 @@
 package com.example.historyquiz.repository
 
-import com.example.historyquiz.repository.user.UserRepository
+import com.example.historyquiz.repository.user.UserRepositoryImpl
 
 class RepositoryProvider {
 
     companion object {
 
-        val userRepository: UserRepository by lazy {
-            UserRepository()
+        val userRepository: UserRepositoryImpl by lazy {
+            UserRepositoryImpl()
         }
     }
 }
