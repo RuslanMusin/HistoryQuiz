@@ -5,7 +5,13 @@ import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.ui.cards.card_list.CardListFragment
-import com.example.historyquiz.ui.cards.wiki_page.WikiPageFragment
+import com.example.historyquiz.ui.epoch.EpochListFragment
+import com.example.historyquiz.ui.game.add_game.AddGameFragment
+import com.example.historyquiz.ui.game.add_photo.AddPhotoFragment
+import com.example.historyquiz.ui.game.bot_play.BotGameFragment
+import com.example.historyquiz.ui.game.game_list.GameListFragment
+import com.example.historyquiz.ui.game.play.PlayGameFragment
+import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
 import com.example.historyquiz.ui.navigation.NavigationActivity
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
@@ -97,6 +103,31 @@ interface AppModule {
 
     @FragmentScope
     @ContributesAndroidInjector()
-    fun wikiPageFragmentInjector(): WikiPageFragment
+    fun gameListFragmentInjector(): GameListFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun botGameFragmentInjector(): BotGameFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun playGameFragmentInjector(): PlayGameFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun gameQuestionFragmentInjector(): GameQuestionFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun addGameFragmentInjector(): AddGameFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun addPhotoFragmentInjector(): AddPhotoFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun epochListFragmentInjector(): EpochListFragment
+
 }
 

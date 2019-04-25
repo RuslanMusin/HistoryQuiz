@@ -36,7 +36,6 @@ import com.example.historyquiz.utils.getRandom
 import com.example.historyquiz.widget.CenterZoomLayoutManager
 import com.ms.square.android.expandabletextview.ExpandableTextView
 import kotlinx.android.synthetic.main.activity_game.*
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.dialog_end_game.view.*
 import kotlinx.android.synthetic.main.item_game_card_medium.view.*
 import kotlinx.android.synthetic.main.layout_change_card.*
@@ -133,10 +132,10 @@ class BotGameFragment : BaseFragment(), BotGameView {
         Log.d(Const.TAG_LOG,"changeCards")
         mode = MODE_CHANGE_CARDS
         rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange())
-
         timer = object : CountDownTimer(10000, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
+                tv_time.text =  "${millisUntilFinished / 1000}"
             }
 
             override fun onFinish() {
@@ -149,7 +148,9 @@ class BotGameFragment : BaseFragment(), BotGameView {
     override fun setCardsList(cards: ArrayList<Card>) {
         myCards = cards
         Log.d(Const.TAG_LOG,"set cards")
-        LayoutInflater.from(context).inflate(R.layout.activity_game, container, false)
+        val viewGroup = view as ViewGroup
+        viewGroup.removeAllViews()
+        viewGroup.addView(LayoutInflater.from(context).inflate(R.layout.activity_game, viewGroup, false))
         enemy_selected_card.visibility = View.INVISIBLE
         my_selected_card.visibility = View.INVISIBLE
         game_questions_container.visibility = View.GONE

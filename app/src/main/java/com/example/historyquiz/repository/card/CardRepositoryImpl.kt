@@ -156,7 +156,7 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     card = dataSnapshot.getValue(Card::class.java)
-                    AbstractCardRepositoryImpl()
+                    abstractCardRepository
                             .findAbstractCard(card?.cardId)
                             .subscribe { t ->
                                 card?.abstractCard = t

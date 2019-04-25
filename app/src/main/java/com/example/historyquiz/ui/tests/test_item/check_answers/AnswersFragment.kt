@@ -27,7 +27,7 @@ import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.gson
-import kotlinx.android.synthetic.main.fragment_question.*
+import kotlinx.android.synthetic.main.layout_question.*
 import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
 import java.util.*
 import javax.inject.Inject

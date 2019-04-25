@@ -49,8 +49,10 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
 
     fun waitEnemy() {
         gameRepository.waitEnemy().subscribe { relation ->
+            Log.d(TAG_LOG, "enemy waited")
             if (relation.relation.equals(Const.IN_GAME_STATUS)) {
                 gameRepository.findLobby(relation.id).subscribe { lobby ->
+                    Log.d(TAG_LOG, "waited lobby finded/ isStopped = $isStopped")
                     if (!isStopped) {
                         AppHelper.currentUser.let {
                             it.gameLobby = lobby
@@ -70,6 +72,7 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
                                 }
                             }
                             it.gameLobby?.gameData = gameData
+                            Log.d(TAG_LOG, "setDialog")
                             viewState.setDialog(gameData, lobby)
                         }
                     }
@@ -79,6 +82,7 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
     }
 
     fun chooseDialogDecision(gameData: GameData, lobby: Lobby) {
+        Log.d(TAG_LOG,"choose dialog decision")
         userRepository.checkUserStatus(gameData.enemyId).subscribe { isOnline ->
             viewState.hideDialog()
             if (isOnline) {

@@ -13,7 +13,7 @@ import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.ui.game.play.PlayView
 import com.example.historyquiz.utils.Const.gson
-import kotlinx.android.synthetic.main.fragment_question.*
+import kotlinx.android.synthetic.main.layout_question.*
 import java.util.*
 
 class GameQuestionFragment : Fragment(), View.OnClickListener {
@@ -24,7 +24,7 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
     private var checkBoxes: MutableList<CheckBox>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_question, container, false)
+        val view = inflater.inflate(R.layout.layout_question, container, false)
 
         question = gson.fromJson(arguments?.getString(QUESTION_JSON)!!, Question::class.java)
 
@@ -61,7 +61,7 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
         when (v.id) {
             R.id.btn_next_question -> {
                 checkAnswers()
-                (activity as PlayView).onAnswer(question.userRight)
+                (parentFragment as PlayView).onAnswer(question.userRight)
             }
         }
     }

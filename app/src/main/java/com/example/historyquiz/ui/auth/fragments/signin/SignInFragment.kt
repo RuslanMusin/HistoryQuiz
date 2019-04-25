@@ -124,8 +124,8 @@ class SignInFragment : BaseFragment(), SignInView, View.OnClickListener {
             }
 
             R.id.iv_cover -> {
-                et_email.setText("Прохор.Куклев.Брониславович")
-                et_password.setText("Прохор.Куклев.Брониславович")
+                et_email.setText("ryst@ma.ru")
+                et_password.setText("rystamka")
             }
 
             R.id.btn_sign_up -> signUp(view)

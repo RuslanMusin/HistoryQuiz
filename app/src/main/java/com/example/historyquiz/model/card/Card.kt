@@ -28,6 +28,8 @@ open class Card() : Parcelable{
 
     var type: String? = null
 
+    var epochId: String? = null
+
     @Exclude
     var abstractCard: AbstractCard = AbstractCard()
 

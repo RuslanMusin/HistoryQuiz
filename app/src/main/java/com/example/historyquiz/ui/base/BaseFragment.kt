@@ -4,10 +4,22 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.widget.TextView
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.MvpAppCompatFragment
+import com.example.historyquiz.R
+import com.example.historyquiz.model.game.GameData
+import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.FIELD_CREATOR
+import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.FIELD_INVITED
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 import com.example.historyquiz.ui.navigation.NavigationView
+import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentId
+import com.example.historyquiz.utils.Const.IN_GAME_STATUS
+import com.example.historyquiz.utils.Const.TAG_LOG
 import dagger.android.support.AndroidSupportInjection
 
 abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
@@ -119,6 +131,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
     override fun setStatus(status: String) {
         (activity as BasicFunctional).setStatus(status)
 
+    }
+
+    override fun waitEnemy() {
+        (activity as BasicFunctional).waitEnemy()
     }
 
 }

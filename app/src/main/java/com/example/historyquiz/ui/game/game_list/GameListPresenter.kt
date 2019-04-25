@@ -57,13 +57,18 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
 
     fun loadOfficialTests() {
         Log.d(Const.TAG_LOG, "load books")
-        AppHelper.currentUser?.id?.let {
-            gameRepository
+        AppHelper.currentUser?.id?.let { it ->
+            val disposable = gameRepository
                 .findOfficialTests(it)
-                .doOnSubscribe({ viewState.showLoading() })
+                /*.doOnSubscribe({ viewState.showLoading() })
                 .doAfterTerminate({ viewState.hideLoading() })
-                .doAfterTerminate({ viewState.setNotLoading() })
-                .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
+                .doAfterTerminate({ viewState.setNotLoading() })*/
+                .subscribe({games ->
+                    Log.d(TAG_LOG, "change games")
+                    viewState.loadOfficialTests()
+                    viewState.changeDataSet(games) }, { viewState.handleError(it) })
+            compositeDisposable.add(disposable)
+
         }
     }
 
@@ -103,6 +108,7 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
                 viewState.showSnackBar("У противника не хватает карт для игры")
             }
         }
+
 
     }
 

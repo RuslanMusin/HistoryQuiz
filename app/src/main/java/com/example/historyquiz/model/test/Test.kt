@@ -3,6 +3,7 @@ package com.example.historyquiz.model.test
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.model.db_dop_models.Relation
+import com.example.historyquiz.model.epoch.Epoch
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*
@@ -40,6 +41,9 @@ class Test {
 
     @Exclude
     var testDone: Boolean = false
+
+    @Exclude
+    var epoch: Epoch? = null
 
     @field:Exclude var testRelation: Relation? = null
 

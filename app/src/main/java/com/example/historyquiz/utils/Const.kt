@@ -80,7 +80,7 @@ object Const {
     //id's
     const val TEST_ID = "TEST_ID"
     const val USER_ID = "USER_ID"
-    const val BOT_ID = "6n5OesjRMGN0jFAhP5jG9hxtaRg2"
+    const val BOT_ID = "JmHmHZUIUORNR42aqXmzV5VujwN2"
 
     //args
     const val QUESTION_NUMBER = "queston_number"

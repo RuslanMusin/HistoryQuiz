@@ -40,12 +40,7 @@ class BotGamePresenter @Inject constructor() : BasePresenter<BotGameView>(), Gam
     fun setInitState(initlobby: Lobby) {
         lobby = initlobby
         gameRepository.setLobbyRefs(lobby.id)
-        val single: Single<List<Card>>
-        if(lobby.type.equals(Const.OFFICIAL_TYPE)) {
-            single = cardRepository.findMyCards(currentId)
-        } else {
-            single = cardRepository.findMyCards(currentId)
-        }
+        val single: Single<List<Card>> = cardRepository.findMyCards(currentId)
         single.subscribe { cards: List<Card>? ->
             cards?.let {
                 val mutCards = cards.toMutableList()
@@ -82,20 +77,12 @@ class BotGamePresenter @Inject constructor() : BasePresenter<BotGameView>(), Gam
                 }
         }
 
-        if (lobby.gameData?.gameMode.equals(Const.BOT_GAME)) {
-            Log.d(Const.TAG_LOG, "find bot cards")
-            val single: Single<List<Card>>
-            if (lobby.type.equals(Const.OFFICIAL_TYPE)) {
-                single = cardRepository.findMyCards(Const.BOT_ID)
-            } else {
-                single = cardRepository.findMyCards(Const.BOT_ID)
-            }
-            single.subscribe { cards ->
-                //                gameRepository.selectOnBotLoseCard(cards)
-                botCards = cards.toMutableList()
-                startGame()
-
-            }
+        Log.d(Const.TAG_LOG, "find bot cards")
+        val single: Single<List<Card>> = cardRepository.findMyCards(Const.BOT_ID)
+        single.subscribe { cards ->
+            //                gameRepository.selectOnBotLoseCard(cards)
+            botCards = cards.toMutableList()
+            startGame()
         }
 
 //            gameRepository.startGame(lobby, this)

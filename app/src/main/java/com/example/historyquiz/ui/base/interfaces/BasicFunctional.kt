@@ -50,6 +50,8 @@ interface BasicFunctional: MvpView {
 
     fun removeStackDownTo(number: Int)
 
+    fun waitEnemy()
+
     fun setStatus(status: String)
 
     fun setOfflineChecking()

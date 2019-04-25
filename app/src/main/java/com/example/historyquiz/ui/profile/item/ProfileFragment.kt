@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
+import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.model.user.User
+import com.example.historyquiz.repository.epoch.EpochRepository
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -27,6 +29,9 @@ class ProfileFragment: BaseFragment(), ProfileView {
     lateinit var presenterProvider: Provider<ProfilePresenter>
     @ProvidePresenter
     fun providePresenter(): ProfilePresenter = presenterProvider.get()
+
+    @Inject
+    lateinit var epochRepository: EpochRepository
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
@@ -50,6 +55,14 @@ class ProfileFragment: BaseFragment(), ProfileView {
     private fun setListeners() {
         tv_add_friend.visibility = View.GONE
         tv_play_game.visibility = View.GONE
+        tv_add_epoches.setOnClickListener { addEpoches() }
+    }
+
+    fun addEpoches() {
+        val list = resources.getStringArray(R.array.epoches).toList()
+        for (item in list) {
+            epochRepository.createEpoch(Epoch(item.toString())).subscribe()
+        }
     }
 
     private fun setUserData() {

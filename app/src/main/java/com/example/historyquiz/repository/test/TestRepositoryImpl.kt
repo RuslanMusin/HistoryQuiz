@@ -49,6 +49,7 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
     private val FIELD_DESC = "desc"
     private val FIELD_TYPE = "type"
     private val FIELD_IMAGE_URL = "imageUrl"
+    private val FIELD_EPOCH_ID = "epochId"
 
 
     private val FIELD_RELATION = "relation"
@@ -71,6 +72,7 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
         result[FIELD_QUESTIONS] = test.questions
         result[FIELD_TYPE] = test.type
         result[FIELD_IMAGE_URL] = test.imageUrl
+        result[FIELD_EPOCH_ID] = test.epochId
 
         return result
     }

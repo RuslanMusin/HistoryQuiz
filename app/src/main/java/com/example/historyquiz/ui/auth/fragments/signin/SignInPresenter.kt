@@ -4,10 +4,12 @@ import android.text.TextUtils
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
+import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -18,7 +20,8 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
 
     @Inject
     lateinit var userRepository: UserRepository
-
+    @Inject
+    lateinit var gameRepository: GameRepository
     @Inject
     lateinit var fireAuth: FirebaseAuth
 
@@ -92,6 +95,9 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
                 user?.let {
                     Log.d(TAG_LOG, "have user")
                     AppHelper.currentUser = user
+                    it.status = ONLINE_STATUS
+                    userRepository.changeUserStatus(it).subscribe()
+                    gameRepository.removeRedundantLobbies(true)
                     viewState.goToProfile(it) }
             }
         } else {

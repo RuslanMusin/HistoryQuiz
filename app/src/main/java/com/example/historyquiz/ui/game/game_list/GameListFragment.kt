@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.game.Lobby
@@ -20,6 +20,7 @@ import com.example.historyquiz.ui.game.bot_play.BotGameFragment
 import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
@@ -34,7 +35,7 @@ class GameListFragment : BaseFragment(), GameListView {
 
     private var isLoaded = false
 
-    @Inject
+    @InjectPresenter
     lateinit var presenter: GameListPresenter
     @Inject
     lateinit var presenterProvider: Provider<GameListPresenter>
@@ -43,9 +44,15 @@ class GameListFragment : BaseFragment(), GameListView {
 
     var isClickable: Boolean = true
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
-
+        setStatus(ONLINE_STATUS)
+        waitEnemy()
         return view
     }
 
@@ -53,14 +60,19 @@ class GameListFragment : BaseFragment(), GameListView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews(view)
-        initRecycler()
         presenter.loadOfficialTests()
     }
 
     private fun initViews(view: View) {
+        setToolbar()
+        initRecycler()
 
     }
 
+    private fun setToolbar() {
+        setActionBar(toolbar)
+        setActionBarTitle(R.string.menu_game)
+    }
 
     private fun initRecycler() {
         adapter = GameAdapter(ArrayList<Lobby>())
@@ -117,13 +129,17 @@ class GameListFragment : BaseFragment(), GameListView {
         error.printStackTrace()
     }
 
-    override fun changeDataSet(users: List<Lobby>) {
-        adapter!!.changeDataSet(users)
+    override fun changeDataSet(tests: List<Lobby>) {
+        Log.d(TAG_LOG, "changeDataSet")
+        adapter!!.changeDataSet(tests)
+        hideLoading()
+        hideListLoading()
     }
 
     override fun loadOfficialTests() {
         Log.d(Const.TAG_LOG, "load requests")
-        presenter!!.loadOfficialTests()
+        hideLoading()
+//        presenter!!.loadOfficialTests()
     }
 
     override fun setNotLoading() {
@@ -137,11 +153,11 @@ class GameListFragment : BaseFragment(), GameListView {
     }
 
     override fun hideListLoading() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        pg_list.visibility = View.GONE
     }
 
     override fun showListLoading(disposable: Disposable) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        pg_list.visibility = View.GONE
     }
 
     override fun onItemClick(item: Lobby) {
@@ -174,6 +190,45 @@ class GameListFragment : BaseFragment(), GameListView {
         val fragment = BotGameFragment.newInstance()
         pushFragments(fragment, true)
 //        BotGameActivity.start(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.game_list_menu, menu)
+        menu?.let {
+
+            val botItem = menu.findItem(R.id.action_find_bot)
+            botItem.setOnMenuItemClickListener {
+                Log.d(TAG_LOG, "find bot")
+                presenter.findBotGame()
+                true
+            }
+
+            val searchItem = menu.findItem(R.id.action_search)
+
+            var searchView: SearchView? = null
+            if (searchItem != null) {
+                searchView = searchItem.actionView as SearchView
+            }
+            if (searchView != null) {
+                val finalSearchView = searchView
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        presenter.loadOfficialTestsByQuery(query)
+                        if (!finalSearchView.isIconified) {
+                            finalSearchView.isIconified = true
+                        }
+                        searchItem!!.collapseActionView()
+                        return false
+                    }
+
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        return false
+                    }
+                })
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun loadNextElements(i: Int) {

@@ -1,5 +1,6 @@
 package com.example.historyquiz.ui.tests.add_test.main
 
+import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
@@ -14,14 +15,18 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
+import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
+import com.example.historyquiz.ui.epoch.EpochListFragment
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
+import com.example.historyquiz.utils.Const.ADD_EPOCH_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
+import com.example.historyquiz.utils.Const.EPOCH_KEY
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.gson
@@ -93,6 +98,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         btn_create_questions.setOnClickListener(this)
         tv_add_card.setOnClickListener(this)
         btn_back.setOnClickListener(this)
+        li_choose_epoch.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -125,6 +131,12 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 fragment.setTargetFragment(this, ADD_CARD_CODE)
                 showFragment(this, fragment)
 
+            }
+
+            R.id.li_choose_epoch -> {
+                val fragment = EpochListFragment.newInstance()
+                fragment.setTargetFragment(this, ADD_EPOCH_CODE)
+                showFragment(this, fragment)
             }
 
             R.id.btn_back -> performBackPressed()
@@ -172,6 +184,14 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 .load(card.abstractCard.photoUrl)
                 .into(iv_cover)
             tv_test_card_name.setError(null);
+        }
+
+        if (reqCode == ADD_EPOCH_CODE && resultCode == RESULT_OK) {
+            val epoch = gson.fromJson(data!!.getStringExtra(EPOCH_KEY), Epoch::class.java)
+            tv_epoch!!.text = epoch.name
+            test!!.epoch = epoch
+            test!!.epochId = epoch.id
+            test!!.card?.epochId = epoch.id
         }
     }
 

@@ -247,7 +247,20 @@
                                 android:text="@string/logout"
                                 android:textColor="@color/primary_text"
                                 android:textSize="@dimen/text.16" />
+
+
                     </LinearLayout>
+
+                    <TextView
+                            android:id="@+id/tv_add_epoches"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/choose_epoch"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/text.16"
+                            android:visibility="visible"
+                    />
                 </LinearLayout>
 
             </LinearLayout>

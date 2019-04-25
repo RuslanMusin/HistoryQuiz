@@ -18,6 +18,7 @@ import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.game.LobbyPlayerData
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.epoch.EpochListFragment
 import com.example.historyquiz.ui.game.add_photo.AddPhotoFragment
 import com.example.historyquiz.ui.game.game_list.GameListFragment
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
@@ -121,9 +122,9 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
             }
 
             R.id.li_choose_epoch -> {
-                /*val fragment = EpochListFragment.newInstance()
+                val fragment = EpochListFragment.newInstance()
                 fragment.setTargetFragment(this, ADD_EPOCH_CODE)
-                showFragment(this, fragment)*/
+                showFragment(this, fragment)
             }
         }
     }

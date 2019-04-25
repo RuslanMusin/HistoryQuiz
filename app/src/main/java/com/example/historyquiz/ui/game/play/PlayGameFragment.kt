@@ -37,7 +37,6 @@ import com.example.historyquiz.utils.getRandom
 import com.example.historyquiz.widget.CenterZoomLayoutManager
 import com.ms.square.android.expandabletextview.ExpandableTextView
 import kotlinx.android.synthetic.main.activity_game.*
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.dialog_end_game.view.*
 import kotlinx.android.synthetic.main.item_game_card_medium.view.*
 import kotlinx.android.synthetic.main.layout_change_card.*
@@ -93,6 +92,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar = game_toolbar
         setActionBar(toolbar)
         btn_cancel.setOnClickListener{quitGameBeforeGameStart()}
         rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
@@ -217,7 +217,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         timer.cancel()
         myCards = cards
         Log.d(TAG_LOG,"set cards")
-        LayoutInflater.from(context).inflate(R.layout.activity_game, container, false)
+        val viewGroup = view as ViewGroup
+        viewGroup.removeAllViews()
+        viewGroup.addView(LayoutInflater.from(context).inflate(R.layout.activity_game, viewGroup, false))
         enemy_selected_card.visibility = View.INVISIBLE
         my_selected_card.visibility = View.INVISIBLE
         game_questions_container.visibility = View.GONE
@@ -282,7 +284,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         }
         dialog.show()
     }
-
 
     override fun setCardChooseEnabled(enabled: Boolean) {
         choosingEnabled = enabled

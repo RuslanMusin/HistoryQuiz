@@ -25,7 +25,7 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>
         }
     }
 
-    private lateinit var recyclerView: EmptyStateRecyclerView
+    private var recyclerView: EmptyStateRecyclerView? = null
 
     init {
         this.items.addAll(list)
@@ -33,7 +33,7 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>
 
     fun attachToRecyclerView(recyclerView: EmptyStateRecyclerView) {
         this.recyclerView = recyclerView
-        this.recyclerView.adapter = this
+        this.recyclerView?.adapter = this
         refreshRecycler()
     }
 
@@ -64,7 +64,7 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>
 
     protected fun refreshRecycler() {
         notifyDataSetChanged()
-        recyclerView.checkIfEmpty()
+        recyclerView?.checkIfEmpty()
     }
 
     @CallSuper

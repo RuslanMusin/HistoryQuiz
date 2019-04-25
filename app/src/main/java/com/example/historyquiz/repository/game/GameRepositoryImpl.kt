@@ -1050,22 +1050,18 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
     }
 
     override fun findOfficialTests(userId: String): Single<List<Lobby>> {
-        return findTestsByType(userId, OFFICIAL_TYPE)
+        return findTestsByType(userId)
     }
 
     override fun findOfficialTestsByQuery(query: String, userId: String): Single<List<Lobby>> {
         return findTestsByTypeByQuery(query, userId, OFFICIAL_TYPE)
     }
 
-    fun findTestsByType(userId: String, type: String): Single<List<Lobby>> {
-        val query: Query = databaseReference.orderByChild(LOBBY_TYPE).equalTo(type)
+    fun findTestsByType(userId: String): Single<List<Lobby>> {
+        Log.d(TAG_LOG, "findGames")
+        val query: Query = databaseReference
         val single: Single<List<Lobby>> = Single.create { e ->
-            val cardSingle: Single<List<Card>>
-            if(type.equals(OFFICIAL_TYPE)) {
-                cardSingle = cardRepository.findMyCards(userId)
-            } else {
-                cardSingle = cardRepository.findMyCards(userId)
-            }
+            val cardSingle: Single<List<Card>> = cardRepository.findMyCards(userId)
             cardSingle.subscribe{ myCards ->
                 val myNumber = myCards.size
                 query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -1074,7 +1070,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                         for (snapshot in dataSnapshot.children) {
                             val card = snapshot.getValue(Lobby::class.java)
                             card?.let {
-                                if ((ONLINE_STATUS.equals(card.status) && card.type.equals(type)) && !card.isFastGame
+                                if (ONLINE_STATUS.equals(card.status) && !card.isFastGame
                                     && (myNumber >= card.cardNumber || card.id.equals(AppHelper.currentUser.lobbyId))) {
                                     if(card.id.equals(AppHelper.currentUser.lobbyId)) {
                                         it.isMyCreation = true
@@ -1083,6 +1079,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                                 }
                             }
                         }
+                        Log.d(TAG_LOG, "succes games")
                         e.onSuccess(cards)
                     }
 
@@ -1150,7 +1147,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
 
     companion object {
-        val ROUNDS_COUNT = 5
+        val ROUNDS_COUNT = 3
 
         const val TABLE_LOBBIES = "lobbies"
         const val USERS_LOBBIES = "users_lobbies"

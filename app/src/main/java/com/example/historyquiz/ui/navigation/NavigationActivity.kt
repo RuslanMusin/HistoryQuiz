@@ -135,6 +135,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
                 dialog.hide()
                 refuseAndWait(lobby) }
             .build()
+        dialog.show()
     }
 
     override fun goToGame() {
@@ -315,12 +316,12 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     override fun removeStackDownTo() {
-        stacks[showTab]?.clear()
+        stacks[currentTab]?.clear()
     }
 
     override fun removeStackDownTo(number: Int) {
         for(i in 1..number) {
-            stacks[showTab]?.pop()
+            stacks[currentTab]?.pop()
         }
     }
 
@@ -444,7 +445,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         }
     }
 
-    fun waitEnemy() {
+    override fun waitEnemy() {
         Log.d(TAG_LOG,"wait enemy")
         presenter.waitEnemy()
     }
@@ -476,5 +477,4 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         presenter.checkUserConnection(offlineMode())
 
     }
-
 }

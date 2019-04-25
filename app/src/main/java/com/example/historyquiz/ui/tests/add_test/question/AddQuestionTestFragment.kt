@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.tests.add_test.question
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,6 +23,7 @@ import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
+import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
@@ -34,7 +34,7 @@ import com.example.historyquiz.utils.Const.TEST_ONE_TYPE
 import com.example.historyquiz.utils.Const.gson
 import com.jaredrummler.materialspinner.MaterialSpinner
 import kotlinx.android.synthetic.main.fragment_add_question.*
-import kotlinx.android.synthetic.main.toolbar_back_cancel_forward.*
+import kotlinx.android.synthetic.main.toolbar_add_test.*
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -79,7 +79,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
         hideLoading()
-        model = activity?.run {
+     /*   model = activity?.run {
             ViewModelProviders.of(this).get(TestViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
         model.test.value?.let {
@@ -87,8 +87,11 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         }
         model.number.value?.let {
             number = it
+        }*/
+        arguments?.let {
+            test = gson.fromJson(it.getString(TEST_ITEM), Test::class.java)
+            number = it.getInt(QUESTION_NUMBER)
         }
-
 //
         return view
     }
@@ -97,26 +100,22 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
         setListeners()
-        if(number >= 2) {
-            btn_ok.visibility = View.VISIBLE
-//            (activity as ChangeToolbarListener).showOk(true)
-        } else {
-            btn_ok.visibility = View.GONE
-//            (activity as ChangeToolbarListener).showOk(false)
-        }
-
         if(test.questions.size > number) {
             question = test.questions[number]
             setQuestionData()
         } else {
             question = Question()
             test.questions.add(question)
+            setStartFields()
+            setStartAnswers()
         }
         super.onViewCreated(view, savedInstanceState)
     }
 
     private fun setQuestionData() {
         Log.d(TAG_LOG,"set question data")
+        testType = question.type
+        selectIndex()
         et_question.setText(question.question)
         for(i in question.answers.indices) {
             if(i >= checkBoxes.size) {
@@ -125,10 +124,29 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
             checkBoxes[i].isChecked = question.answers?.get(i)?.isRight ?: false
             editTexts[i].setText(question.answers?.get(i)?.text)
         }
+        if(editTexts.size == 0) {
+            setStartParams()
+        }
     }
 
+    private fun setStartParams() {
+        setStartFields()
+        setStartAnswers()
+    }
+
+    private fun selectIndex() {
+        Log.d(TAG_LOG, "type = ${question.type}")
+        when {
+
+            TEST_ONE_TYPE.equals(testType) -> spinner.selectedIndex = 0
+
+            TEST_MANY_TYPE.equals(testType) -> spinner.selectedIndex = 1
+        }
+    }
+
+
     private fun initViews(view: View) {
-        setActionBar(toolbar_back_cancel_forward)
+        setActionBar(toolbar_add_test)
         setToolbarTitle(toolbar_title, getString(R.string.add_question_number, number + 1))
         spinner.setItems(getString(R.string.test_type_one), getString(R.string.test_type_many))
 
@@ -136,27 +154,17 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         editTexts = ArrayList()
         radioButtons = ArrayList()
         checkBoxes = ArrayList()
-
-        setStartAnswers()
     }
 
     private fun setStartAnswers() {
-        checkListener = object: View.OnClickListener{
-            override fun onClick(v: View?) {
-                if(testType.equals(TEST_ONE_TYPE)) {
-                    Log.d(TAG_LOG,"change on one type")
-                    changeToOneType(v as CheckBox)
-
-                }
-            }
-
-        }
-
-
         for (i in 0..2) {
             addAnswer()
 
         }
+    }
+
+    private fun setStartFields() {
+        et_question.setText(getString(R.string.add_question_number, number + 1))
     }
 
 
@@ -180,6 +188,18 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
             }
 
         })
+        checkListener = object: View.OnClickListener{
+            override fun onClick(v: View?) {
+                if(testType.equals(TEST_ONE_TYPE)) {
+                    Log.d(TAG_LOG,"change on one type")
+                    changeToOneType(v as CheckBox)
+
+                }
+            }
+
+        }
+
+
     }
 
     private fun changeToManyType() {
@@ -234,8 +254,8 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
                 args.putString(TEST_ITEM, gson.toJson(test))
                 args.putInt(QUESTION_NUMBER, ++number)
                 val fragment = AddQuestionTestFragment.newInstance(args)
-                model.selectTest(test)
-                model.selectNumber(++number)
+                /*model.selectTest(test)
+                model.selectNumber(++number)*/
                 pushFragments(fragment, true)
 //                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
             }
@@ -274,9 +294,25 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private fun beforeQuestion() {
 //        removeStackDownTo(1)
-        model.selectTest(test)
+        val args = Bundle()
+        args.putString(TEST_ITEM, gson.toJson(test))
+        var toQuestion = true
+        if(number == 0) {
+            toQuestion = false
+        }
+        args.putInt(QUESTION_NUMBER, --number)
+        if(toQuestion) {
+            removeStackDownTo(1)
+            val fragment = AddQuestionTestFragment.newInstance(args)
+            pushFragments(fragment, true)
+        } else {
+            removeStackDownTo()
+            val fragment = AddMainTestFragment.newInstance(args)
+            pushFragments(fragment, true)
+        }
+        /*model.selectTest(test)
         model.selectNumber(--number)
-        super.performBackPressed()
+        super.performBackPressed()*/
     }
 
     override fun onClick(v: View) {
@@ -346,6 +382,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         val editText: EditText = view.findViewById(R.id.et_answer)
         val checkBox: CheckBox = view.findViewById(R.id.checkbox)
 
+        editText.setText("Answer $answerSize")
         checkBox.setOnClickListener(checkListener)
 
         editTexts?.add(editText)
@@ -369,6 +406,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         question!!.question = et_question.text.toString()
         question!!.answers = answers.toMutableList()
         question.id = number.toString()
+        question.type = testType
 
     }
 
