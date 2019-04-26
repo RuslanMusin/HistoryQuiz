@@ -20,4 +20,12 @@ interface UserRepository {
     fun checkUserStatus(userId: String): Single<Boolean>
 
     fun checkUserConnection(checkIt: () -> (Unit))
+
+    fun loadDefaultUsers(): Single<List<User>>
+
+    fun loadUsersByQuery(query: String): Single<List<User>>
+
+    fun findUsersByTypeByQuery(userQuery: String, userId: String, type: String): Single<List<User>>
+
+    fun findUsersByIdAndType(userId: String, type: String): Single<List<User>>
 }

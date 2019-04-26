@@ -1,16 +1,25 @@
 package com.example.historyquiz.repository.user
 
+import android.icu.lang.UCharacter.SentenceBreak.SEP
 import android.util.Log
+import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.user.User
+import com.example.historyquiz.repository.epoch.UserEpochRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl.Companion.TABLE_LOBBIES
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.AppHelper.Companion.userInSession
+import com.example.historyquiz.utils.Const.ADD_FRIEND
 import com.example.historyquiz.utils.Const.OFFLINE_STATUS
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
+import com.example.historyquiz.utils.Const.QUERY_END
+import com.example.historyquiz.utils.Const.REMOVE_FRIEND
+import com.example.historyquiz.utils.Const.REMOVE_REQUEST
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.USER_FRIENDS
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
+import dagger.Lazy
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.*
@@ -19,6 +28,9 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor() : UserRepository {
 
     private val databaseReference: DatabaseReference
+
+    @Inject
+    lateinit var userEpochRepository: Lazy<UserEpochRepository>
 
     init {
         this.databaseReference = FirebaseDatabase.getInstance().reference.child(TABLE_NAME)
@@ -29,7 +41,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
             if (databaseError != null) {
                 Log.d(TAG, "database error = " + databaseError.message)
             }
-            Log.d(TAG, "completed ")
+            Log.d(TAG, "completed")
+            userEpochRepository.get().createStartEpoches(user)
         }
     }
 
@@ -137,6 +150,155 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         }
     }
 
+    override fun loadDefaultUsers(): Single<List<User>> {
+        val single: Single<List<User>> = Single.create { e ->
+            databaseReference.addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val users: MutableList<User> = ArrayList()
+                    for(snapshot in dataSnapshot.children) {
+                        val user = snapshot.getValue(User::class.java)
+                        user?.let { users.add(it) }
+                    }
+                    e.onSuccess(users)
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+            })
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    override fun loadUsersByQuery(query: String): Single<List<User>> {
+        val queryPart = query.trim { it <= ' ' }.toLowerCase()
+        val single: Single<List<User>> = Single.create { e ->
+            val queryName = databaseReference.orderByChild(FIELD_LOWER_NAME).startAt(queryPart).endAt(queryPart + QUERY_END)
+            queryName.addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val users: MutableList<User> = ArrayList()
+                    for(snapshot in dataSnapshot.children) {
+                        val user = snapshot.getValue(User::class.java)
+                        user?.let { users.add(it) }
+                    }
+                    e.onSuccess(users)
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+            })
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    override fun findUsersByTypeByQuery(userQuery: String, userId: String, type: String): Single<List<User>> {
+        var query: Query = databaseReference.root.child(USER_FRIENDS).child(userId).orderByChild(FIELD_RELATION).equalTo(type)
+        val single: Single<List<User>> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(Relation::class.java)
+                        elementId?.let {
+                            elementIds.add(it.id)
+                        }
+                    }
+                    val queryPart = userQuery.toLowerCase()
+                    query = databaseReference.orderByChild(FIELD_LOWER_NAME).startAt(queryPart).endAt(queryPart + QUERY_END)
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val users: MutableList<User> = ArrayList()
+                            for(snapshot in dataSnapshot.children) {
+                                val user = snapshot.getValue(User::class.java)
+                                if(elementIds.contains(user?.id)) {
+                                    user?.let { users.add(it) }
+                                }
+
+                            }
+                            e.onSuccess(users)
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {}
+                    })
+
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    override fun findUsersByIdAndType(userId: String, type: String): Single<List<User>> {
+        val query: Query = databaseReference.root.child(USER_FRIENDS).child(userId).orderByChild(FIELD_RELATION).equalTo(type)
+        val single: Single<MutableList<User>> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(Relation::class.java)
+                        elementId?.let {
+                            elementIds.add(it.id)
+                        }
+                    }
+                    findUsers(elementIds).subscribe{ users ->
+                        e.onSuccess(users)
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+        }
+
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun addFriend(userId: String, friendId: String) {
+        val userValues = Relation.toMap(userId, REMOVE_FRIEND)
+        val friendValues = Relation.toMap(friendId, REMOVE_FRIEND)
+        val childUpdates = HashMap<String, Any>()
+        childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = friendValues
+        childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = userValues
+
+        databaseReference.root.updateChildren(childUpdates)
+    }
+
+    fun removeFriend(userId: String, friendId: String) {
+        val userValues = Relation.toMap(userId, REMOVE_REQUEST)
+        val childUpdates = HashMap<String, Any?>()
+        childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = null
+        childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = null
+
+        databaseReference.root.updateChildren(childUpdates)
+    }
+
+    fun addFriendRequest(userId: String, friendId: String) {
+        val friendValues = Relation.toMap(friendId, REMOVE_REQUEST)
+        val userValues = Relation.toMap(userId, ADD_FRIEND)
+        val childUpdates = HashMap<String, Any>()
+        childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = friendValues
+        childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = userValues
+
+        databaseReference.root.updateChildren(childUpdates)
+    }
+
+    fun removeFriendRequest(userId: String, friendId: String) {
+        val childUpdates = HashMap<String, Any?>()
+        childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = null
+        childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = null
+
+        databaseReference.root.updateChildren(childUpdates)
+    }
+
+    fun checkType(userId: String, friendId: String): Query {
+        return databaseReference.root.child(USER_FRIENDS).child(userId).child(friendId)
+    }
+
     companion object {
 
         private val TAG = "UserRepositoryImpl"
@@ -145,5 +307,9 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 
         const val FIELD_LOBBY_ID = "lobbyId"
         val FIELD_STATUS = "status"
+        const val FIELD_ID = "id"
+        const val FIELD_NAME = "username"
+        const val FIELD_LOWER_NAME = "lowerUsername"
+        const val FIELD_RELATION = "relation"
     }
 }

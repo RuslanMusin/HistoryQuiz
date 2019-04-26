@@ -25,7 +25,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
                     xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -57,6 +59,9 @@
                             android:layout_width="match_parent"
                             android:minHeight="120dp"
                             android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/intrinsic_padding"
+                            android:paddingRight="@dimen/intrinsic_padding"
+                            android:paddingTop="@dimen/intrinsic_padding"
                     >
 
                         <RelativeLayout
@@ -68,8 +73,15 @@
                                 android:layout_centerVertical="true"
                         >
 
+                            <ProgressBar
+                                    android:id="@+id/progressBarPersonal"
+                                    android:layout_width="@dimen/progress_bar_size"
+                                    android:layout_height="@dimen/progress_bar_size"
+                                    android:layout_centerInParent="true"
+                                    android:visibility="visible" />
+
                             <de.hdodenhof.circleimageview.CircleImageView
-                                    android:id="@+id/iv_profile"
+                                    android:id="@+id/iv_portrait"
                                     android:layout_width="100dp"
                                     android:layout_height="100dp"
                                     android:layout_alignParentStart="true"
@@ -98,6 +110,16 @@
                             />
 
                             <TextView
+                                    android:id="@+id/tv_level"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="@string/level"
+                                    android:textColor="@color/primary_text"
+                                    android:textSize="@dimen/text.16"
+                            />
+
+                            <TextView
                                     android:id="@+id/tv_add_friend"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -115,7 +137,9 @@
                                     android:textSize="@dimen/text.16"
                                     android:textStyle="bold"
                                     android:textColor="@color/primary"
-                                    android:layout_marginTop="8dp"/>
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="@dimen/margin.normal"
+                            />
 
                            <!-- <android.support.v7.widget.AppCompatButton
                                     android:id="@+id/btn_add_friend"
@@ -124,7 +148,6 @@
                                     android:text="@string/add_friend"
                                     android:textAllCaps="false"
                                     android:background="@color/primary"
-                                    android:layout_marginTop="@dimen/margin.normal"
                                     android:padding="@dimen/padding_small"
                                     android:textColor="@color/white"
                             />
@@ -155,13 +178,13 @@
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                >
+                        android:orientation="vertical">
 
                     <LinearLayout
                             android:id="@+id/li_tests"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
                             android:orientation="horizontal">
 
                         <ImageView
@@ -169,7 +192,7 @@
                                 android:layout_height="wrap_content"
                                 android:paddingTop="@dimen/padding_small"
                                 android:paddingBottom="@dimen/padding_small"
-                                app:srcCompat="@drawable/ic_insert_drive_file_black_24dp"/>
+                                android:src="@drawable/ic_insert_drive_file_black_24dp"/>
 
                         <TextView
                                 android:id="@+id/tv_crossings"
@@ -189,6 +212,7 @@
                             android:id="@+id/li_cards"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
                             android:orientation="horizontal">
 
                         <ImageView
@@ -196,7 +220,7 @@
                                 android:layout_height="wrap_content"
                                 android:paddingTop="@dimen/padding_small"
                                 android:paddingBottom="@dimen/padding_small"
-                                app:srcCompat="@drawable/ic_portrait_black_24dp"/>
+                                android:src="@drawable/ic_portrait_black_24dp"/>
 
                         <TextView
                                 android:id="@+id/tv_cards"
@@ -212,45 +236,6 @@
 
                     <include layout="@layout/layout_divider"/>
 
-                    <!--<TextView-->
-                            <!--android:id="@+id/tv_desc_name"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:text="@string/description"-->
-                            <!--android:textColor="@color/primary_text"-->
-                            <!--android:textSize="@dimen/text.16" />-->
-
-                    <!--<include layout="@layout/layout_expandable_text_view"/>-->
-
-                    <!--<include layout="@layout/layout_divider"/>-->
-
-                    <LinearLayout
-                            android:id="@+id/li_logout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                        <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/padding_small"
-                                android:paddingBottom="@dimen/padding_small"
-                                app:srcCompat="@drawable/ic_exit_to_app_black_24dp"/>
-
-                        <TextView
-                                android:id="@+id/tv_logout"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingStart="@dimen/padding_small"
-                                android:paddingTop="@dimen/padding_small"
-                                android:paddingBottom="@dimen/padding_small"
-                                android:text="@string/logout"
-                                android:textColor="@color/primary_text"
-                                android:textSize="@dimen/text.16" />
-
-
-                    </LinearLayout>
-
                     <TextView
                             android:id="@+id/tv_add_epoches"
                             android:layout_width="wrap_content"
@@ -261,6 +246,26 @@
                             android:textSize="@dimen/text.16"
                             android:visibility="visible"
                     />
+
+                    <TextView
+                            android:id="@+id/tv_desc_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/description"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                    <include layout="@layout/layout_expandable_text_view"/>
+
+                    <ProgressBar
+                            android:id="@+id/progress_loader"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
                 </LinearLayout>
 
             </LinearLayout>

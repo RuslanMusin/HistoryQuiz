@@ -15,6 +15,7 @@ import com.example.historyquiz.utils.Const.GAME_WIN_POINTS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
+import dagger.Lazy
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
     lateinit var leaderStatRepository: LeaderStatRepository
 
     @Inject
-    lateinit var userRepository: UserRepository
+    lateinit var userRepository: Lazy<UserRepository>
 
     var databaseReference: DatabaseReference
 
@@ -182,14 +183,13 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
                 }
             }
         }
-
     }
 
     override fun updateAfterGame(lobby: Lobby, playerId: String?, isWin: Boolean, score: Int): Single<Boolean> {
         Log.d(TAG_LOG, "update after game")
         val single: Single<Boolean> = Single.create { e ->
             playerId?.let {
-                userRepository.readUserById(it).subscribe { user ->
+                userRepository.get().readUserById(it).subscribe { user ->
                     findUserEpoch(it, lobby.epochId).subscribe { epoch ->
                         Log.d(TAG_LOG, "find epoch after game")
                         if (isWin) {
@@ -205,7 +205,7 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
                             user.points = 0
                         }
                         epoch.updateGe()
-                        userRepository.updateUser(user)
+                        userRepository.get().updateUser(user)
                         Log.d(TAG_LOG, "after update user")
                         if (user.id.equals(AppHelper.currentUser.id)) {
                             AppHelper.currentUser = user

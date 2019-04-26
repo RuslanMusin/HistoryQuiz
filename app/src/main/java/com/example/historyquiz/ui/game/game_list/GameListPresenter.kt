@@ -122,6 +122,7 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
     fun gameNotAccepted(lobby: Lobby): () -> Unit {
         return  {
             timer.cancel()
+            viewState.setWaitStatus(true)
             viewState.hideProgressDialog()
             gameRepository.notAccepted(lobby)
         }

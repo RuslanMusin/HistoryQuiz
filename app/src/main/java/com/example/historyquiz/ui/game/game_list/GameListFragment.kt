@@ -52,7 +52,8 @@ class GameListFragment : BaseFragment(), GameListView {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
         setStatus(ONLINE_STATUS)
-        waitEnemy()
+        setWaitStatus(true)
+//        waitEnemy()
         return view
     }
 
@@ -162,6 +163,7 @@ class GameListFragment : BaseFragment(), GameListView {
 
     override fun onItemClick(item: Lobby) {
         if(isClickable) {
+            setWaitStatus(false)
             presenter!!.onItemClick(item)
             isClickable = false
         }

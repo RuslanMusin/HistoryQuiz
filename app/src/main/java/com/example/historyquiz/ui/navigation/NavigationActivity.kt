@@ -138,6 +138,10 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         dialog.show()
     }
 
+    override fun setWaitStatus(isWaiting: Boolean) {
+        presenter.isWaiting = isWaiting
+    }
+
     override fun goToGame() {
         val fragment = PlayGameFragment.newInstance()
         pushFragments(fragment, true)

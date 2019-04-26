@@ -471,9 +471,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             }
             relation.relation = IN_GAME_STATUS
             databaseReference.root.child(USERS_LOBBIES).child(it).child(lobby.id).setValue(relation)
-
-
-
         }
 
 

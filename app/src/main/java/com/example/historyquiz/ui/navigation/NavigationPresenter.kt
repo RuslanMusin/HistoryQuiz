@@ -28,6 +28,7 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
     lateinit var gameRepository: GameRepository
 
     var isStopped: Boolean = false
+    var isWaiting: Boolean = false
 
     fun setStatus(status: String) {
         Log.d(TAG_LOG,"current status = $status")
@@ -48,32 +49,34 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
     }
 
     fun waitEnemy() {
-        gameRepository.waitEnemy().subscribe { relation ->
-            Log.d(TAG_LOG, "enemy waited")
-            if (relation.relation.equals(Const.IN_GAME_STATUS)) {
-                gameRepository.findLobby(relation.id).subscribe { lobby ->
-                    Log.d(TAG_LOG, "waited lobby finded/ isStopped = $isStopped")
-                    if (!isStopped) {
-                        AppHelper.currentUser.let {
-                            it.gameLobby = lobby
-                            val gameData: GameData = GameData()
-                            gameData.gameMode = ONLINE_GAME
-                            val invitedId = lobby.invited?.playerId
-                            val creatorId = lobby.creator?.playerId
-                            if (invitedId != null && creatorId.equals(currentId)) {
-                                invitedId.let {
-                                    gameData.enemyId = it
-                                    gameData.role = GameRepositoryImpl.FIELD_CREATOR
+        if(isWaiting) {
+            gameRepository.waitEnemy().subscribe { relation ->
+                Log.d(TAG_LOG, "enemy waited")
+                if (relation.relation.equals(Const.IN_GAME_STATUS)) {
+                    gameRepository.findLobby(relation.id).subscribe { lobby ->
+                        Log.d(TAG_LOG, "waited lobby finded/ isStopped = $isStopped")
+                        if (!isStopped) {
+                            AppHelper.currentUser.let {
+                                it.gameLobby = lobby
+                                val gameData: GameData = GameData()
+                                gameData.gameMode = ONLINE_GAME
+                                val invitedId = lobby.invited?.playerId
+                                val creatorId = lobby.creator?.playerId
+                                if (invitedId != null && creatorId.equals(currentId)) {
+                                    invitedId.let {
+                                        gameData.enemyId = it
+                                        gameData.role = GameRepositoryImpl.FIELD_CREATOR
+                                    }
+                                } else {
+                                    creatorId?.let {
+                                        gameData.enemyId = it
+                                        gameData.role = GameRepositoryImpl.FIELD_INVITED
+                                    }
                                 }
-                            } else {
-                                creatorId?.let {
-                                    gameData.enemyId = it
-                                    gameData.role = GameRepositoryImpl.FIELD_INVITED
-                                }
+                                it.gameLobby?.gameData = gameData
+                                Log.d(TAG_LOG, "setDialog")
+                                viewState.setDialog(gameData, lobby)
                             }
-                            it.gameLobby?.gameData = gameData
-                            Log.d(TAG_LOG, "setDialog")
-                            viewState.setDialog(gameData, lobby)
                         }
                     }
                 }
@@ -97,5 +100,4 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
             }
         }
     }
-
 }

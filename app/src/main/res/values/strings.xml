@@ -161,4 +161,17 @@
     <string name="users">Пользователи</string>
     <string name="all_users">Все</string>
     <string name="requests">Запросы</string>
+
+
+    <string name="ke_arg">Общий коэффициент Ke : %1$s</string>
+    <string name="ke_change_arg">Изменения Ke : %1$s</string>
+    <string name="right_arg">Правильных ответов : %1$d</string>
+    <string name="wrong_arg">Неправильных ответов : %1$d</string>
+
+    <string name="ge_arg">Игровой коэффициент Ge : %1$s</string>
+    <string name="ge_change_arg">Изменения Ge : %1$s</string>
+    <string name="win_arg">Побед : %1$d</string>
+    <string name="lose_arg">Проигрышей : %1$d</string>
+
+    <string name="kg_arg">Общий игровой коэффициент Kg : %1$s</string>
 </resources>

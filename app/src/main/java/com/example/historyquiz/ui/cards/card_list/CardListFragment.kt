@@ -14,6 +14,7 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.gson
 import io.reactivex.disposables.Disposable
@@ -44,6 +45,8 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
+        setStatus(ONLINE_STATUS)
+        setWaitStatus(true)
         return view
     }
 

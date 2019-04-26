@@ -15,6 +15,7 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.USERS_LIST_TYPE
 import com.example.historyquiz.utils.Const.gson
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
@@ -37,6 +38,8 @@ class MemberListFragment : BaseFragment(), MemberListView {
     @ProvidePresenter
     fun providePresenter(): MemberListPresenter = presenterProvider.get()
 
+    lateinit var type: String
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_member_list, container, false)
         return view
@@ -45,12 +48,15 @@ class MemberListFragment : BaseFragment(), MemberListView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        presenter.loadTests()
+        arguments?.let {
+            type = it.getString(USERS_LIST_TYPE)
+            presenter.loadUsers(type)
+        }
     }
 
     override fun reloadList() {
         if(tests.size > 0) {
-            presenter.loadTests()
+            presenter.loadUsers(type)
         }
     }
 
@@ -124,6 +130,14 @@ class MemberListFragment : BaseFragment(), MemberListView {
 
         fun newInstance(): Fragment {
             val fragment = MemberListFragment()
+            return fragment
+        }
+
+        fun newInstance(type: String): Fragment {
+            val fragment = MemberListFragment()
+            val args = Bundle()
+            args.putString(USERS_LIST_TYPE, type)
+            fragment.arguments = args
             return fragment
         }
     }

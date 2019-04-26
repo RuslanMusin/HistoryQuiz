@@ -18,6 +18,7 @@ import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AFTER_TEST
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -77,7 +78,8 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         /*(activity as BaseBackActivity).currentTag = TEST_FRAGMENT
         test.title?.let { (activity as ChangeToolbarListener).changeToolbar(TEST_FRAGMENT, it) }*/
         presenter.readCardForTest(test)
-
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
         return view
     }
 

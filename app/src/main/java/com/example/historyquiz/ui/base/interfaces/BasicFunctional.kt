@@ -52,6 +52,8 @@ interface BasicFunctional: MvpView {
 
     fun waitEnemy()
 
+    fun setWaitStatus(isWaiting: Boolean)
+
     fun setStatus(status: String)
 
     fun setOfflineChecking()

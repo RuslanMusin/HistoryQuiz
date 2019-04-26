@@ -78,7 +78,8 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
         card.id?.let { elemId = it }
         /*(activity as BaseBackActivity).currentTag = TEST_FRAGMENT
         test.title?.let { (activity as ChangeToolbarListener).changeToolbar(TEST_FRAGMENT, it) }*/
-
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
         return view
     }
 

@@ -8,6 +8,8 @@ object Const {
     const val TAG_LOG = "TAG_LOG"
 
     const val TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    const val DOUBLE_FORM = "%.2f"
+
 
     const val MAX_LENGTH = 80
     const val MORE_TEXT = "..."
@@ -101,9 +103,29 @@ object Const {
 
     const val CARD_NUMBER = 3
 
+    //Friend type
+    const val ADD_FRIEND = "addF"
+    const val REMOVE_FRIEND = "removeF"
+    const val ADD_REQUEST = "addR"
+    const val REMOVE_REQUEST = "removeR"
+
+    //Friend's list types
+    const val USERS_LIST_TYPE = "type"
+    const val DEFAULT_USERS_TYPE = "default_users"
+
+    const val READER_LIST = "readers"
+    const val FRIEND_LIST = "friends"
+    const val REQUEST_LIST = "requests"
+
     //GameType
     const val OFFICIAL_TYPE = "official_type"
     const val USER_TYPE = "user_type"
+
+    //Crossing type
+    const val WATCHER_TYPE = "watcher"
+    const val OWNER_TYPE = "owner"
+    const val RESTRICT_OWNER_TYPE = "restrict_owner"
+    const val FOLLOWER_TYPE = "follower"
 
     //Gamer status
     const val ONLINE_STATUS = "online_status"
@@ -119,7 +141,9 @@ object Const {
 
     const val EPOCH_KEY = "EPOCH_KEY"
 
-
     val gson = Gson()
+
+    val USER_FRIENDS = "user_friends"
+
 
 }
