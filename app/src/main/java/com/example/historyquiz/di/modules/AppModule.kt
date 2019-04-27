@@ -14,6 +14,12 @@ import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
 import com.example.historyquiz.ui.navigation.NavigationActivity
 import com.example.historyquiz.ui.profile.item.ProfileFragment
+import com.example.historyquiz.ui.profile.list.MemberTabFragment
+import com.example.historyquiz.ui.profile.list.list_item.MemberListFragment
+import com.example.historyquiz.ui.statists.StatListFragment
+import com.example.historyquiz.ui.statists.tab_fragment.common_stats.CommonStatsFragment
+import com.example.historyquiz.ui.statists.tab_fragment.game_stats.GameStatsFragment
+import com.example.historyquiz.ui.statists.tab_fragment.leader_stats.LeaderStatsFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
@@ -128,6 +134,30 @@ interface AppModule {
     @FragmentScope
     @ContributesAndroidInjector()
     fun epochListFragmentInjector(): EpochListFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun memberTabFragmentInjector(): MemberTabFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun memberListFragmentInjector(): MemberListFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun statListFragmentInjector(): StatListFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun commonStatListFragmentInjector(): CommonStatsFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun gameStatListFragmentInjector(): GameStatsFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun leaderStatListFragmentInjector(): LeaderStatsFragment
 
 }
 

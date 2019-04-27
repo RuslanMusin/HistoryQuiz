@@ -249,6 +249,21 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
         }
     }
 
+    override fun findMyCardsByEpoch(userId: String, epochId: String): Single<List<Card>> {
+        val single:Single<List<Card>> =  Single.create { e ->
+            findMyCards(userId).subscribe { cards ->
+                val officials: MutableList<Card> = ArrayList()
+                for (card in cards) {
+                    if (epochId.equals(card.epochId)) {
+                        officials.add(card)
+                    }
+                }
+                e.onSuccess(officials)
+            }
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
     fun findDefaultAbstractCardStates(abstractCardId: String): Single<List<Card>> {
         val query: Query = databaseReference.orderByChild(FIELD_CARD_ID).equalTo(abstractCardId)
         val single: Single<List<Card>> = Single.create { e ->

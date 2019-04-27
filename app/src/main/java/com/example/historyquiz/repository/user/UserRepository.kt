@@ -1,6 +1,7 @@
 package com.example.historyquiz.repository.user
 
 import com.example.historyquiz.model.user.User
+import com.google.firebase.database.Query
 import io.reactivex.Single
 
 interface UserRepository {
@@ -28,4 +29,14 @@ interface UserRepository {
     fun findUsersByTypeByQuery(userQuery: String, userId: String, type: String): Single<List<User>>
 
     fun findUsersByIdAndType(userId: String, type: String): Single<List<User>>
+
+    fun addFriend(userId: String, friendId: String)
+
+    fun removeFriend(userId: String, friendId: String)
+
+    fun addFriendRequest(userId: String, friendId: String)
+
+    fun removeFriendRequest(userId: String, friendId: String)
+
+    fun checkType(userId: String, friendId: String): Query
 }

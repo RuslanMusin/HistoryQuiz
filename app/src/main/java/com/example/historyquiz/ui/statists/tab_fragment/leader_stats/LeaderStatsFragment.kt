@@ -81,6 +81,9 @@ class LeaderStatsFragment : BaseFragment(), LeaderStatsView {
         pg_list.visibility = View.GONE
     }
 
+    override fun reloadList() {
+        presenter.loadStats()
+    }
 
     override fun loadNextElements(i: Int) {
     }

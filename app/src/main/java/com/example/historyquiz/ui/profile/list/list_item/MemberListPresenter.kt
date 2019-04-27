@@ -1,7 +1,6 @@
 package com.example.historyquiz.ui.profile.list.list_item
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.user.UserRepository
@@ -55,8 +54,8 @@ class MemberListPresenter @Inject constructor() : BasePresenter<MemberListView>(
 
         }
         single
-            .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-            .doAfterTerminate(Action { viewState.hideLoading() })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading(compositeDisposable) })
+            .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
     }
 

@@ -235,7 +235,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 
     override fun findUsersByIdAndType(userId: String, type: String): Single<List<User>> {
         val query: Query = databaseReference.root.child(USER_FRIENDS).child(userId).orderByChild(FIELD_RELATION).equalTo(type)
-        val single: Single<MutableList<User>> = Single.create { e ->
+        val single: Single<List<User>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val elementIds: MutableList<String> = ArrayList()
@@ -258,7 +258,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    fun addFriend(userId: String, friendId: String) {
+    override fun addFriend(userId: String, friendId: String) {
         val userValues = Relation.toMap(userId, REMOVE_FRIEND)
         val friendValues = Relation.toMap(friendId, REMOVE_FRIEND)
         val childUpdates = HashMap<String, Any>()
@@ -268,7 +268,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         databaseReference.root.updateChildren(childUpdates)
     }
 
-    fun removeFriend(userId: String, friendId: String) {
+    override fun removeFriend(userId: String, friendId: String) {
         val userValues = Relation.toMap(userId, REMOVE_REQUEST)
         val childUpdates = HashMap<String, Any?>()
         childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = null
@@ -277,7 +277,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         databaseReference.root.updateChildren(childUpdates)
     }
 
-    fun addFriendRequest(userId: String, friendId: String) {
+    override fun addFriendRequest(userId: String, friendId: String) {
         val friendValues = Relation.toMap(friendId, REMOVE_REQUEST)
         val userValues = Relation.toMap(userId, ADD_FRIEND)
         val childUpdates = HashMap<String, Any>()
@@ -287,7 +287,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         databaseReference.root.updateChildren(childUpdates)
     }
 
-    fun removeFriendRequest(userId: String, friendId: String) {
+    override fun removeFriendRequest(userId: String, friendId: String) {
         val childUpdates = HashMap<String, Any?>()
         childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = null
         childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = null
@@ -295,7 +295,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         databaseReference.root.updateChildren(childUpdates)
     }
 
-    fun checkType(userId: String, friendId: String): Query {
+    override fun checkType(userId: String, friendId: String): Query {
         return databaseReference.root.child(USER_FRIENDS).child(userId).child(friendId)
     }
 

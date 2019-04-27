@@ -6,4 +6,16 @@ interface ProfileView: BasicFunctional {
 
     fun handleError(throwable: Throwable)
 
+    fun changePlayButton(isClickable: Boolean)
+
+    fun showProgressDialog()
+
+    fun hideGameDialog()
+
+    fun showGameDialog()
+
+    fun changeType(type: String)
+
+    fun initViews()
+
 }

@@ -96,6 +96,10 @@ class GameStatsFragment : BaseFragment(), GameStatsView {
 
     }
 
+    override fun reloadList() {
+        presenter.loadStats()
+    }
+
     private fun initRecycler() {
         adapter = GameStatsAdapter(ArrayList())
         val manager = LinearLayoutManager(activity as Activity)

@@ -17,6 +17,8 @@ interface CardRepository {
 
     fun findMyCards(userId: String): Single<List<Card>>
 
+    fun findMyCardsByEpoch(userId: String, epochId: String): Single<List<Card>>
+
     fun findMyAbstractCardStates(abstractCardId: String, userId: String): Single<List<Card>>
 
     fun addCardAfterGame(cardId: String , winnerId: String, loserId: String): Single<Boolean>

@@ -13,6 +13,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USERS_LIST_TYPE
@@ -110,8 +111,9 @@ class MemberListFragment : BaseFragment(), MemberListView {
 
     override fun onItemClick(item: User) {
         val args = Bundle()
-        args.putString(Const.TEST_ITEM, gson.toJson(item))
-//        presenter.onTestClick(args)
+        args.putString(Const.USER_ITEM, gson.toJson(item))
+        val fragment = ProfileFragment.newInstance(args)
+        pushFragments(fragment, true)
     }
 
     override fun findByQuery(query: String) {

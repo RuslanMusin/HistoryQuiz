@@ -1,20 +1,17 @@
 package com.example.historyquiz.ui.statists.tab_fragment.common_stats
 
 import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.example.historyquiz.model.epoch.UserEpoch
 import com.example.historyquiz.repository.epoch.UserEpochRepository
 import com.example.historyquiz.ui.base.BasePresenter
-import com.example.historyquiz.ui.statists.tab_fragment.game_stats.GameStatsView
 import com.example.historyquiz.utils.AppHelper
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 import javax.inject.Inject
 
 @InjectViewState
-class CommonStatsPresenter @Inject constructor() : BasePresenter<GameStatsView>() {
+class CommonStatsPresenter @Inject constructor() : BasePresenter<CommonStatsView>() {
 
     @Inject
     lateinit var userEpochRepository: UserEpochRepository

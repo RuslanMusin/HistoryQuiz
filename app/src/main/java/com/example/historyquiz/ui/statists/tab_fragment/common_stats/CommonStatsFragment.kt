@@ -73,6 +73,10 @@ class CommonStatsFragment : BaseFragment(), CommonStatsView {
 
     }
 
+    override fun reloadList() {
+        presenter.loadStats()
+    }
+
     override fun showListLoading(disposable: Disposable) {
         pg_list.visibility = View.VISIBLE
     }

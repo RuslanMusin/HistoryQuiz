@@ -73,15 +73,8 @@
                                 android:layout_centerVertical="true"
                         >
 
-                            <ProgressBar
-                                    android:id="@+id/progressBarPersonal"
-                                    android:layout_width="@dimen/progress_bar_size"
-                                    android:layout_height="@dimen/progress_bar_size"
-                                    android:layout_centerInParent="true"
-                                    android:visibility="visible" />
-
                             <de.hdodenhof.circleimageview.CircleImageView
-                                    android:id="@+id/iv_portrait"
+                                    android:id="@+id/iv_profile"
                                     android:layout_width="100dp"
                                     android:layout_height="100dp"
                                     android:layout_alignParentStart="true"
@@ -118,6 +111,21 @@
                                     android:textColor="@color/primary_text"
                                     android:textSize="@dimen/text.16"
                             />
+
+                            <ProgressBar
+                                    android:id="@+id/progressBar"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="100dp"
+                                    android:layout_height="8dp"
+                                    android:layout_marginTop="@dimen/margin.small"
+                                    android:layout_marginBottom="8dp"
+                                    android:indeterminate="false"
+                                    android:progressDrawable="@drawable/progress_style"
+                                    android:max="100"
+                                    android:progress="50"
+                                    android:visibility="gone"
+                            />
+
 
                             <TextView
                                     android:id="@+id/tv_add_friend"
@@ -181,10 +189,11 @@
                         android:orientation="vertical">
 
                     <LinearLayout
-                            android:id="@+id/li_tests"
+                            android:id="@+id/li_friends"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin.normal"
+                            android:visibility="gone"
                             android:orientation="horizontal">
 
                         <ImageView
@@ -201,7 +210,7 @@
                                 android:paddingStart="@dimen/padding_small"
                                 android:paddingTop="@dimen/padding_small"
                                 android:paddingBottom="@dimen/padding_small"
-                                android:text="@string/menu_tests"
+                                android:text="@string/friends"
                                 android:textColor="@color/primary_text"
                                 android:textSize="@dimen/text.16" />
                     </LinearLayout>
@@ -209,10 +218,11 @@
                     <include layout="@layout/layout_divider"/>
 
                     <LinearLayout
-                            android:id="@+id/li_cards"
+                            android:id="@+id/li_statists"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin.normal"
+                            android:visibility="gone"
                             android:orientation="horizontal">
 
                         <ImageView
@@ -229,14 +239,14 @@
                                 android:paddingStart="@dimen/padding_small"
                                 android:paddingTop="@dimen/padding_small"
                                 android:paddingBottom="@dimen/padding_small"
-                                android:text="@string/menu_cards"
+                                android:text="@string/statists"
                                 android:textColor="@color/primary_text"
                                 android:textSize="@dimen/text.16" />
                     </LinearLayout>
 
                     <include layout="@layout/layout_divider"/>
 
-                    <TextView
+               <!--     <TextView
                             android:id="@+id/tv_add_epoches"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -245,7 +255,7 @@
                             android:textColor="@color/primary"
                             android:textSize="@dimen/text.16"
                             android:visibility="visible"
-                    />
+                    />-->
 
                     <TextView
                             android:id="@+id/tv_desc_name"

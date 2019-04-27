@@ -13,7 +13,9 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.base.interfaces.ReloadableView
-import com.example.historyquiz.ui.profile.list.list_item.MemberListFragment
+import com.example.historyquiz.ui.statists.tab_fragment.common_stats.CommonStatsFragment
+import com.example.historyquiz.ui.statists.tab_fragment.game_stats.GameStatsFragment
+import com.example.historyquiz.ui.statists.tab_fragment.leader_stats.LeaderStatsFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.widget.FragViewPagerAdapter
 import kotlinx.android.synthetic.main.fragment_member_tabs.*
@@ -75,12 +77,12 @@ class StatListFragment : BaseFragment(), StatListView {
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = FragViewPagerAdapter(childFragmentManager)
-        fragments.add(MemberListFragment.newInstance())
-        fragments.add(MemberListFragment.newInstance())
-        fragments.add(MemberListFragment.newInstance())
-        adapter.addFragment(fragments[0], getString(R.string.menu_profile))
-        adapter.addFragment(fragments[1], getString(R.string.menu_cards))
-        adapter.addFragment(fragments[2], getString(R.string.menu_tests))
+        fragments.add(CommonStatsFragment.newInstance())
+        fragments.add(GameStatsFragment.newInstance())
+        fragments.add(LeaderStatsFragment.newInstance())
+        adapter.addFragment(fragments[0], getString(R.string.tab_common_stat))
+        adapter.addFragment(fragments[1], getString(R.string.tab_game_stat))
+        adapter.addFragment(fragments[2], getString(R.string.tab_leader_stat))
         viewPager.adapter = adapter
     }
 

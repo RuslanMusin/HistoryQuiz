@@ -83,9 +83,9 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
         fragments.add(MemberListFragment.newInstance(DEFAULT_USERS_TYPE))
         fragments.add(MemberListFragment.newInstance(REMOVE_FRIEND))
         fragments.add(MemberListFragment.newInstance(ADD_FRIEND))
-        adapter.addFragment(fragments[0], getString(R.string.menu_profile))
-        adapter.addFragment(fragments[1], getString(R.string.menu_cards))
-        adapter.addFragment(fragments[2], getString(R.string.menu_tests))
+        adapter.addFragment(fragments[0], getString(R.string.tab_all_users))
+        adapter.addFragment(fragments[1], getString(R.string.tab_friends))
+        adapter.addFragment(fragments[2], getString(R.string.tab_requests))
         viewPager.adapter = adapter
     }
 

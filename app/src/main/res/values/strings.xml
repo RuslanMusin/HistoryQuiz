@@ -174,4 +174,11 @@
     <string name="lose_arg">Проигрышей : %1$d</string>
 
     <string name="kg_arg">Общий игровой коэффициент Kg : %1$s</string>
+    <string name="statists">Статистика</string>
+    <string name="tab_common_stat">Общее</string>
+    <string name="tab_game_stat">Игровая</string>
+    <string name="tab_leader_stat">Рейтинг</string>
+    <string name="tab_all_users">Все</string>
+    <string name="tab_requests">Предложения</string>
+    <string name="tab_friends">Друзья</string>
 </resources>
