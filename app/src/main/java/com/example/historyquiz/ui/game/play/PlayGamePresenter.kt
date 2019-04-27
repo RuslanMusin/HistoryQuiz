@@ -13,9 +13,7 @@ import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const.BOT_GAME
-import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.MODE_PLAY_GAME
-import com.example.historyquiz.utils.Const.OFFICIAL_TYPE
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.getRandom
 import io.reactivex.Single
@@ -42,12 +40,7 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
         lobby = initlobby
         gameRepository.setLobbyRefs(lobby.id)
         gameRepository.watchMyStatus()
-        val single: Single<List<Card>>
-        if(lobby.type.equals(OFFICIAL_TYPE)) {
-            single = cardRepository.findMyCards(currentId)
-        } else {
-            single = cardRepository.findMyCards(currentId)
-        }
+        val single: Single<List<Card>> = cardRepository.findMyCardsByEpoch(currentId, lobby.epochId)
         single.subscribe { cards: List<Card>? ->
             cards?.let {
                 val mutCards = cards.toMutableList()
@@ -99,20 +92,6 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
             }
 
             gameRepository.startGame(lobby, this)
-
-            if (lobby.gameData?.gameMode.equals(BOT_GAME)) {
-                Log.d(TAG_LOG, "find bot cards")
-                val single: Single<List<Card>>
-                if (lobby.type.equals(OFFICIAL_TYPE)) {
-                    single = cardRepository.findMyCards(BOT_ID)
-                } else {
-                    single = cardRepository.findMyCards(BOT_ID)
-                }
-                single.subscribe { cards ->
-                    gameRepository.selectOnBotLoseCard(cards)
-                    botCards = cards.toMutableList()
-                }
-            }
         }
     }
 

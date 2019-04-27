@@ -3,13 +3,14 @@ import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseAdapter
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
-import io.reactivex.disposables.Disposable
 
 interface CommentView: BasicFunctional, BaseAdapter.OnItemClickListener<Comment>{
 
     fun showComments(comments: List<Comment>)
 
-    fun showLoading(disposable: Disposable)
+    fun showListLoading()
+
+    fun hideListLoading()
 
     fun onReplyClick(position: Int)
 

@@ -14,10 +14,13 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
+import com.example.historyquiz.utils.Const.NEW_ONES
+import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
+import com.example.historyquiz.utils.Const.TIME_TYPE
+import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.gson
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import java.util.*
@@ -27,6 +30,7 @@ import javax.inject.Provider
 class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     lateinit var userId: String
+    lateinit var type: String
     private lateinit var adapter: TestAdapter
 
     lateinit var skills: MutableList<Test>
@@ -50,8 +54,12 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
-        presenter.loadOfficialTests()
+        arguments?.let {
+            userId = it.getString(USER_ID)
+            type = it.getString(TIME_TYPE)
+            initViews()
+            presenter.loadOfficialTests(userId, type)
+        }
     }
 
     private fun initViews() {
@@ -63,6 +71,12 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
     private fun setToolbar() {
         setActionBar(toolbar)
         setActionBarTitle(R.string.menu_tests)
+        if(!type.equals(OLD_ONES)) {
+            toolbar.setNavigationIcon(null)
+        } else {
+            toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+            floating_button.visibility = View.GONE
+        }
     }
 
     private fun setListeners() {
@@ -72,7 +86,7 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
 //        pb_list.visibility = View.VISIBLE
     }
 
@@ -103,26 +117,27 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
         adapter.attachToRecyclerView(rv_list)
         adapter.setOnItemClickListener(this)
         rv_list.adapter = adapter
-
-        rv_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0 && floating_button.getVisibility() == View.VISIBLE) {
-                    floating_button.hide();
-                } else if (dy < 0 && floating_button.getVisibility() != View.VISIBLE) {
-                    floating_button.show();
+        if(type.equals(NEW_ONES)) {
+            rv_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0 && floating_button.getVisibility() == View.VISIBLE) {
+                        floating_button.hide();
+                    } else if (dy < 0 && floating_button.getVisibility() != View.VISIBLE) {
+                        floating_button.show();
+                    }
                 }
-            }
-        })
+            })
 
-        floating_button.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                Log.d(TAG_LOG,"act float btn")
-                val fragment = AddMainTestFragment.newInstance()
-                pushFragments(fragment, true)
+            floating_button.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(v: View?) {
+                    Log.d(TAG_LOG, "act float btn")
+                    val fragment = AddMainTestFragment.newInstance()
+                    pushFragments(fragment, true)
 //                AddTestActivity.start(activity as Activity)
-            }
-        })
+                }
+            })
+        }
     }
 
     override fun onItemClick(item: Test) {
@@ -165,7 +180,7 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                presenter.loadOfficialTestsByQUery(newText)
+                presenter.loadOfficialTestsByQUery(userId, newText, type)
 //                findFromList(newText)
                 return false
             }

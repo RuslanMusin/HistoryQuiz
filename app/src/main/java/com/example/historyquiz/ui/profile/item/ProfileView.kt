@@ -8,8 +8,6 @@ interface ProfileView: BasicFunctional {
 
     fun changePlayButton(isClickable: Boolean)
 
-    fun showProgressDialog()
-
     fun hideGameDialog()
 
     fun showGameDialog()

@@ -20,8 +20,8 @@ class LeaderStatsPresenter @Inject constructor() : BasePresenter<LeaderStatsView
         val disposable =  leaderStatRepository
             .findStats(AppHelper.currentUser)
             .map { stats -> stats.sortedWith(compareByDescending(LeaderStat::kg)) }
-            .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-            .doAfterTerminate(Action { viewState.hideLoading() })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
+            .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
         compositeDisposable.add(disposable)
     }

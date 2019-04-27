@@ -22,16 +22,16 @@ class MemberListPresenter @Inject constructor() : BasePresenter<MemberListView>(
     fun loadReadersByQuery(query: String) {
         userRepository
             .loadUsersByQuery(query)
-            .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-            .doAfterTerminate(Action { viewState.hideLoading() })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
+            .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
     }
 
     fun loadUsersByQueryAndType(query: String, userId: String, type: String) {
         userRepository!!
             .findUsersByTypeByQuery(query, userId, type)
-            .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-            .doAfterTerminate(Action { viewState.hideLoading() })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
+            .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
     }
 
@@ -54,7 +54,7 @@ class MemberListPresenter @Inject constructor() : BasePresenter<MemberListView>(
 
         }
         single
-            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading(compositeDisposable) })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
             .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
     }

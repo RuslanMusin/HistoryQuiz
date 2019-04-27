@@ -16,9 +16,11 @@ import com.example.historyquiz.ui.comment.CommentFragment
 import com.example.historyquiz.ui.comment.CommentPresenter
 import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.ABS_CARD
 import com.example.historyquiz.utils.Const.CARD_COMMENT_TYPE
+import com.example.historyquiz.utils.Const.PAGE_TITLE
+import com.example.historyquiz.utils.Const.PAGE_URL
 import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_card.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
@@ -110,10 +112,19 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
         li_wiki.setOnClickListener(this)
     }
 
+    override fun showListLoading() {
+        pg_list.visibility = View.GONE
+    }
+
+    override fun hideListLoading() {
+        pg_list.visibility = View.GONE
+    }
+
     private fun getWikiUrl() {
         if(card.wikiUrl != null){
             val args = Bundle()
-            args.putString(ABS_CARD, gson.toJson(card))
+            args.putString(PAGE_TITLE, card.name)
+            args.putString(PAGE_URL, card.wikiUrl)
             pushFragments(WikiPageFragment.newInstance(args), true)
 //            WebViewActivity.start(this, card)
         }else{

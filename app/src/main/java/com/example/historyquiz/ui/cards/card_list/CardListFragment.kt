@@ -14,10 +14,11 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
+import com.example.historyquiz.utils.Const.TIME_TYPE
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.gson
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import java.util.*
@@ -27,6 +28,7 @@ import javax.inject.Provider
 class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     lateinit var userId: String
+    lateinit var type: String
     private lateinit var adapter: CardAdapter
 
     lateinit var skills: MutableList<Card>
@@ -54,11 +56,12 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
         arguments?.let {
             userId = it.getString(USER_ID)
+            type = it.getString(TIME_TYPE)
+            initViews()
+            presenter.loadUserCards(userId)
         }
-        presenter.loadUserCards(userId)
     }
 
     private fun initViews() {
@@ -70,6 +73,11 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
     private fun setToolbar() {
         setActionBar(toolbar)
         setActionBarTitle(R.string.menu_cards)
+        if(!type.equals(OLD_ONES)) {
+            toolbar.setNavigationIcon(null)
+        } else {
+            toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        }
     }
 
     private fun setListeners() {
@@ -79,7 +87,7 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
 //        pb_list.visibility = View.VISIBLE
     }
 

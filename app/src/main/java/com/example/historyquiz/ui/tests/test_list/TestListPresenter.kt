@@ -17,23 +17,23 @@ class TestListPresenter @Inject constructor() : BasePresenter<TestListView>() {
     @Inject
     lateinit var testRepository: TestRepository
 
-    fun loadOfficialTestsByQUery(query: String) {
+    fun loadOfficialTestsByQUery(userId: String, query: String, type: String) {
         AppHelper.currentUser?.id?.let {
             val disposable = testRepository
-                .findTestsByQuery(query)
-                .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading(it) })
+                .findTestsByQuery(userId, query, type)
+                .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
                 .doAfterTerminate(Action { viewState.hideListLoading() })
                 .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
             compositeDisposable.add(disposable)
         }
     }
 
-    fun loadOfficialTests() {
+    fun loadOfficialTests(userId: String, type: String) {
         Log.d(TAG_LOG, "load tests")
         AppHelper.currentUser?.id?.let {
             testRepository
-                .findTests()
-                .doOnSubscribe({ viewState.showListLoading(it) })
+                .findTests(userId, type)
+                .doOnSubscribe({ viewState.showListLoading() })
                 .doAfterTerminate({ viewState.hideListLoading() })
                 .doAfterTerminate({ viewState.setNotLoading() })
                 .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })

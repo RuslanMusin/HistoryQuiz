@@ -60,7 +60,7 @@ class AddPhotoFragment: BaseFragment(), AddPhotoView {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
         pg_list.visibility = View.VISIBLE
     }
 

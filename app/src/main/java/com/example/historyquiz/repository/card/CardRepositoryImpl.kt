@@ -36,6 +36,7 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
     private val FIELD_ID = "id"
     private val FIELD_CARD_ID = "cardId"
     private val FIELD_TEST_ID = "testId"
+    private val FIELD_EPOCH_ID = "epochId"
     private val FIELD_INTELLIGENCE = "intelligence"
     private val FIELD_SUPPORT = "support"
     private val FIELD_PRESTIGE = "prestige"
@@ -57,6 +58,7 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
             result[FIELD_ID] = card.id
             result[FIELD_TEST_ID] = card.testId
             result[FIELD_CARD_ID] = card.cardId
+            result[FIELD_EPOCH_ID] = card.epochId
             result[FIELD_INTELLIGENCE] = card.intelligence
             result[FIELD_PRESTIGE] = card.prestige
             result[FIELD_HP] = card.hp

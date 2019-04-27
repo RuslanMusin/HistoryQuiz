@@ -49,7 +49,8 @@ class StatListFragment : BaseFragment(), StatListView {
 
     private fun initViews() {
         setActionBar(toolbar)
-        setActionBarTitle(R.string.menu_profile)
+        setActionBarTitle(R.string.statists)
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         setupViewPager(viewpager)
         tab_layout.setupWithViewPager(viewpager)
         viewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tab_layout))

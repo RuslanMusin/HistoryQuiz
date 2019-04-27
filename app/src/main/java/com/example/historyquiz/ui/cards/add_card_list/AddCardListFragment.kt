@@ -20,7 +20,6 @@ import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.gson
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_add_list.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.*
@@ -52,16 +51,21 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         initRecycler()
         hideLoading()
         hideListLoading()
+        setToolbar()
+        setHasOptionsMenu(true)
+    }
+
+    private fun setToolbar() {
         setActionBar(toolbar)
         setActionBarTitle(R.string.search_card)
-        setHasOptionsMenu(true)
+        toolbar.setOnClickListener { activity?.onBackPressed() }
     }
 
     override fun handleError(throwable: Throwable) {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
         pg_list.visibility = View.VISIBLE
     }
 

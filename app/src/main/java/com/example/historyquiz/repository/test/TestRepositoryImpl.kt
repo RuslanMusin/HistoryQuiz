@@ -7,10 +7,13 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.card.AbstractCardRepository
 import com.example.historyquiz.repository.card.CardRepositoryImpl
+import com.example.historyquiz.repository.epoch.EpochRepository
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AFTER_TEST
 import com.example.historyquiz.utils.Const.BEFORE_TEST
 import com.example.historyquiz.utils.Const.LOSE_GAME
+import com.example.historyquiz.utils.Const.NEW_ONES
+import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.QUERY_END
 import com.example.historyquiz.utils.Const.SEP
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -26,6 +29,8 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
 
     @Inject
     lateinit var abstractCardRepository: AbstractCardRepository
+    @Inject
+    lateinit var epochRepository: EpochRepository
 
     private val databaseReference: DatabaseReference
 
@@ -46,6 +51,7 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
     private val FIELD_AUTHOR_ID = "authorId"
     private val FIELD_AUTHOR_NAME = "authorName"
     private val FIELD_QUESTIONS = "questions"
+    private val FIELD_LINKS = "links"
     private val FIELD_DESC = "desc"
     private val FIELD_TYPE = "type"
     private val FIELD_IMAGE_URL = "imageUrl"
@@ -70,6 +76,7 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
         result[FIELD_AUTHOR_NAME] = test.authorName
         result[FIELD_CARD_ID] = test.cardId
         result[FIELD_QUESTIONS] = test.questions
+        result[FIELD_LINKS] = test.links
         result[FIELD_TYPE] = test.type
         result[FIELD_IMAGE_URL] = test.imageUrl
         result[FIELD_EPOCH_ID] = test.epochId
@@ -183,7 +190,7 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
                             Log.d(TAG_LOG, "no create abs")
                         }
                         card?.cardId = abstractCard?.id
-
+                        card?.epochId = test.epochId
                         Log.d(TAG_LOG, "after abstract")
                         val cardRepository = CardRepositoryImpl()
                         val crossingIdValues = cardRepository.toMap(card)
@@ -278,8 +285,8 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun findTests(): Single<List<Test>> {
-        var query: Query = databaseReference
+    override fun findTests(userId: String, type: String): Single<List<Test>> {
+        var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
         val single: Single<List<Test>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -297,17 +304,24 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val cards: MutableList<Test> = ArrayList()
                             for(snapshot in dataSnapshot.children) {
-                                val card = snapshot.getValue(Test::class.java)
-                                    if (relations.keys.contains(card?.id)) {
-                                        if(LOSE_GAME.equals(relations[card?.id]?.relation) || AFTER_TEST.equals(relations[card?.id]?.relation)) {
-                                            card?.testDone = true
-
-                                        }
-                                        card?.testRelation = relations[card?.id]
-                                    } else {
-                                        card?.testRelation = Relation()
+                                val test = snapshot.getValue(Test::class.java)
+                                if (relations.keys.contains(test?.id)) {
+                                    if(LOSE_GAME.equals(relations[test?.id]?.relation) || AFTER_TEST.equals(relations[test?.id]?.relation)) {
+                                        test?.testDone = true
                                     }
-                                    card?.let { cards.add(it) }
+                                    test?.testRelation = relations[test?.id]
+                                } else {
+                                    test?.testRelation = Relation()
+                                    test?.testDone = false
+                                }
+                                epochRepository.findEpoch(test?.epochId!!).subscribe { it ->
+                                    test.epoch = it
+                                }
+                                if(type.equals(NEW_ONES) && !test?.testDone!!) {
+                                    test?.let { cards.add(it) }
+                                } else if(type.equals(OLD_ONES) && test?.testDone!!) {
+                                    test?.let { cards.add(it) }
+                                }
 
 
                             }
@@ -326,8 +340,8 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun findTestsByQuery(userQuery: String): Single<List<Test>> {
-        var query: Query = databaseReference
+    override fun findTestsByQuery(userId: String, userQuery: String, type: String): Single<List<Test>> {
+        var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
         val single: Single<List<Test>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -346,11 +360,20 @@ class TestRepositoryImpl @Inject constructor() : TestRepository{
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val cards: MutableList<Test> = ArrayList()
                             for(snapshot in dataSnapshot.children) {
-                                val card = snapshot.getValue(Test::class.java)
-                                    if (elementIds.contains(card?.id)) {
-                                        card?.testDone = true
+                                val test = snapshot.getValue(Test::class.java)
+                                    if (elementIds.contains(test?.id)) {
+                                        test?.testDone = true
+                                    } else {
+                                        test?.testDone = false
                                     }
-                                    card?.let { cards.add(it) }
+                                epochRepository.findEpoch(test?.epochId!!).subscribe { it ->
+                                    test.epoch = it
+                                }
+                                if(type.equals(NEW_ONES) && !test?.testDone!!) {
+                                    test?.let { cards.add(it) }
+                                } else if(type.equals(OLD_ONES) && test?.testDone!!) {
+                                    test?.let { cards.add(it) }
+                                }
 
                             }
                             e.onSuccess(cards)

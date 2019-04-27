@@ -5,10 +5,12 @@ import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.ui.cards.card_list.CardListFragment
+import com.example.historyquiz.ui.cards.wiki_page.WikiPageFragment
 import com.example.historyquiz.ui.epoch.EpochListFragment
 import com.example.historyquiz.ui.game.add_game.AddGameFragment
 import com.example.historyquiz.ui.game.add_photo.AddPhotoFragment
 import com.example.historyquiz.ui.game.bot_play.BotGameFragment
+import com.example.historyquiz.ui.game.fast_game.FastGameFragment
 import com.example.historyquiz.ui.game.game_list.GameListFragment
 import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
@@ -20,6 +22,7 @@ import com.example.historyquiz.ui.statists.StatListFragment
 import com.example.historyquiz.ui.statists.tab_fragment.common_stats.CommonStatsFragment
 import com.example.historyquiz.ui.statists.tab_fragment.game_stats.GameStatsFragment
 import com.example.historyquiz.ui.statists.tab_fragment.leader_stats.LeaderStatsFragment
+import com.example.historyquiz.ui.tests.add_test.add_link.AddLinkFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment
@@ -158,6 +161,18 @@ interface AppModule {
     @FragmentScope
     @ContributesAndroidInjector()
     fun leaderStatListFragmentInjector(): LeaderStatsFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun wikiPageFragmentInjector(): WikiPageFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun addLinkFragmentInjector(): AddLinkFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector()
+    fun fastGameFragmentInjector(): FastGameFragment
 
 }
 

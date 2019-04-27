@@ -24,4 +24,7 @@
     <color name="game_card_prestige">#fbff00</color>
     <color name="game_card_hp">#ff5d5d</color>
     <color name="game_card_strength">#990000</color>
+
+    <color name="primary_dark_text">#28333D</color>
+
 </resources>

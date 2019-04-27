@@ -28,9 +28,12 @@ import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.userStatus
+import com.example.historyquiz.utils.Const.BOT_ID
+import com.example.historyquiz.utils.Const.NEW_ONES
 import com.example.historyquiz.utils.Const.OFFLINE_STATUS
 import com.example.historyquiz.utils.Const.STOP_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.TIME_TYPE
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.USER_ITEM
 import com.example.historyquiz.utils.Const.gson
@@ -399,27 +402,26 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         args.putString(USER_ITEM, gson.toJson(AppHelper.currentUser))
         val fragment = ProfileFragment.newInstance(args)
         pushFragments(fragment, true)
-        /*args.putString(ID_KEY, AppHelper.currentCurator.id)
-        val fragment = CuratorFragment.newInstance(args, this)
-        pushFragments(fragment, true)*/
     }
 
     private fun showGame(tabId: String) {
-//        showProfile(tabId)
         val fragment = GameListFragment.newInstance()
         pushFragments(fragment, true)
     }
 
     private fun showCards(tabId: String) {
-//        showProfile(tabId)
         val args = Bundle()
-        args.putString(USER_ID, AppHelper.currentUser.id)
+        args.putString(USER_ID, BOT_ID)
+        args.putString(TIME_TYPE, NEW_ONES)
         val fragment = CardListFragment.newInstance(args)
         pushFragments(fragment, true)
     }
 
     private fun showTests(tabId: String) {
-        val fragment = TestListFragment.newInstance()
+        val args = Bundle()
+        args.putString(TIME_TYPE, NEW_ONES)
+        args.putString(USER_ID, BOT_ID)
+        val fragment = TestListFragment.newInstance(args)
         pushFragments(fragment, true)
     }
 

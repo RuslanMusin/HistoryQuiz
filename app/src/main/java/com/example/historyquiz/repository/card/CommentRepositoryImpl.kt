@@ -2,6 +2,7 @@ package com.example.historyquiz.repository.card
 
 import android.util.Log
 import com.example.historyquiz.model.comment.Comment
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
@@ -13,6 +14,9 @@ import javax.inject.Inject
 class CommentRepositoryImpl @Inject constructor() : CommentRepository {
 
     val databaseReference: DatabaseReference
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     private val TABLE_NAME = "card_comments"
 
@@ -42,7 +46,12 @@ class CommentRepositoryImpl @Inject constructor() : CommentRepository {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val comments: MutableList<Comment> = ArrayList()
                     for (postSnapshot in dataSnapshot.children) {
-                        comments.add(postSnapshot.getValue(Comment::class.java)!!)
+                        val comment = postSnapshot.getValue(Comment::class.java)!!
+                        userRepository.readUserById(comment.authorId).subscribe { it ->
+                            comment.authorName = it.username
+                            comment.authorPhotoUrl = it.photoUrl
+                            comments.add(comment)
+                        }
                     }
                     e.onSuccess(comments)
 

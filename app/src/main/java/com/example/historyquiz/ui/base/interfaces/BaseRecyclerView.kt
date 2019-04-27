@@ -1,7 +1,6 @@
 package com.example.historyquiz.ui.base.interfaces
 
 import com.example.historyquiz.ui.base.BaseAdapter
-import io.reactivex.disposables.Disposable
 
 interface BaseRecyclerView<Entity> : BasicFunctional, BaseAdapter.OnItemClickListener<Entity> {
 
@@ -9,7 +8,7 @@ interface BaseRecyclerView<Entity> : BasicFunctional, BaseAdapter.OnItemClickLis
 
     fun setNotLoading()
 
-    fun showListLoading(disposable: Disposable)
+    fun showListLoading()
 
     fun hideListLoading()
 

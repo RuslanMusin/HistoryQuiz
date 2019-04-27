@@ -14,6 +14,7 @@ import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.DEFAULT_EPOCH_ID
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.getRandom
 import io.reactivex.Single
@@ -39,8 +40,9 @@ class BotGamePresenter @Inject constructor() : BasePresenter<BotGameView>(), Gam
 
     fun setInitState(initlobby: Lobby) {
         lobby = initlobby
+        lobby.epochId = DEFAULT_EPOCH_ID
         gameRepository.setLobbyRefs(lobby.id)
-        val single: Single<List<Card>> = cardRepository.findMyCards(currentId)
+        val single: Single<List<Card>> = cardRepository.findMyCardsByEpoch(currentId, lobby.epochId)
         single.subscribe { cards: List<Card>? ->
             cards?.let {
                 val mutCards = cards.toMutableList()
@@ -78,7 +80,7 @@ class BotGamePresenter @Inject constructor() : BasePresenter<BotGameView>(), Gam
         }
 
         Log.d(Const.TAG_LOG, "find bot cards")
-        val single: Single<List<Card>> = cardRepository.findMyCards(Const.BOT_ID)
+        val single: Single<List<Card>> = cardRepository.findMyCardsByEpoch(Const.BOT_ID, lobby.epochId)
         single.subscribe { cards ->
             //                gameRepository.selectOnBotLoseCard(cards)
             botCards = cards.toMutableList()

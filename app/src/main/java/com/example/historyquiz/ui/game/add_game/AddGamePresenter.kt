@@ -26,7 +26,7 @@ class AddGamePresenter @Inject constructor() : BasePresenter<AddGameView>() {
     }
 
     fun createGame(lobby: Lobby) {
-        cardRepository.findMyCards(AppHelper.currentId).subscribe { myCards ->
+        cardRepository.findMyCardsByEpoch(AppHelper.currentId, lobby.epochId).subscribe { myCards ->
             val mySize = myCards.size
             Log.d(Const.TAG_LOG,"mySize = $mySize and cardNumber = ${lobby.cardNumber}")
             if (mySize >= lobby.cardNumber) {

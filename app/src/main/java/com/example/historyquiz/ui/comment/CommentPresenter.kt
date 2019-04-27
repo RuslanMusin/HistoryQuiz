@@ -16,10 +16,10 @@ open class CommentPresenter @Inject constructor() : BasePresenter<CommentView>()
 //        viewState.startTimeout(R.string.failed_load_comments)
         val single: Single<List<Comment>> = commentRepository.getComments(type, elemId)
         val disposable = single
-            .doOnSubscribe({ viewState.showLoading(it) })
-                .doAfterTerminate({ viewState.hideLoading() })
+            .doOnSubscribe({ viewState.showListLoading() })
+                .doAfterTerminate({ viewState.hideListLoading() })
                 .subscribe { res ->
-                    viewState.showSnackBar("Comments loaded")
+                    viewState.showComments(res)
                   /* interceptSecondResponse(res, {
                        viewState.stopTimeout()
                        viewState.showComments(it)

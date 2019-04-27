@@ -22,7 +22,7 @@ interface TestRepository {
 
     fun findTests(cardsIds: List<String>): Single<List<Test>>
 
-    fun findTests(): Single<List<Test>>
+    fun findTests(userId: String, type: String): Single<List<Test>>
 
-    fun findTestsByQuery(userQuery: String): Single<List<Test>>
+    fun findTestsByQuery(userId: String, userQuery: String, type: String): Single<List<Test>>
 }

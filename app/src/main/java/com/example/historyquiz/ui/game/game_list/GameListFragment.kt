@@ -22,7 +22,6 @@ import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import java.util.*
@@ -76,7 +75,7 @@ class GameListFragment : BaseFragment(), GameListView {
     }
 
     private fun initRecycler() {
-        adapter = GameAdapter(ArrayList<Lobby>())
+        adapter = GameAdapter(this, ArrayList<Lobby>())
         val manager = LinearLayoutManager(this.activity)
         rv_list!!.layoutManager = manager
         rv_list!!.setEmptyView(tv_empty)
@@ -157,7 +156,7 @@ class GameListFragment : BaseFragment(), GameListView {
         pg_list.visibility = View.GONE
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
         pg_list.visibility = View.GONE
     }
 
@@ -181,8 +180,8 @@ class GameListFragment : BaseFragment(), GameListView {
     override fun hideProgressDialog() {
         showSnackBar("Противник не принял приглашение")
         isClickable = true
-        /*if (mProgressDialog != null && mProgressDialog!!.isShowing) {
-            mProgressDialog!!.dismiss()
+        /*if (dialog != null && dialog!!.isShowing) {
+            dialog!!.dismiss()
         }
         isClickable = true*/
     }

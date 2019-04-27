@@ -7,14 +7,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.epoch.UserEpoch
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.statists.StatListPresenter
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -75,7 +72,7 @@ class GameStatsFragment : BaseFragment(), GameStatsView {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
         pg_list.visibility = View.VISIBLE
     }
 

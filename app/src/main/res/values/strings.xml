@@ -181,4 +181,14 @@
     <string name="tab_all_users">Все</string>
     <string name="tab_requests">Предложения</string>
     <string name="tab_friends">Друзья</string>
+    <string name="tab_users">Пользователи</string>
+    <string name="question_numbers">Количество вопросов</string>
+    <string name="add_link">Добавить ссылку</string>
+    <string name="links">Ссылки</string>
+    <string name="add_epoch">Добавить эпоху</string>
+    <string name="link_name">Название ссылки</string>
+    <string name="url">URL</string>
+    <string name="create_fast_game">Предложить игру</string>
+    <string name="time_end">Время ожидания истекло</string>
+    <string name="not_accepted">Противник не принял приглашение</string>
 </resources>

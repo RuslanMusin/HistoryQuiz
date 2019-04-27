@@ -675,7 +675,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         listeners.put(enemyLobbyRef!!.child(LobbyPlayerData.PARAM_online), enemyConnectionListener)*/
     }
 
-    private fun readCardsByType(lobbyId: String, lobby: Lobby): Single<List<Card>> {
+    /*private fun readCardsByType(lobbyId: String, lobby: Lobby): Single<List<Card>> {
         val singleCards: Single<List<Card>>
         if(lobby.type.equals(OFFICIAL_TYPE)) {
             singleCards = cardRepository.findMyCards(lobbyId)
@@ -683,13 +683,13 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             singleCards = cardRepository.findMyCards(lobbyId)
         }
         return singleCards
-    }
+    }*/
 
     private fun selectOnLoseCard(lobby: Lobby) {
 
         lobby.gameData?.enemyId?.let {
-            readCardsByType(it,lobby).subscribe { enemyCards: List<Card>? ->
-                readCardsByType(currentId,lobby).subscribe { myCards: List<Card>? ->
+            cardRepository.findMyCardsByEpoch(it, lobby.epochId).subscribe { enemyCards: List<Card>? ->
+                cardRepository.findMyCardsByEpoch(currentId, lobby.epochId).subscribe { myCards: List<Card>? ->
                     onYouLoseCard = ArrayList(myCards).minus(enemyCards!!).getRandom()
                     if(onYouLoseCard == null) {
                         onYouLoseCard = myCards?.getRandom()
@@ -1091,12 +1091,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         val queryPart = userQuery.toLowerCase()
         var query = databaseReference.orderByChild(FIELD_LOWER_TITLE).startAt(queryPart).endAt(queryPart + QUERY_END)
         val single: Single<List<Lobby>> = Single.create { e ->
-            val cardSingle: Single<List<Card>>
-            if (type.equals(OFFICIAL_TYPE)) {
-                cardSingle = cardRepository.findMyCards(userId)
-            } else {
-                cardSingle = cardRepository.findMyCards(userId)
-            }
+            val cardSingle: Single<List<Card>> = cardRepository.findMyCards(userId)
             cardSingle.subscribe { myCards ->
                 val myNumber = myCards.size
                 query.addListenerForSingleValueEvent(object : ValueEventListener {

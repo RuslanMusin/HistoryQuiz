@@ -10,7 +10,6 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.TAG_LOG
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import java.util.*
@@ -116,6 +115,8 @@ abstract class CommentFragment: BaseFragment(), CommentView {
             user.let {
                 comment.content = commentText
                 comment.authorId = user.id
+                comment.authorName = user.username
+                comment.authorPhotoUrl = user.photoUrl
 //                comment.authorName = "${user.lastname} ${user.name} ${user.patronymic}"
                 comment.createdDate = (Date()).time
                 commentPresenter.createComment(type, elemId, comment)
@@ -123,16 +124,6 @@ abstract class CommentFragment: BaseFragment(), CommentView {
             addComment(comment)
         }
         clearAfterSendComment()
-    }
-
-    override fun showLoading(disposable: Disposable) {
-//        pb_list.visibility = View.VISIBLE
-
-    }
-
-    override fun hideLoading() {
-//        pb_list.visibility = View.GONE
-
     }
 
 }

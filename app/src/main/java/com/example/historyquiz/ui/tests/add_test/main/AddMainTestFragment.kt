@@ -10,23 +10,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.epoch.Epoch
+import com.example.historyquiz.model.test.Link
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.add_card_list.AddCardListFragment
 import com.example.historyquiz.ui.epoch.EpochListFragment
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
+import com.example.historyquiz.ui.tests.add_test.add_link.AddLinkFragment
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.ADD_EPOCH_CODE
+import com.example.historyquiz.utils.Const.ADD_LINK_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.EPOCH_KEY
+import com.example.historyquiz.utils.Const.LINK_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.gson
@@ -49,6 +56,13 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     private var imageUri: Uri? = null
 
     lateinit var test: Test
+    private lateinit var checkListener: View.OnClickListener
+
+    private var links: MutableList<Link> = ArrayList()
+
+    private var imageViews: MutableList<ImageView> = ArrayList()
+    private var liViews: MutableList<LinearLayout> = ArrayList()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_test, container, false)
@@ -98,7 +112,20 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         btn_create_questions.setOnClickListener(this)
         tv_add_card.setOnClickListener(this)
         btn_back.setOnClickListener(this)
-        li_choose_epoch.setOnClickListener(this)
+        tv_add_epoch.setOnClickListener(this)
+        tv_add_link.setOnClickListener(this)
+
+        checkListener = object: View.OnClickListener{
+            override fun onClick(v: View?) {
+                val ivRemove = v as ImageView
+                val index = imageViews.indexOf(ivRemove)
+                val liSkill = liViews[index]
+                li_added_links.removeView(liSkill)
+                liViews.removeAt(index)
+                imageViews.removeAt(index)
+                links.removeAt(index)
+            }
+        }
     }
 
     override fun onClick(v: View) {
@@ -107,7 +134,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
             R.id.btn_create_questions -> {
                 test!!.title = et_test_name.text.toString()
                 test!!.desc = et_test_desc.text.toString()
-
+                test.links = links
 //                addTestView!!.setTest(test!!)
 
                 if(checkTest()) {//
@@ -133,9 +160,15 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
 
             }
 
-            R.id.li_choose_epoch -> {
+            R.id.tv_add_epoch -> {
                 val fragment = EpochListFragment.newInstance()
                 fragment.setTargetFragment(this, ADD_EPOCH_CODE)
+                showFragment(this, fragment)
+            }
+
+            R.id.tv_add_link -> {
+                val fragment = AddLinkFragment.newInstance()
+                fragment.setTargetFragment(this, ADD_LINK_CODE)
                 showFragment(this, fragment)
             }
 
@@ -188,12 +221,31 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
 
         if (reqCode == ADD_EPOCH_CODE && resultCode == RESULT_OK) {
             val epoch = gson.fromJson(data!!.getStringExtra(EPOCH_KEY), Epoch::class.java)
-            tv_epoch!!.text = epoch.name
-            test!!.epoch = epoch
-            test!!.epochId = epoch.id
-            test!!.card?.epochId = epoch.id
+            test.epochId = epoch.id
+            li_added_epoch.visibility = View.VISIBLE
+            tv_added_epoch!!.text = epoch.name
+            tv_test_epoch_name.setError(null);
+        }
+
+        if (reqCode == ADD_LINK_CODE && resultCode == RESULT_OK) {
+            val link = gson.fromJson(data!!.getStringExtra(LINK_ITEM), Link::class.java)
+            links.add(link)
+            addLinkView(link)
         }
     }
+
+    private fun addLinkView(link: Link) {
+        val view: View = layoutInflater.inflate(R.layout.item_link_clear, li_added_links,false)
+        val ivRemoveSkill: ImageView = view.findViewById(R.id.iv_remove_skill)
+        val tvAddedSkill: TextView = view.findViewById(R.id.tv_added_skill_name)
+
+        ivRemoveSkill.setOnClickListener(checkListener)
+        tvAddedSkill.text = link.name
+        imageViews.add(ivRemoveSkill)
+        liViews.add(view as LinearLayout)
+        li_added_links.addView(view)
+    }
+
 
     companion object {
 

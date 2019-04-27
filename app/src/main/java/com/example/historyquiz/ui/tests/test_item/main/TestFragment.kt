@@ -8,24 +8,32 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
+import com.example.historyquiz.model.test.Link
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.cards.wiki_page.WikiPageFragment
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.AFTER_TEST
+import com.example.historyquiz.utils.Const.BOT_ID
+import com.example.historyquiz.utils.Const.NEW_ONES
+import com.example.historyquiz.utils.Const.OLD_ONES
+import com.example.historyquiz.utils.Const.PAGE_TITLE
+import com.example.historyquiz.utils.Const.PAGE_URL
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
-import com.example.historyquiz.utils.Const.WIN_GAME
 import com.example.historyquiz.utils.Const.gson
-import kotlinx.android.synthetic.main.layout_expandable_text_view.*
+import kotlinx.android.synthetic.main.layout_expandable.*
+import kotlinx.android.synthetic.main.layout_links.*
 import kotlinx.android.synthetic.main.layout_test.*
 import kotlinx.android.synthetic.main.toolbar_back.*
 import javax.inject.Inject
@@ -63,7 +71,12 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
 
     override fun performBackPressed() {
         removeStackDownTo()
-        val fragment = TestListFragment.newInstance()
+        val type = if(test.testDone) OLD_ONES else NEW_ONES
+        val userId = if(test.testDone) currentId else BOT_ID
+        val args = Bundle()
+        args.putString(Const.TIME_TYPE, type)
+        args.putString(Const.USER_ID, userId)
+        val fragment = TestListFragment.newInstance(args)
         pushFragments(fragment, true)
     }
 
@@ -98,21 +111,73 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         } else {
             tv_done.text = getText(R.string.test_was_done)
         }
+        if(currentId.equals(test.authorId)) {
+            tv_do_test.visibility = View.GONE
+        }
         val relation: String? = test.testRelation?.relation
         Log.d(TAG_LOG,"has card = $relation and has test = ${test.testDone}")
-        if(relation.equals(AFTER_TEST) || relation.equals(WIN_GAME)) {
+       /* if(relation.equals(AFTER_TEST) || relation.equals(WIN_GAME)) {
             tv_card_done.text = getText(R.string.test_was_done)
         } else {
             tv_card_done.text = getText(R.string.test_wasnt_done)
-        }
-        expand_text_view.text = test.desc
+        }*/
+        tv_content.text = test.desc
         tv_name.text = test.title
+        tv_test_name.text = test.title
+        tv_questions.text = test.questions.size.toString()
+        tv_epoch.text = test.epoch?.name
         test.card?.abstractCard?.photoUrl?.let {
             Glide.with(iv_portrait.context)
                 .load(it)
                 .into(iv_portrait)
         }
+        if(test.links.size == 0) {
+            li_links.visibility = View.GONE
+        } else {
+            for(skill in test.links) {
+                addLinkView(skill)
+            }
+        }
         hideLoading()
+    }
+
+    private fun addLinkView(skill: Link) {
+        val view: View = layoutInflater.inflate(R.layout.item_link, li_added_links,false)
+        val tvAddedSkill: TextView = view.findViewById(R.id.tv_link_name)
+        val tvContent: TextView = view.findViewById(R.id.tv_link_content)
+
+        tvAddedSkill.text = skill.name
+        tvAddedSkill.setOnClickListener { loadPage(skill) }
+        tvContent.text = skill.content
+        li_added_links.addView(view)
+    }
+
+    private fun loadPage(link: Link) {
+        val args = Bundle()
+        args.putString(PAGE_TITLE, link.name)
+        args.putString(PAGE_URL, link.url)
+        pushFragments(WikiPageFragment.newInstance(args), true)
+
+    }
+
+    fun showDescription() {
+        expandable_layout.toggle()
+        if(expandable_layout.isExpanded) {
+            iv_arrow.rotation = 180f
+//            iv_arrow.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp)
+        } else {
+//            iv_arrow.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp)
+            iv_arrow.rotation = 0f
+        }
+    }
+
+    fun showLinks() {
+        expandable_link_layout.toggle()
+        if(expandable_link_layout.isExpanded) {
+            iv_link_arrow.rotation = 180f
+        } else {
+            iv_link_arrow.rotation = 0f
+        }
     }
 
     private fun initViews(view: View) {
@@ -123,6 +188,8 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
     private fun setListeners() {
         tv_do_test.setOnClickListener(this)
         btn_back.setOnClickListener(this)
+        li_description.setOnClickListener(this)
+        li_links.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -144,6 +211,11 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
             }
 
             R.id.btn_back -> performBackPressed()
+
+            R.id.li_description -> showDescription()
+
+            R.id.li_links -> showLinks()
+
         }
     }
 

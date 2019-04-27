@@ -17,7 +17,7 @@
     <item
         android:id="@+id/action_cards"
         android:title="@string/menu_cards"
-        android:icon="@drawable/ic_event_note_black_24dp"
+        android:icon="@drawable/ic_portrait_black_24dp"
         app:showAsAction="ifRoom" />
 
     <item

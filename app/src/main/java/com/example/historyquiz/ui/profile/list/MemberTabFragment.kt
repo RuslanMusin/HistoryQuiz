@@ -52,7 +52,7 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
 
     private fun initViews() {
         setActionBar(toolbar)
-        setActionBarTitle(R.string.menu_profile)
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         setupViewPager(viewpager)
         tab_layout.setupWithViewPager(viewpager)
         viewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tab_layout))

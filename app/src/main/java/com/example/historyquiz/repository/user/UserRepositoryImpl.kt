@@ -1,6 +1,5 @@
 package com.example.historyquiz.repository.user
 
-import android.icu.lang.UCharacter.SentenceBreak.SEP
 import android.util.Log
 import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.user.User
@@ -15,6 +14,7 @@ import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.QUERY_END
 import com.example.historyquiz.utils.Const.REMOVE_FRIEND
 import com.example.historyquiz.utils.Const.REMOVE_REQUEST
+import com.example.historyquiz.utils.Const.SEP
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_FRIENDS
 import com.example.historyquiz.utils.RxUtils

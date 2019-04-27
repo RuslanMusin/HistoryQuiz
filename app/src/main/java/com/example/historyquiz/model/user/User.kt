@@ -19,6 +19,8 @@ class User {
 
     var lowerUsername: String? = null
 
+    var description: String? = null
+
     lateinit var photoUrl: String
 
     var score: String? = null

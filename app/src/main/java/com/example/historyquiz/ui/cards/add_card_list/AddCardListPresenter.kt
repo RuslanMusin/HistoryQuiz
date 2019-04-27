@@ -27,7 +27,7 @@ class AddCardListPresenter @Inject constructor() : BasePresenter<AddCardListView
         Log.d(TAG_LOG,"pres opensearch")
         wikiApiRepository
                 .opensearch(opensearch)
-                .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading(it) })
+                .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
                 .doAfterTerminate(Action { viewState.hideListLoading() })
                 .subscribe({ viewState.setOpenSearchList(it) }, { viewState.handleError(it) })
     }

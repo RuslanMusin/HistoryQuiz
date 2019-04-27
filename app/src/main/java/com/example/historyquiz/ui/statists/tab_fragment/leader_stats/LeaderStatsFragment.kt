@@ -12,7 +12,6 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.epoch.LeaderStat
 import com.example.historyquiz.ui.base.BaseFragment
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -73,7 +72,7 @@ class LeaderStatsFragment : BaseFragment(), LeaderStatsView {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
         pg_list.visibility = View.VISIBLE
     }
 

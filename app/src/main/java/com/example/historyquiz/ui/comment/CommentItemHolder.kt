@@ -10,6 +10,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.comment.Comment
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.FormatterUtil
 import com.ms.square.android.expandabletextview.ExpandableTextView
 import kotlinx.android.synthetic.main.item_comment.view.*
@@ -32,7 +33,8 @@ class CommentItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         itemView.iv_cover.setOnClickListener { authorId?.let { it1 -> commentClickListener!!.onAuthorClick(it1) } }
 
-        fillComment(comment)
+        AppHelper.loadUserPhoto(itemView.iv_cover, comment.authorPhotoUrl!!)
+//        fillComment(comment)
 
     }
 

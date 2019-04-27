@@ -15,8 +15,8 @@ import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.gson
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.fragment_test_list.*
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -51,7 +51,9 @@ class EpochListFragment : BaseFragment(), EpochListView {
     }
 
     private fun initViews(view: View) {
-
+        setActionBar(toolbar)
+        toolbar.title = getString(R.string.choose_epoch)
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
     }
 
 
@@ -63,6 +65,8 @@ class EpochListFragment : BaseFragment(), EpochListView {
         adapter!!.attachToRecyclerView(rv_list!!)
         adapter!!.setOnItemClickListener(this)
         rv_list!!.adapter = adapter
+
+        floating_button.visibility = View.GONE
     }
 
     override fun handleError(error: Throwable) {
@@ -85,7 +89,7 @@ class EpochListFragment : BaseFragment(), EpochListView {
         pg_list.visibility = View.GONE
     }
 
-    override fun showListLoading(disposable: Disposable) {
+    override fun showListLoading() {
         pg_list.visibility = View.GONE
     }
 
@@ -100,8 +104,8 @@ class EpochListFragment : BaseFragment(), EpochListView {
     override fun hideProgressDialog() {
         showSnackBar("Противник не принял приглашение")
         isClickable = true
-        /*if (mProgressDialog != null && mProgressDialog!!.isShowing) {
-            mProgressDialog!!.dismiss()
+        /*if (dialog != null && dialog!!.isShowing) {
+            dialog!!.dismiss()
         }
         isClickable = true*/
     }

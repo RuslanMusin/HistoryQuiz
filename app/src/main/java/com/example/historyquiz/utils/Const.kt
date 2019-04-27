@@ -65,12 +65,15 @@ object Const {
     const val BEFORE_TEST = "before_test"
 
     //comment types
-    const val CARD_COMMENT_TYPE = "CARD_COMMENT_TYPE"
+    const val CARD_COMMENT_TYPE = "card_comments"
 
     //TestType
     const val TEST_ONE_TYPE = "test_one_type"
     const val TEST_MANY_TYPE = "test_many_type"
 
+    const val TIME_TYPE = "TIME_TYPE"
+    const val NEW_ONES = "NEW_ONES"
+    const val OLD_ONES = "OLD_ONES"
     //items
     const val PHOTO_ITEM = "PHOTO_ITEM"
     const val USER_ITEM = "USER_ITEM"
@@ -78,18 +81,23 @@ object Const {
     const val CARD_ITEM = "CARD_ITEM"
     const val ABS_CARD = "ABS_CARD"
     const val ITEM_ITEM = "ITEM_ITEM"
+    const val LINK_ITEM = "LINK_ITEM"
 
     //id's
     const val TEST_ID = "TEST_ID"
     const val USER_ID = "USER_ID"
     const val BOT_ID = "JmHmHZUIUORNR42aqXmzV5VujwN2"
+    const val DEFAULT_EPOCH_ID = "-LceLTNbCEbXB00ismFk"
 
     //args
     const val QUESTION_NUMBER = "queston_number"
+    const val PAGE_TITLE = "PAGE_TITLE"
+    const val PAGE_URL = "PAGE_URL"
 
     //result nums
     const val ADD_CARD_CODE = 0
     const val ADD_EPOCH_CODE = 1
+    const val ADD_LINK_CODE = 2
 
 
     const val ONLINE_GAME = "online_game"

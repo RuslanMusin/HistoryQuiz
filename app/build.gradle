@@ -112,6 +112,9 @@ dependencies {
     //ExpandableTextView
     implementation 'com.ms-square:expandableTextView:0.1.4'
 
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
+
+
     //Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version" // use -ktx for Kotlin
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version"

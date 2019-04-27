@@ -18,7 +18,6 @@ import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USERS_LIST_TYPE
 import com.example.historyquiz.utils.Const.gson
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.*
 import java.util.regex.Pattern
@@ -73,12 +72,12 @@ class MemberListFragment : BaseFragment(), MemberListView {
 
     }
 
-    override fun showListLoading(disposable: Disposable) {
-
+    override fun showListLoading() {
+        pg_list.visibility = View.VISIBLE
     }
 
     override fun hideListLoading() {
-
+        pg_list.visibility = View.GONE
     }
 
     override fun loadNextElements(i: Int) {

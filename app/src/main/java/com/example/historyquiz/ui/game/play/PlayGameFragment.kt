@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -30,6 +31,7 @@ import com.example.historyquiz.ui.game.game_list.GameListFragment
 import com.example.historyquiz.ui.game.play.change_list.GameChangeListAdapter
 import com.example.historyquiz.ui.game.play.list.GameCardsListAdapter
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.MODE_CARD_VIEW
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -82,6 +84,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
 
     lateinit var adapter: GameCardsListAdapter
+
+    override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
+        navigationView.changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 //        setStatus(IN_GAME_STATUS)

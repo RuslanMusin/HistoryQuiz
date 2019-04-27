@@ -20,8 +20,8 @@ class CommonStatsPresenter @Inject constructor() : BasePresenter<CommonStatsView
         val disposable =  userEpochRepository
             .findUserEpoches(AppHelper.currentUser.id)
             .map { epoches -> epoches.sortedWith(compareByDescending(UserEpoch::keSub)) }
-            .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-            .doAfterTerminate(Action { viewState.hideLoading() })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
+            .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
         compositeDisposable.add(disposable)
     }

@@ -6,7 +6,6 @@ import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.epoch.Epoch
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import java.util.*
 
 @IgnoreExtraProperties
 class Test {
@@ -26,6 +25,8 @@ class Test {
     var cardId: String? = null
 
     var questions: MutableList<Question> = ArrayList()
+
+    var links: MutableList<Link> = ArrayList()
 
     var type: String? = null
 

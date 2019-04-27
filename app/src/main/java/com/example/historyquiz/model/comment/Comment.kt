@@ -10,7 +10,7 @@ class Comment {
 
     var id: String? = null
     var content: String? = null
-    var authorId: String? = null
+    lateinit var authorId: String
     var createdDate: Long = 0
 
     @Exclude
