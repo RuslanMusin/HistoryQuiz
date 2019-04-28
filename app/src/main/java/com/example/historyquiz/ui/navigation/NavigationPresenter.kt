@@ -1,5 +1,6 @@
 package com.example.historyquiz.ui.navigation
 
+import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
@@ -16,6 +17,8 @@ import com.example.historyquiz.utils.AppHelper.Companion.userStatus
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ONLINE_GAME
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.gson
+import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
 @InjectViewState
@@ -26,6 +29,8 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
 
     @Inject
     lateinit var gameRepository: GameRepository
+    @Inject
+    lateinit var fireAuth: FirebaseAuth
 
     var isStopped: Boolean = false
     var isWaiting: Boolean = false
@@ -100,5 +105,28 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
                 waitEnemy()
             }
         }
+    }
+
+    fun signIn(email: String, password: String) {
+        fireAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener({ task ->
+                if (task.isSuccessful) {
+                    val user = fireAuth!!.currentUser
+                    viewState.createCookie(email, password)
+                    userRepository?.readUserById(currentId)
+                        .subscribe { user ->
+                            user?.let {
+                                Log.d(TAG_LOG, "have user")
+                                AppHelper.currentUser = it
+                                it.status = Const.ONLINE_STATUS
+                                userRepository.changeUserStatus(it).subscribe()
+                                gameRepository.removeRedundantLobbies(true)
+                                val args = Bundle()
+                                args.putString(Const.USER_ITEM, gson.toJson(currentUser))
+                                viewState.openNavigationPage()
+                            }
+                        }
+                }
+            })
     }
 }

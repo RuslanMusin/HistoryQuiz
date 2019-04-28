@@ -38,11 +38,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 
     override fun createUser(user: User) {
         databaseReference.child(user.id!!).setValue(user) { databaseError, databaseReference ->
-            if (databaseError != null) {
-                Log.d(TAG, "database error = " + databaseError.message)
-            }
-            Log.d(TAG, "completed")
-            userEpochRepository.get().createStartEpoches(user)
+            userEpochRepository.get().createStartEpoches(user, true)
         }
     }
 
@@ -79,8 +75,9 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
     }
 
     override fun updateUser(user: User) {
-        val updatedValues = HashMap<String, Any>()
-        databaseReference.child(user.id!!).updateChildren(updatedValues)
+        /*val updatedValues = HashMap<String, Any>()
+        databaseReference.child(user.id!!).updateChildren(updatedValues)*/
+        databaseReference.child(user.id).setValue(user)
     }
 
     override fun changeUserStatus(user: User): Single<Boolean> {

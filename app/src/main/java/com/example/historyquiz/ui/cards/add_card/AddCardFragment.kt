@@ -47,6 +47,10 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
 
     private var isBalanced: Boolean = true
 
+    /*override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
+    }*/
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.activity_add_card, container, false)
         return view

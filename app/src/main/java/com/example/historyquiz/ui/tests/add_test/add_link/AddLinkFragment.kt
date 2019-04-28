@@ -31,6 +31,11 @@ class AddLinkFragment : BaseFragment(), AddLinkView, View.OnClickListener {
     @ProvidePresenter
     fun providePresenter(): AddLinkPresenter = presenterProvider.get()
 
+   /* android:descendantFocusability="beforeDescendants"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"*/
+
     companion object {
 
         fun newInstance(): Fragment {
@@ -38,7 +43,6 @@ class AddLinkFragment : BaseFragment(), AddLinkView, View.OnClickListener {
             return fragment
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

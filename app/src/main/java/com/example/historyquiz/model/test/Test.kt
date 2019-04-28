@@ -10,7 +10,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 @IgnoreExtraProperties
 class Test {
 
-    var id: String? = null
+    lateinit var id: String
 
     var title: String? = null
 
@@ -44,6 +44,9 @@ class Test {
     var testDone: Boolean = false
 
     @Exclude
+    var procent: Long = 0
+
+    @Exclude
     var epoch: Epoch? = null
 
     @field:Exclude var testRelation: Relation? = null
@@ -53,4 +56,7 @@ class Test {
 
     @Exclude
     lateinit var wrongQuestions: List<Question>
+
+    var usersIds: MutableList<String> = ArrayList()
+
 }

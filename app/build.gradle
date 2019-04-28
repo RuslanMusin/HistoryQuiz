@@ -122,6 +122,7 @@ dependencies {
     //MaterialDesign
     implementation 'com.jaredrummler:material-spinner:1.2.5'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
 
     //Stream
     implementation 'com.annimon:stream:1.2.0'

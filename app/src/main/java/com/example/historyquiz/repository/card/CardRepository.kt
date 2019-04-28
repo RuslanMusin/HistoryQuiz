@@ -22,4 +22,6 @@ interface CardRepository {
     fun findMyAbstractCardStates(abstractCardId: String, userId: String): Single<List<Card>>
 
     fun addCardAfterGame(cardId: String , winnerId: String, loserId: String): Single<Boolean>
+
+    fun isUserHasCard(userId: String, cardId: String): Single<Boolean>
 }

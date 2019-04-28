@@ -7,8 +7,8 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.repository.test.TestRepository
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AFTER_TEST
-import com.example.historyquiz.utils.Const.BEFORE_TEST
-import com.example.historyquiz.utils.Const.LOSE_GAME
+import com.example.historyquiz.utils.Const.BOT_ID
+import com.example.historyquiz.utils.Const.CARD_NUMBER
 import com.example.historyquiz.utils.Const.SEP
 import com.example.historyquiz.utils.Const.WIN_GAME
 import com.example.historyquiz.utils.RxUtils
@@ -87,66 +87,40 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
     override fun addCardAfterGame(cardId: String , winnerId: String, loserId: String): Single<Boolean> {
         val single: Single<Boolean> = Single.create { e ->
             val childUpdates = HashMap<String, Any>()
-            this.readCard(cardId)
-                .subscribe { card ->
-                    val test: Test? = card?.test
-                    test?.id?.let {
-                        testRepository.changeStatus(it, winnerId, WIN_GAME).subscribe { relationWinner ->
-                            if (LOSE_GAME.equals(relationWinner.relBefore) || BEFORE_TEST.equals(relationWinner.relBefore)) {
-                                var addTestValues: Map<String, Any?> = HashMap()
-                                if (LOSE_GAME.equals(relationWinner.relBefore)) {
-                                    addTestValues = testRepository.toMap(test?.id, AFTER_TEST)
-                                }
-                                if (BEFORE_TEST.equals(relationWinner.relBefore)) {
-                                    addTestValues = testRepository.toMap(test?.id, WIN_GAME)
-
-                                }
-                                val addCardValues = toMapId(cardId)
-                                childUpdates[USERS_CARDS + Const.SEP + winnerId + SEP + cardId] = addCardValues
-                                childUpdates[USERS_TESTS + Const.SEP + winnerId + SEP + test.id] = addTestValues
-                            }
-                            testRepository.changeStatus(it, loserId, LOSE_GAME).subscribe { relationLoser ->
-                                if (WIN_GAME.equals(relationLoser.relBefore) || AFTER_TEST.equals(relationLoser.relBefore)) {
-                                    var removeTestValues: Map<String, Any?> = HashMap()
-                                    if (WIN_GAME.equals(relationLoser.relBefore)) {
-                                        removeTestValues = testRepository.toMap(null, null)
+            findMyCards(loserId).subscribe { loserCards ->
+                this.readCard(cardId)
+                    .subscribe { card ->
+                        val test: Test? = card?.test
+                        test?.id?.let {
+                            val addCardValues = toMapId(cardId)
+                            childUpdates[USERS_CARDS + Const.SEP + winnerId + SEP + cardId] = addCardValues
+                            val removeCardValues = toMapId(null)
+                            childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
+                            this.findMyAbstractCardStates(it, winnerId)
+                                .subscribe { winnerCards ->
+                                    if (winnerCards.size == 0) {
+                                        val addAbstractCardValues = abstractCardRepository.toMapId(it)
+                                        childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + it] =
+                                                addAbstractCardValues
                                     }
-                                    if (AFTER_TEST.equals(relationLoser.relBefore)) {
-                                        removeTestValues = testRepository.toMap(test.id, LOSE_GAME)
-                                    }
-                                    val removeCardValues = toMapId(null)
-                                    childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
-                                    childUpdates[USERS_TESTS + Const.SEP + loserId + SEP + test.id] = removeTestValues
-                                }
-
-                                card.cardId!!.let {
-                                    if (LOSE_GAME.equals(relationWinner.relBefore) || BEFORE_TEST.equals(relationWinner.relBefore)) {
-                                        this.findMyAbstractCardStates(it, winnerId)
-                                            .subscribe { winnerCards ->
-                                                if (winnerCards.size == 0) {
-                                                    val addAbstractCardValues = abstractCardRepository.toMapId(it)
-                                                    childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + it] = addAbstractCardValues
+                                    if (loserCards.size > CARD_NUMBER && !loserId.equals(BOT_ID)) {
+                                        this.findMyAbstractCardStates(it, loserId)
+                                            .subscribe { loserCards ->
+                                                if (loserCards.size == 1) {
+                                                    val removeAbstractCardValues =
+                                                        abstractCardRepository.toMapId(null)
+                                                    childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + it] =
+                                                            removeAbstractCardValues
                                                 }
-                                                this.findMyAbstractCardStates(it, loserId)
-                                                    .subscribe { loserCards ->
-                                                        if (loserCards.size == 1) {
-                                                            val removeAbstractCardValues = abstractCardRepository.toMapId(null)
-                                                            childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + it] = removeAbstractCardValues
-                                                        }
-                                                        databaseReference.root.updateChildren(childUpdates)
-                                                        e.onSuccess(true)
-                                                    }
+                                                databaseReference.root.updateChildren(childUpdates)
+                                                e.onSuccess(true)
                                             }
                                     }
                                 }
 
-                            }
                         }
-
                     }
-
-
-                }
+            }
         }
         return single.compose(RxUtils.asyncSingle())
     }
@@ -249,6 +223,25 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
                 }
             })
         }
+    }
+
+    override fun isUserHasCard(userId: String, cardId: String): Single<Boolean> {
+        val query: Query = databaseReference.root.child(USERS_CARDS).child(userId).child(cardId)
+        val single: Single<Boolean> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if(dataSnapshot.exists()) {
+                        e.onSuccess(true)
+                    } else {
+                        e.onSuccess(false)
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+        }
+        return single.compose(RxUtils.asyncSingle())
     }
 
     override fun findMyCardsByEpoch(userId: String, epochId: String): Single<List<Card>> {

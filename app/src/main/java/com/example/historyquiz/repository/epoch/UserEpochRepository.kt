@@ -11,13 +11,13 @@ interface UserEpochRepository {
 
     fun findUserEpoch(userId: String, epochId: String): Single<UserEpoch>
 
-    fun findUserEpoches(userId: String): Single<List<UserEpoch>>
+    fun findUserEpoches(userId: String, hasDefault: Boolean): Single<List<UserEpoch>>
 
     fun findEpochById(epoches: List<Epoch>, epochId: String): Epoch
 
     fun updateUserEpoch(userEpoch: UserEpoch): Single<Boolean>
 
-    fun createStartEpoches(user: User)
+    fun createStartEpoches(user: User, hasDefault: Boolean)
 
     fun updateAfterGame(lobby: Lobby, playerId: String?, isWin: Boolean, score: Int): Single<Boolean>
 

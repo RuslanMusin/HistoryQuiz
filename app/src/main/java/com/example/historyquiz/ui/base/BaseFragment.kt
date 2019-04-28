@@ -21,7 +21,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
         super.onAttach(context)
         (activity as BasicFunctional).setOfflineChecking()
         setWaitStatus(false)
-
     }
 
     override fun setOfflineChecking() {
@@ -128,6 +127,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
 
     override fun setWaitStatus(isWaiting: Boolean) {
         (activity as BasicFunctional).setWaitStatus(isWaiting)
+    }
+
+    override fun setBottomNavigationStatus(hasBottomNavigation: Boolean) {
+        (activity as BasicFunctional).setBottomNavigationStatus(hasBottomNavigation)
     }
 
 }

@@ -78,10 +78,6 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
         val testStr: String? = arguments?.getString(Const.ABS_CARD)
         card = gson.fromJson(testStr, AbstractCard::class.java)
         card.id?.let { elemId = it }
-        /*(activity as BaseBackActivity).currentTag = TEST_FRAGMENT
-        test.title?.let { (activity as ChangeToolbarListener).changeToolbar(TEST_FRAGMENT, it) }*/
-        setStatus(Const.ONLINE_STATUS)
-        setWaitStatus(true)
         return view
     }
 
@@ -92,6 +88,8 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
         setListeners()
         setData()
         card.id?.let { commentPresenter.loadComments(CARD_COMMENT_TYPE, it) }
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
     }
 
     fun setData() {

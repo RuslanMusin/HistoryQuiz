@@ -9,8 +9,10 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AVATAR
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
@@ -33,7 +35,7 @@ class SignUpPresenter @Inject constructor() : BasePresenter<SignUpView>() {
         fireAuth.createUserWithEmailAndPassword(user.email!!, user.password!!)
             .addOnCompleteListener( {task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
+                    // Sign in success, update UI with the signed-in user'setBottomNavigationStatus information
                     Log.d(TAG_LOG, "createUserWithEmail:success")
                     createInDatabase(user, imageUri)
                     updateUI(user)
@@ -95,6 +97,8 @@ class SignUpPresenter @Inject constructor() : BasePresenter<SignUpView>() {
     private fun updateUI(user: User) {
         viewState.hideProgressDialog()
         AppHelper.currentUser = user
+        currentUser.status = ONLINE_STATUS
+        userRepository.changeUserStatus(currentUser).subscribe()
         viewState.goToProfile(user)
     }
 }

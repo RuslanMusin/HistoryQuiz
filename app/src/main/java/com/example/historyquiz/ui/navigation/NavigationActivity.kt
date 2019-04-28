@@ -2,6 +2,7 @@ package com.example.historyquiz.ui.navigation
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -27,6 +28,8 @@ import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.ui.profile.item.ProfileFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentId
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.AppHelper.Companion.userStatus
 import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.NEW_ONES
@@ -34,17 +37,21 @@ import com.example.historyquiz.utils.Const.OFFLINE_STATUS
 import com.example.historyquiz.utils.Const.STOP_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TIME_TYPE
+import com.example.historyquiz.utils.Const.USER_DATA_PREFERENCES
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.USER_ITEM
+import com.example.historyquiz.utils.Const.USER_PASSWORD
+import com.example.historyquiz.utils.Const.USER_USERNAME
 import com.example.historyquiz.utils.Const.gson
 import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.layout_connectivity.*
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
-open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListener {
+open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var presenter: NavigationPresenter
@@ -62,6 +69,8 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     var lastRequest: (() -> Unit)? = null
 
     lateinit var dialog: MaterialDialog
+
+    var hasBottomNavigation: Boolean = true
 
     companion object {
 
@@ -105,6 +114,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         stacks[SHOW_GAME] = Stack()
         stacks[SHOW_TESTS] = Stack()
         stacks[SHOW_CARDS] = Stack()
+        stacks[SHOW_AUTH] = Stack()
 
         relativeTabs = HashMap()
         relativeTabs[TAB_AUTH] = SHOW_AUTH
@@ -112,6 +122,9 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         relativeTabs[TAB_GAME] = SHOW_GAME
         relativeTabs[TAB_TESTS] = SHOW_TESTS
         relativeTabs[TAB_CARDS] = SHOW_CARDS
+
+        AppHelper.onlineFunction = onlineMode()
+        AppHelper.offlineFunction = offlineMode()
 
         dialog = MaterialDialog.Builder(this)
             .title(R.string.game_dialog)
@@ -121,8 +134,35 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
             .build()
 
         dialog.setCancelable(false)
-        openLoginPage()
+        hideBottomNavigation()
+        checkUserSession()
 //        bottom_navigation.selectedItemId = R.id.action_profile
+    }
+
+    override fun createCookie(email: String, password: String) {
+       getSharedPreferences(USER_DATA_PREFERENCES, Context.MODE_PRIVATE)?.let {
+            if (!it.contains(USER_USERNAME)) {
+                val editor = it.edit()
+                editor.putString(USER_USERNAME, email)
+                editor.putString(USER_PASSWORD, password)
+                editor.apply()
+            }
+        }
+    }
+
+    private fun checkUserSession() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences(USER_DATA_PREFERENCES,Context.MODE_PRIVATE)
+        if(sharedPreferences.contains(USER_USERNAME)) {
+            val email: String = sharedPreferences.getString(USER_USERNAME,"")
+            val passwored: String = sharedPreferences.getString(USER_PASSWORD,"")
+            presenter.signIn(email,passwored)
+        } else {
+            openLoginPage()
+        }
+    }
+
+    fun hideStartView() {
+        layout_start.visibility = View.GONE
     }
 
     override fun setDialog(gameData: GameData, lobby: Lobby) {
@@ -145,6 +185,11 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
         presenter.isWaiting = isWaiting
     }
 
+    override fun setBottomNavigationStatus(hasBottomNavigation: Boolean) {
+        Log.d(TAG_LOG, "hasBottom = $hasBottomNavigation")
+        this.hasBottomNavigation = hasBottomNavigation
+    }
+
     override fun goToGame() {
         val fragment = PlayGameFragment.newInstance()
         pushFragments(fragment, true)
@@ -155,6 +200,8 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     override fun openLoginPage() {
+        hideStartView()
+        clearAllStacks()
         currentTab = TAB_AUTH
         showTab = SHOW_AUTH
         val fragment = SignInFragment.newInstance()
@@ -163,7 +210,15 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
 
     }
 
+    fun clearAllStacks() {
+        for(key in stacks.keys) {
+            stacks[key]?.clear()
+        }
+    }
+
     override fun openNavigationPage() {
+        hideStartView()
+        waitEnemy()
         currentTab = TAB_PROFILE
         showTab = SHOW_PROFILE
         bottom_navigation.selectedItemId = R.id.action_profile
@@ -172,6 +227,17 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
 
     private fun initListeners() {
         iv_reconnect.setOnClickListener(this)
+        KeyboardVisibilityEvent.setEventListener(
+            this) {
+            Log.d(TAG_LOG, "key has bottom = $hasBottomNavigation")
+            if (it) {
+                Log.d(TAG_LOG, "key hide bottom navigation")
+                hideBottomNavigation()
+            } else if (hasBottomNavigation){
+                Log.d(TAG_LOG, "key show bottom navigation")
+                showBottomNavigation(this)
+            }
+        }
     }
 
     override fun onClick(v: View) {
@@ -298,6 +364,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
 
     override fun pushFragments(fragment: Fragment, shouldAdd: Boolean) {
         showBottomNavigation(this)
+        setBottomNavigationStatus(true)
         if (shouldAdd) {
             stacks[currentTab]?.push(fragment)
         }
@@ -397,7 +464,7 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     }
 
     private fun showProfile(tabId: String) {
-        Log.d(TAG_NAVIG_ACT, "curator start")
+        Log.d(TAG_NAVIG_ACT, "profile start ${currentUser.email}")
         val args: Bundle = Bundle()
         args.putString(USER_ITEM, gson.toJson(AppHelper.currentUser))
         val fragment = ProfileFragment.newInstance(args)
@@ -420,14 +487,12 @@ open class NavigationActivity: BaseActivity(), NavigationView, View.OnClickListe
     private fun showTests(tabId: String) {
         val args = Bundle()
         args.putString(TIME_TYPE, NEW_ONES)
-        args.putString(USER_ID, BOT_ID)
+        args.putString(USER_ID, currentId)
         val fragment = TestListFragment.newInstance(args)
         pushFragments(fragment, true)
     }
 
     override fun setStatus(status: String) {
-        AppHelper.onlineFunction = onlineMode()
-        AppHelper.offlineFunction = offlineMode()
         presenter.setStatus(status)
     }
 

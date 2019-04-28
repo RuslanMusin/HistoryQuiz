@@ -117,9 +117,9 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun findUserEpoches(userId: String): Single<List<UserEpoch>> {
+    override fun findUserEpoches(userId: String, hasDefault: Boolean): Single<List<UserEpoch>> {
         val single: Single<List<UserEpoch>> = Single.create{ e ->
-            epochRepository.findEpoches().subscribe { epoches ->
+            epochRepository.findEpoches(hasDefault).subscribe { epoches ->
                 val query: Query = databaseReference.child(userId)
                 query.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -175,8 +175,8 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun createStartEpoches(user: User) {
-        epochRepository.findEpoches().subscribe { epoches ->
+    override fun createStartEpoches(user: User, hasDefault: Boolean) {
+        epochRepository.findEpoches(hasDefault).subscribe { epoches ->
             for(item in epoches) {
                 updateUserEpoch(UserEpoch(item, user)).subscribe { e ->
                     Log.d(TAG_LOG, "updated user epoch ${item.name}")
@@ -213,7 +213,7 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
                         epoch.right += score
                         epoch.wrong += (lobby.cardNumber - score)
                         updateUserEpoch(epoch).subscribe { e ->
-                            findUserEpoches(playerId).subscribe { epoches ->
+                            findUserEpoches(playerId, true).subscribe { epoches ->
                                 user.epochList = epoches.toMutableList()
                                 val leaderStat = LeaderStat(user)
                                 Log.d(TAG_LOG, "create leader stat")

@@ -14,6 +14,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.HAS_DEFAULT
 import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
@@ -47,7 +48,10 @@ class EpochListFragment : BaseFragment(), EpochListView {
         super.onViewCreated(view, savedInstanceState)
         initViews(view)
         initRecycler()
-        presenter.loadEpoches()
+        arguments?.let {
+            val hasDefault: Boolean = it.getBoolean(HAS_DEFAULT)
+            presenter.loadEpoches(hasDefault)
+        }
     }
 
     private fun initViews(view: View) {
@@ -118,6 +122,12 @@ class EpochListFragment : BaseFragment(), EpochListView {
 
         fun newInstance(): Fragment {
             val fragment = EpochListFragment()
+            return fragment
+        }
+
+        fun newInstance(args: Bundle): Fragment {
+            val fragment = EpochListFragment()
+            fragment.arguments = args
             return fragment
         }
     }

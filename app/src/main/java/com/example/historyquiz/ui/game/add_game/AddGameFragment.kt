@@ -122,7 +122,9 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
             }
 
             R.id.li_choose_epoch -> {
-                val fragment = EpochListFragment.newInstance()
+                val args = Bundle()
+                args.putBoolean(Const.HAS_DEFAULT, true)
+                val fragment = EpochListFragment.newInstance(args)
                 fragment.setTargetFragment(this, ADD_EPOCH_CODE)
                 showFragment(this, fragment)
             }

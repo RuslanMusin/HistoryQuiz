@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 import com.example.historyquiz.ui.navigation.NavigationView
+import com.example.historyquiz.utils.Const.TAG_LOG
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -85,11 +87,14 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
     }
 
     override fun hideBottomNavigation() {
+        Log.d(TAG_LOG, "hide bottom navigation")
         bottom_navigation.visibility = View.GONE
+        changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
 
     override fun showBottomNavigation(navigationView: NavigationView) {
+        Log.d(TAG_LOG, "show bottom navigation")
         bottom_navigation.visibility = View.VISIBLE
         changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }

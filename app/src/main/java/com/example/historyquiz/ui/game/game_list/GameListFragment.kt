@@ -22,8 +22,10 @@ import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
+import kotlinx.android.synthetic.main.dialog_help.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
+import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -42,6 +44,8 @@ class GameListFragment : BaseFragment(), GameListView {
     fun providePresenter(): GameListPresenter = presenterProvider.get()
 
     var isClickable: Boolean = true
+    lateinit var helpDialog: MaterialDialog
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +76,7 @@ class GameListFragment : BaseFragment(), GameListView {
     private fun setToolbar() {
         setActionBar(toolbar)
         setActionBarTitle(R.string.menu_game)
+        toolbar.setNavigationIcon(null)
     }
 
     private fun initRecycler() {
@@ -195,14 +200,28 @@ class GameListFragment : BaseFragment(), GameListView {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.game_list_menu, menu)
-        menu?.let {
+        helpDialog = MaterialDialog.Builder(this.activity!!)
+            .customView(R.layout.dialog_help, false)
+            .onNeutral { dialog, which ->
+                dialog.cancel()
+            }
+            .build()
 
-            val botItem = menu.findItem(R.id.action_find_bot)
+        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
+        helpDialog.tv_help_content.text = getString(R.string.game_text)
+        menu?.let {
+            val helpItem = menu.findItem(R.id.action_help)
+            helpItem.setOnMenuItemClickListener {
+                helpDialog.show()
+                true
+            }
+
+            /*  val botItem = menu.findItem(R.id.action_find_bot)
             botItem.setOnMenuItemClickListener {
                 Log.d(TAG_LOG, "find bot")
                 presenter.findBotGame()
                 true
-            }
+            }*/
 
             val searchItem = menu.findItem(R.id.action_search)
 

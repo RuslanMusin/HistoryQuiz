@@ -12,11 +12,14 @@ import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.ui.game.fast_game.FastGameFragment
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_REQUEST
 import com.example.historyquiz.utils.Const.OWNER_TYPE
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_ITEM
 import com.example.historyquiz.utils.Const.gson
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -90,6 +93,15 @@ class ProfilePresenter @Inject constructor() : BasePresenter<ProfileView>() {
                 viewState.changePlayButton(true)
             }
         }
+    }
+
+    fun logout() {
+        currentUser.status = Const.OFFLINE_STATUS
+        userRepository.changeUserStatus(currentUser).subscribe()
+        FirebaseAuth.getInstance().signOut()
+        currentUser = User()
+        viewState.deleteUserPrefs()
+        viewState.openLoginPage()
     }
 
 }

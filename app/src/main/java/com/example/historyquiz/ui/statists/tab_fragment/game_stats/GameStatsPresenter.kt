@@ -19,7 +19,7 @@ class GameStatsPresenter @Inject constructor() : BasePresenter<GameStatsView>() 
     fun loadStats() {
 
         val disposable =  userEpochRepository
-            .findUserEpoches(AppHelper.currentUser.id)
+            .findUserEpoches(AppHelper.currentUser.id, true)
             .map { epoches -> epoches.sortedWith(compareByDescending { i -> Math.abs(i.geSub)} ) }
             .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
             .doAfterTerminate(Action { viewState.hideListLoading() })

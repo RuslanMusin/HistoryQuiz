@@ -4,6 +4,8 @@ import android.text.TextUtils
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
+import com.example.historyquiz.model.epoch.Epoch
+import com.example.historyquiz.repository.epoch.EpochRepository
 import com.example.historyquiz.repository.epoch.UserEpochRepository
 import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.user.UserRepository
@@ -27,6 +29,8 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
     @Inject
     lateinit var userEpochRepository: Lazy<UserEpochRepository>
     @Inject
+    lateinit var epochRepository: EpochRepository
+    @Inject
     lateinit var fireAuth: FirebaseAuth
 
 
@@ -41,31 +45,16 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
         fireAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener({ task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG_LOG, "signInWithEmail:success")
                     val user = fireAuth!!.currentUser
-
-//                    saveInPreferences(email,password)
+                    viewState.createCookie(email,password)
                     updateUI(user)
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG_LOG, "signInWithEmail:failure", task.exception)
                     updateUI(null)
                 }
 
                 viewState.hideProgressDialog()
             })
     }
-
- /*   private fun saveInPreferences(email: String, password: String) {
-        val mySharedPreferences = logView.getSharedPreferences(USER_DATA_PREFERENCES, Context.MODE_PRIVATE)
-        if(!mySharedPreferences.contains(USER_USERNAME)) {
-            val editor = mySharedPreferences.edit()
-            editor.putString(USER_USERNAME, email)
-            editor.putString(USER_PASSWORD, password)
-            editor.apply()
-        }
-    }*/
 
     private fun validateForm(email: String, password: String): Boolean {
         return checkEmail(email) && checkPassword(password)
@@ -97,16 +86,22 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
             userRepository?.readUserById(currentId)
                 .subscribe { user ->
                 user?.let {
-                    Log.d(TAG_LOG, "have user")
-                    AppHelper.currentUser = user
+                    Log.d(TAG_LOG, "have user and userEmail = ${it.email}")
+                    AppHelper.currentUser = it
                     it.status = ONLINE_STATUS
-//                    userEpochRepository.get().createStartEpoches(user)
                     userRepository.changeUserStatus(it).subscribe()
                     gameRepository.removeRedundantLobbies(true)
-                    viewState.goToProfile(it) }
+                    viewState.goToProfile(it)
+                }
             }
         } else {
             viewState.showError()
+        }
+    }
+
+    fun createEpoches(list: List<String>) {
+        for (item in list) {
+            epochRepository.createEpoch(Epoch(item.toString())).subscribe()
         }
     }
 

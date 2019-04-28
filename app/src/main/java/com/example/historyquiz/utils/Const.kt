@@ -83,12 +83,12 @@ object Const {
     const val ITEM_ITEM = "ITEM_ITEM"
     const val LINK_ITEM = "LINK_ITEM"
 
-    //id's
+    //id'setBottomNavigationStatus
     const val TEST_ID = "TEST_ID"
     const val USER_ID = "USER_ID"
-    const val BOT_ID = "JmHmHZUIUORNR42aqXmzV5VujwN2"
-    const val DEFAULT_EPOCH_ID = "-LceLTNbCEbXB00ismFk"
-
+    const val BOT_ID = "OJHDfF2ZxkQDy46sBVgVAoyJqmn1"
+    const val DEFAULT_EPOCH_ID = "-LdZR_fAD2hRV69uBMiK"
+    const val HAS_DEFAULT = "HAS_DEFAULT"
     //args
     const val QUESTION_NUMBER = "queston_number"
     const val PAGE_TITLE = "PAGE_TITLE"
@@ -117,7 +117,7 @@ object Const {
     const val ADD_REQUEST = "addR"
     const val REMOVE_REQUEST = "removeR"
 
-    //Friend's list types
+    //Friend'setBottomNavigationStatus list types
     const val USERS_LIST_TYPE = "type"
     const val DEFAULT_USERS_TYPE = "default_users"
 
@@ -142,6 +142,12 @@ object Const {
     const val IN_GAME_STATUS = "in_game_status"
     const val NOT_ACCEPTED = "not_accepted"
     const val EDIT_STATUS = "edit_status"
+
+
+    //User roles
+    const val FIELD_ROLE = "role"
+    const val USER_ROLE = "user"
+    const val ADMIN_ROLE = "admin"
 
     const val GAME_WIN_POINTS = 20
     const val GAME_LOSE_POINTS = 5

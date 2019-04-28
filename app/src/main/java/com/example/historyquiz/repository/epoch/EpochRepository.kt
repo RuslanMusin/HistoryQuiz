@@ -7,7 +7,7 @@ interface EpochRepository {
 
     fun findEpoch(id: String): Single<Epoch>
 
-    fun findEpoches(): Single<List<Epoch>>
+    fun findEpoches(hasDefault: Boolean): Single<List<Epoch>>
 
     fun createEpoch(epoch: Epoch): Single<Boolean>
 

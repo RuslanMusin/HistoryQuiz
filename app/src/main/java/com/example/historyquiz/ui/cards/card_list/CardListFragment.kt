@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.*
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
@@ -16,11 +17,14 @@ import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TIME_TYPE
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.dialog_help.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
+import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -40,6 +44,8 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
     @ProvidePresenter
     fun providePresenter(): CardListPresenter = presenterProvider.get()
 
+    lateinit var helpDialog: MaterialDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -47,8 +53,6 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
-        setStatus(ONLINE_STATUS)
-        setWaitStatus(true)
         return view
     }
 
@@ -60,7 +64,10 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
             userId = it.getString(USER_ID)
             type = it.getString(TIME_TYPE)
             initViews()
+            Log.d(TAG_LOG, "user load cards/userId = $userId")
             presenter.loadUserCards(userId)
+            setStatus(Const.ONLINE_STATUS)
+            setWaitStatus(true)
         }
     }
 
@@ -100,14 +107,10 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
 
     override fun changeDataSet(cards: List<AbstractCard>) {
-        /*val abstractCards: MutableList<AbstractCard> = ArrayList()
-        for(card in cards) {
-            abstractCards.add(card.abstractCard)
-        }*/
         adapter!!.changeDataSet(cards)
         hideListLoading()
         hideLoading()
-        Log.d(Const.TAG_LOG, "test loaded")
+        Log.d(Const.TAG_LOG, "cards loaded and size = ${cards.size}")
     }
 
     override fun handleError(throwable: Throwable) {
@@ -144,7 +147,23 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
-        menu?.let { setSearchMenuItem(it) }
+        helpDialog = MaterialDialog.Builder(this.activity!!)
+            .customView(R.layout.dialog_help, false)
+            .onNeutral { dialog, which ->
+                dialog.cancel()
+            }
+            .build()
+
+        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
+        helpDialog.tv_help_content.text = getString(R.string.card_text)
+        menu?.let {
+            val helpItem = menu.findItem(R.id.action_help)
+            helpItem.setOnMenuItemClickListener {
+                helpDialog.show()
+                true
+            }
+            setSearchMenuItem(it)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 

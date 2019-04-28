@@ -82,6 +82,19 @@
                                 android:layout_marginStart="@dimen/margin.normal"
                         />
 
+                        <TextView
+                                android:id="@+id/tv_check_result"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                android:text="@string/check_result"
+                                android:textSize="@dimen/text.16"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginStart="@dimen/margin.normal"
+                        />
+
 
                     </LinearLayout>
 

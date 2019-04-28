@@ -10,11 +10,11 @@ import javax.inject.Inject
 class TestPresenter @Inject constructor() : BasePresenter<TestView>() {
 
     @Inject
-    lateinit var cardRepositoryImpl: CardRepository
+    lateinit var cardRepository: CardRepository
 
     fun readCardForTest(test: Test) {
         test.cardId?.let {
-            val dis = cardRepositoryImpl.readCardForTest(it).subscribe{ card ->
+            val dis = cardRepository.readCardForTest(it).subscribe{ card ->
                 test.card = card
                 viewState.setData()
             }

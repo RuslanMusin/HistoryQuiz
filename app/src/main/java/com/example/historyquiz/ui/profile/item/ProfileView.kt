@@ -8,12 +8,10 @@ interface ProfileView: BasicFunctional {
 
     fun changePlayButton(isClickable: Boolean)
 
-    fun hideGameDialog()
-
-    fun showGameDialog()
-
     fun changeType(type: String)
 
     fun initViews()
+
+    fun deleteUserPrefs()
 
 }

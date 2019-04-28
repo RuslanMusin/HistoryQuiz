@@ -1,13 +1,13 @@
 package com.example.historyquiz.ui.profile.item
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -15,7 +15,6 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.model.game.Lobby
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.epoch.EpochRepository
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_list.CardListFragment
 import com.example.historyquiz.ui.profile.list.MemberTabFragment
@@ -25,17 +24,18 @@ import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_FRIEND
 import com.example.historyquiz.utils.Const.ADD_REQUEST
-import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.OWNER_TYPE
 import com.example.historyquiz.utils.Const.REMOVE_FRIEND
 import com.example.historyquiz.utils.Const.REMOVE_REQUEST
 import com.example.historyquiz.utils.Const.TAG_LOG
+import com.example.historyquiz.utils.Const.USER_DATA_PREFERENCES
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.USER_ITEM
 import com.example.historyquiz.utils.Const.gson
-import kotlinx.android.synthetic.main.fragment_add_game.*
+import kotlinx.android.synthetic.main.dialog_help.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.layout_expandable.*
+import kotlinx.android.synthetic.main.toolbar_help.*
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -48,14 +48,15 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
     @ProvidePresenter
     fun providePresenter(): ProfilePresenter = presenterProvider.get()
 
-    lateinit var gameDialog: MaterialDialog
+    lateinit var helpDialog: MaterialDialog
     lateinit var user: User
     val lobby: Lobby = Lobby()
     var type: String? = null
 
-
-    @Inject
-    lateinit var epochRepository: EpochRepository
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
@@ -64,12 +65,12 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setStatus(ONLINE_STATUS)
-        setWaitStatus(true)
-        waitEnemy()
         arguments?.let {
             user = gson.fromJson(it.getString(USER_ITEM), User::class.java)
+            Log.d(TAG_LOG, "userEmail = ${user.email}")
             presenter.setUserRelationAndView(user)
+            setStatus(Const.ONLINE_STATUS)
+            setWaitStatus(true)
         }
         hideLoading()
     }
@@ -94,6 +95,7 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
         li_tests.setOnClickListener(this)
         li_cards.setOnClickListener(this)
         li_description.setOnClickListener(this)
+        li_logout.setOnClickListener(this)
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
     }
 
@@ -113,6 +115,17 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
             R.id.li_tests -> showTests()
 
             R.id.li_description -> showDescription()
+
+            R.id.li_logout -> presenter.logout()
+        }
+    }
+
+    override fun deleteUserPrefs() {
+        activity?.getSharedPreferences(USER_DATA_PREFERENCES, Context.MODE_PRIVATE)?.let {
+            val editor: SharedPreferences.Editor = it.edit()
+            editor.remove(Const.USER_USERNAME)
+            editor.remove(Const.USER_PASSWORD)
+            editor.apply()
         }
     }
 
@@ -151,13 +164,6 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
         pushFragments(fragment, true)
     }
 
-    fun addEpoches() {
-        val list = resources.getStringArray(R.array.epoches).toList()
-        for (item in list) {
-            epochRepository.createEpoch(Epoch(item.toString())).subscribe()
-        }
-    }
-
     private fun setUserData() {
         arguments?.let {
             tv_name.text = user.username
@@ -171,6 +177,7 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
                 li_friends.visibility = View.GONE
                 li_statists.visibility = View.GONE
                 li_tests.visibility = View.GONE
+                li_logout.visibility = View.GONE
             }
 
             AppHelper.loadUserPhoto(iv_profile, user.photoUrl)
@@ -196,46 +203,26 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
         Log.d(TAG_LOG, "handle error")
     }
 
-    override fun showGameDialog() {
-                /*gameDialog = MaterialDialog.Builder(this.activity!!)
-                    .customView(R.layout.dialog_fast_game, false)
-                    .onNeutral { dialog, which ->
-                        dialog.cancel()
-                        changePlayButton(true)
-                    }
-                    .build()
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.help_menu, menu)
+        helpDialog = MaterialDialog.Builder(this.activity!!)
+            .customView(R.layout.dialog_help, false)
+            .onNeutral { dialog, which ->
+                dialog.cancel()
+            }
+            .build()
 
-                gameDialog.btn_create_game.setOnClickListener{ createGame() }
-                gameDialog.li_choose_epoch.setOnClickListener {
-                    val fragment = EpochListFragment.newInstance()
-                    fragment.setTargetFragment(this, Const.ADD_EPOCH_CODE)
-                    showFragment(this, fragment)
-                }
-
-                gameDialog.seekBarCards.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
-                    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                        val strProgress: String = seekBar?.progress.toString()
-                        gameDialog.tvCards.text = strProgress
-                    }
-
-                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    }
-
-                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    }
-
-                })
-
-
-                gameDialog.show()*/
-
+        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
+        helpDialog.tv_help_content.text = getString(R.string.profile_text)
+        menu?.let {
+            val helpItem = menu.findItem(R.id.action_help)
+            helpItem.setOnMenuItemClickListener {
+                helpDialog.show()
+                true
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater)
     }
-
-   /* fun createGame() {
-        lobby.cardNumber = gameDialog.seekBarCards.progress
-        presenter.createGame(lobby, user)
-
-    }*/
 
     override fun changePlayButton(isClickable: Boolean) {
         tv_play_game.isClickable = isClickable
@@ -275,17 +262,12 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
 
 
 
-    override fun hideGameDialog() {
-        gameDialog.hide()
-    }
-
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
         if(resultCode == Activity.RESULT_OK) {
             if (reqCode == Const.ADD_EPOCH_CODE) {
                 val epoch = gson.fromJson(data!!.getStringExtra(Const.EPOCH_KEY), Epoch::class.java)
-                gameDialog.tv_epoch!!.text = epoch.name
                 lobby.epoch = epoch
                 lobby.epochId = epoch.id
             }

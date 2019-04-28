@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.*
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
@@ -14,6 +15,9 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
+import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.ADMIN_ROLE
 import com.example.historyquiz.utils.Const.NEW_ONES
 import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -21,8 +25,10 @@ import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.TIME_TYPE
 import com.example.historyquiz.utils.Const.USER_ID
 import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.dialog_help.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
+import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -42,6 +48,8 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
     @ProvidePresenter
     fun providePresenter(): TestListPresenter = presenterProvider.get()
 
+    lateinit var helpDialog: MaterialDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -49,6 +57,7 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
+
         return view
     }
 
@@ -59,6 +68,8 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
             type = it.getString(TIME_TYPE)
             initViews()
             presenter.loadOfficialTests(userId, type)
+            setStatus(Const.ONLINE_STATUS)
+            setWaitStatus(true)
         }
     }
 
@@ -75,7 +86,6 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
             toolbar.setNavigationIcon(null)
         } else {
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-            floating_button.visibility = View.GONE
         }
     }
 
@@ -117,7 +127,7 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
         adapter.attachToRecyclerView(rv_list)
         adapter.setOnItemClickListener(this)
         rv_list.adapter = adapter
-        if(type.equals(NEW_ONES)) {
+        if(type.equals(NEW_ONES) && currentUser.role.equals(ADMIN_ROLE)) {
             rv_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy);
@@ -137,10 +147,13 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 //                AddTestActivity.start(activity as Activity)
                 }
             })
+        } else {
+            floating_button.visibility = View.GONE
         }
     }
 
     override fun onItemClick(item: Test) {
+        item.type = type
         val args = Bundle()
         args.putString(TEST_ITEM, gson.toJson(item))
         val fragment = TestFragment.newInstance(args)
@@ -160,7 +173,23 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
-        menu?.let { setSearchMenuItem(it) }
+        helpDialog = MaterialDialog.Builder(this.activity!!)
+            .customView(R.layout.dialog_help, false)
+            .onNeutral { dialog, which ->
+                dialog.cancel()
+            }
+            .build()
+
+        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
+        helpDialog.tv_help_content.text = getString(R.string.test_text)
+        menu?.let {
+            val helpItem = menu.findItem(R.id.action_help)
+            helpItem.setOnMenuItemClickListener {
+                helpDialog.show()
+                true
+            }
+            setSearchMenuItem(it)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 

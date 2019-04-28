@@ -14,13 +14,14 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.auth.fragments.signup.SignUpFragment
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.navigation.NavigationView
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.TAG
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.USER_DATA_PREFERENCES
 import com.example.historyquiz.utils.Const.USER_PASSWORD
 import com.example.historyquiz.utils.Const.USER_USERNAME
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_sign_in.*
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -36,8 +37,15 @@ class SignInFragment : BaseFragment(), SignInView, View.OnClickListener {
     @ProvidePresenter
     fun providePresenter(): SignInPresenter = presenterProvider.get()
 
+    override fun showBottomNavigation(navigationView: NavigationView) {
+        Log.d(TAG_LOG, "fragment hide bottom navigation")
+        navigationView.hideBottomNavigation()
+        navigationView.setBottomNavigationStatus(false)
+    }
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_login, container, false)
+        val view = inflater.inflate(R.layout.fragment_sign_in, container, false)
         return view
     }
 
@@ -47,39 +55,15 @@ class SignInFragment : BaseFragment(), SignInView, View.OnClickListener {
     }
 
     private fun initViews() {
-        hideBottomNavigation()
         setListeners()
     }
-
-    override fun showBottomNavigation(navigationView: NavigationView) {
-        navigationView.hideBottomNavigation()
-    }
-
-    /* private fun setListeners() {
-         val args = Bundle()
-         args.putString(KEY, "Button")
-         btn_enter.setOnClickListener(
-             Navigation.createNavigateOnClickListener(R.id.loginAction, args)
-         )
-         btn_sign_up.setOnClickListener(this)
-     }*/
 
     private fun signUp(v: View) {
         val args = Bundle()
         args.putString(KEY, "Button")
-//        Navigation.findNavController(v).navigate(R.id.signUpAciton)
+        removeStackDownTo()
         val fragment = SignUpFragment.newInstance(args)
         pushFragments(fragment, true)
-    }
-
-    private fun checkUserSession() {
-        activity?.getSharedPreferences(USER_DATA_PREFERENCES, Context.MODE_PRIVATE)?.let {
-            if (it.contains(USER_USERNAME)) {
-                val email: String = it.getString(USER_USERNAME, "")
-                val password: String = it.getString(USER_PASSWORD, "")
-                presenter.signIn(email, password)
-            }
-        }
     }
 
     override fun showEmailError(hasError: Boolean) {
@@ -105,6 +89,7 @@ class SignInFragment : BaseFragment(), SignInView, View.OnClickListener {
         btn_enter.setOnClickListener(this)
         iv_cover.setOnClickListener(this)
         tv_name.setOnClickListener(this)
+        iv_epoch.setOnClickListener { presenter.createEpoches(resources.getStringArray(R.array.epoches).toList()) }
     }
 
     override fun onClick(view: View) {
@@ -133,9 +118,10 @@ class SignInFragment : BaseFragment(), SignInView, View.OnClickListener {
     }
 
     override fun goToProfile(user: User) {
-        Log.d(TAG,"login")
+        Log.d(TAG_LOG,"login and ${currentUser.email} and ${user.email}")
+        removeStackDownTo()
         val args = Bundle()
-        args.putString(Const.USER_ITEM, gson.toJson(user))
+        args.putString(Const.USER_ITEM, gson.toJson(currentUser))
         openNavigationPage()
        /* Navigation.findNavController(btn_enter)
             .navigate(R.id.action_loginFragment_to_profileFragment, args)*/

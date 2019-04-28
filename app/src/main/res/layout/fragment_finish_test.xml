@@ -64,11 +64,11 @@
                 tools:text="Question" />
         </LinearLayout>
 
-        <View
+      <!--  <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="4dp"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray"/>-->
 
         <LinearLayout
             android:id="@+id/li_wrong_answers"
@@ -94,41 +94,58 @@
                 tools:text="Question" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="4dp"
-            android:background="@android:color/darker_gray"/>
-
         <LinearLayout
-            android:id="@+id/li_winned_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin.large"
-            android:orientation="vertical">
+                android:id="@+id/li_procent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin.large"
+                android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/winned_card"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/test_procent"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/text.16" />
 
             <TextView
-                android:id="@+id/tv_winned_card"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.small"
-                android:textColor="@color/secondary_text"
-                android:textSize="@dimen/text.14"
-                tools:text="Question" />
+                    android:id="@+id/tv_procent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.small"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="@dimen/text.14"
+                    tools:text="Question" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="4dp"
-            android:background="@android:color/darker_gray"/>
+
+        <LinearLayout
+                android:id="@+id/li_winned_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/margin.large"
+                android:orientation="vertical">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/winned_card"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/text.16"/>
+
+            <TextView
+                    android:id="@+id/tv_winned_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.small"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="@dimen/text.14"
+                    tools:text="Question"/>
+
+        </LinearLayout>
+
+
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_finish_test"

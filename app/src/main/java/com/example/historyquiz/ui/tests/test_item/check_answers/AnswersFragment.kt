@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.tests.test_item.check_answers
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -21,8 +20,8 @@ import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
-import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
@@ -64,18 +63,9 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
 
         type = arguments?.getString(ANSWERS_TYPE)!!
-        model = activity?.run {
-            ViewModelProviders.of(this).get(TestViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
-        model.test.value?.let {
-            test = it
-        }
-        model.number.value?.let {
-            number = it
-        }
-        /*val testStr: String = arguments?.getString(TEST_ITEM)!!
+        val testStr: String = arguments?.getString(TEST_ITEM)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
-        test = gson.fromJson(testStr, Test::class.java)*/
+        test = gson.fromJson(testStr, Test::class.java)
         if(type.equals(RIGHT_ANSWERS)) {
             question =  test.rightQuestions[number]
             listSize = test.rightQuestions.size
@@ -84,9 +74,6 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
             listSize = test.wrongQuestions.size
 
         }
-
-        /*(activity as BaseBackActivity).currentTag = TestActivity.ANSWERS_FRAGMENT + number
-        (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT,"Вопрос ${number+1}/${listSize}")*/
         return view
     }
 
@@ -114,12 +101,12 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
             btn_cancel.visibility = View.GONE
             btn_finish_questions.visibility = View.VISIBLE
             btn_ok.visibility = View.VISIBLE
-//            (activity as ChangeToolbarListener).showOk(true)
         }
 
         tv_question.text = question.question
 
         setStartAnswers()
+        hideLoading()
     }
 
     private fun setStartAnswers() {
@@ -162,36 +149,34 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
 
     private fun beforeQuestion() {
         if(number > 0) {
-            val args: Bundle = Bundle()
+            (activity as NavigationView).performBackPressed()
+           /* val args: Bundle = Bundle()
             args.putString(TEST_ITEM, gson.toJson(test))
             args.putString(ANSWERS_TYPE, type)
             args.putInt(QUESTION_NUMBER, --number)
-            val fragment = AnswersFragment.newInstance(args)
-//            (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+            val fragment = AnswersFragment.newInstance(args)*/
         } else {
             finishQuestions()
         }
     }
 
     private fun finishQuestions() {
-        removeStackDownTo()
-        val args: Bundle = Bundle()
+        Log.d(TAG_LOG, "remove num = ${number + 1}")
+        removeStackDownTo(number + 1)
+        (activity as NavigationView).performBackPressed()
+        /*val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         val fragment = FinishFragment.newInstance(args)
-        pushFragments(fragment, true)
-//        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)
+        pushFragments(fragment, true)*/
     }
 
     private fun nextQuestion() {
-        model.selectTest(test)
-        model.selectNumber(++number)
         val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         args.putString(ANSWERS_TYPE,type)
         args.putInt(QUESTION_NUMBER, ++number)
         val fragment = AnswersFragment.newInstance(args)
         pushFragments(fragment, true)
-//        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
     }
 
     override fun onClick(v: View) {
@@ -201,26 +186,10 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
 
             R.id.btn_finish_questions -> {
                 finishQuestions()
-               /* val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
-                activity!!.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, TestFragment.newInstance(args))
-                        .addToBackStack("AddQuestionFragment")
-                        .commit()        */
             }
 
             R.id.btn_next_question -> {
                 nextQuestion()
-              /*  val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
-                args.putInt(QUESTION_NUMBER, ++number)
-                args.putString(ANSWERS_TYPE, type)
-                activity!!.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, AnswersFragment.newInstance(args))
-                        .addToBackStack("AddQuestionFragment")
-                        .commit()*/
             }
 
             R.id.btn_cancel -> finishQuestions()

@@ -19,4 +19,5 @@ interface NavigationView: BasicFunctional {
     fun goToGame()
     fun setDialog(gameData: GameData, lobby: Lobby)
 
+    fun createCookie(email: String, password: String)
 }

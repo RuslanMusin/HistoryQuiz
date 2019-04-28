@@ -14,6 +14,7 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.add_card.AddCardFragment
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
@@ -39,6 +40,10 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
     fun providePresenter(): AddCardListPresenter = presenterProvider.get()
 
     private var adapter: AddCardListAdapter? = null
+
+    /*override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.activity_add_list, container, false)
@@ -109,10 +114,10 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
                     flag = true
                     val text = it.content
                     Log.d(TAG_LOG, "text = " + text)
-//                    val pattern = Pattern.compile(".*\\(.*[0-9]{1,4}.*(\\s*-\\s*[0-9]{1,4}.*)?\\).*")
+//                    val pattern = Pattern.compile(".*\\(.*[0-9]{1,4}.*(\\setBottomNavigationStatus*-\\setBottomNavigationStatus*[0-9]{1,4}.*)?\\).*")
                     val mainPattern = Pattern.compile(".*\\(.*(([0-9]{1,4})|(век|др\\.)).*\\).*")
-                    val secondPattern = Pattern.compile("\\(.*\\)\\s*—")
-                    val thirdPattern = Pattern.compile("\\s+|,|\\.")
+                    val secondPattern = Pattern.compile("\\(.*\\)\\setBottomNavigationStatus*—")
+                    val thirdPattern = Pattern.compile("\\setBottomNavigationStatus+|,|\\.")
                     flag = mainPattern.matcher(text!!).matches()
                     if (flag) {
                         Log.d(TAG_LOG, "text true = " + text)

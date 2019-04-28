@@ -18,13 +18,11 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.wiki_page.WikiPageFragment
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
+import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.ui.tests.test_item.question.QuestionFragment
-import com.example.historyquiz.ui.tests.test_list.TestListFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.BOT_ID
-import com.example.historyquiz.utils.Const.NEW_ONES
 import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.PAGE_TITLE
 import com.example.historyquiz.utils.Const.PAGE_URL
@@ -69,7 +67,7 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         TestListActivity.start(activity as Activity)
     }*/
 
-    override fun performBackPressed() {
+    /*override fun performBackPressed() {
         removeStackDownTo()
         val type = if(test.testDone) OLD_ONES else NEW_ONES
         val userId = if(test.testDone) currentId else BOT_ID
@@ -78,7 +76,7 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         args.putString(Const.USER_ID, userId)
         val fragment = TestListFragment.newInstance(args)
         pushFragments(fragment, true)
-    }
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test, container, false)
@@ -110,6 +108,10 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
             tv_done.text = getText(R.string.test_wasnt_done)
         } else {
             tv_done.text = getText(R.string.test_was_done)
+        }
+        if(OLD_ONES.equals(test.type)) {
+            tv_do_test.visibility = View.GONE
+            tv_check_result.visibility = View.VISIBLE
         }
         if(currentId.equals(test.authorId)) {
             tv_do_test.visibility = View.GONE
@@ -187,6 +189,7 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
 
     private fun setListeners() {
         tv_do_test.setOnClickListener(this)
+        tv_check_result.setOnClickListener(this)
         btn_back.setOnClickListener(this)
         li_description.setOnClickListener(this)
         li_links.setOnClickListener(this)
@@ -208,6 +211,13 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
                 pushFragments(fragment, true)
 //                (activity as BaseBackActivity).changeFragment(fragment, QUESTION_FRAGMENT + 0)
 
+            }
+
+            R.id.tv_check_result -> {
+                val args: Bundle = Bundle()
+                args.putString(TEST_ITEM, gson.toJson(test))
+                val fragment = FinishFragment.newInstance(args)
+                pushFragments(fragment, true)
             }
 
             R.id.btn_back -> performBackPressed()

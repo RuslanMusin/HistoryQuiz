@@ -33,6 +33,7 @@ import com.example.historyquiz.utils.Const.ADD_EPOCH_CODE
 import com.example.historyquiz.utils.Const.ADD_LINK_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.EPOCH_KEY
+import com.example.historyquiz.utils.Const.HAS_DEFAULT
 import com.example.historyquiz.utils.Const.LINK_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
@@ -63,6 +64,9 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     private var imageViews: MutableList<ImageView> = ArrayList()
     private var liViews: MutableList<LinearLayout> = ArrayList()
 
+ /*   override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_test, container, false)
@@ -161,7 +165,9 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
             }
 
             R.id.tv_add_epoch -> {
-                val fragment = EpochListFragment.newInstance()
+                val args = Bundle()
+                args.putBoolean(HAS_DEFAULT, false)
+                val fragment = EpochListFragment.newInstance(args)
                 fragment.setTargetFragment(this, ADD_EPOCH_CODE)
                 showFragment(this, fragment)
             }
@@ -222,6 +228,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         if (reqCode == ADD_EPOCH_CODE && resultCode == RESULT_OK) {
             val epoch = gson.fromJson(data!!.getStringExtra(EPOCH_KEY), Epoch::class.java)
             test.epochId = epoch.id
+            test.epoch = epoch
             li_added_epoch.visibility = View.VISIBLE
             tv_added_epoch!!.text = epoch.name
             tv_test_epoch_name.setError(null);

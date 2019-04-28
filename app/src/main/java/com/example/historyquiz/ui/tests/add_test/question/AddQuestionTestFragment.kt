@@ -72,6 +72,10 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private lateinit var checkListener: View.OnClickListener
 
+    /*override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
+    }*/
+
     override fun performBackPressed() {
         beforeQuestion()
     }

@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.historyquiz.model.epoch.Epoch
 import com.example.historyquiz.model.epoch.UserEpoch
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.DEFAULT_EPOCH_ID
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Single
@@ -95,14 +96,17 @@ class EpochRepositoryImpl @Inject constructor() : EpochRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun findEpoches(): Single<List<Epoch>> {
+    override fun findEpoches(hasDefault: Boolean): Single<List<Epoch>> {
         val single: Single<List<Epoch>> = Single.create{ e ->
             val query: Query = databaseReference
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val comments: MutableList<Epoch> = ArrayList()
                     for (postSnapshot in dataSnapshot.children) {
-                        comments.add(postSnapshot.getValue(Epoch::class.java)!!)
+                        val epoch = postSnapshot.getValue(Epoch::class.java)!!
+                        if(hasDefault || (!hasDefault  && !epoch.id.equals(DEFAULT_EPOCH_ID))) {
+                            comments.add(epoch)
+                        }
                     }
                     e.onSuccess(comments)
                 }

@@ -40,22 +40,12 @@ class TestCardFragment: BaseFragment(), TestCardView {
             return fragment
         }
     }
-
-    /*override fun onBackPressed() {
-        val args: Bundle = Bundle()
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
-        val fragment = FinishFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)
-    }*/
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_card, container, false)
 
         val testStr: String? = arguments?.getString(TEST_ITEM)
         test = gson.fromJson(testStr, Test::class.java)
         card = test.card!!
-//        (activity as BaseBackActivity).currentTag = TestActivity.WINNED_FRAGMENT
-//        (activity as ChangeToolbarListener).changeToolbar(WINNED_FRAGMENT,"Карта ${card.abstractCard?.name}")
         return view
     }
 

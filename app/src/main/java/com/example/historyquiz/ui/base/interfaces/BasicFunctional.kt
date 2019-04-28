@@ -54,6 +54,8 @@ interface BasicFunctional: MvpView {
 
     fun setWaitStatus(isWaiting: Boolean)
 
+    fun setBottomNavigationStatus(hasBottomNavigation: Boolean)
+
     fun setStatus(status: String)
 
     fun setOfflineChecking()
