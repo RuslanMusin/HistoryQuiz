@@ -12,6 +12,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Link
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_LINK_CODE
 import com.example.historyquiz.utils.Const.LINK_ITEM
 import com.example.historyquiz.utils.Const.gson
@@ -56,6 +57,8 @@ class AddLinkFragment : BaseFragment(), AddLinkView, View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews()
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 

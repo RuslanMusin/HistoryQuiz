@@ -173,20 +173,23 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
-        helpDialog = MaterialDialog.Builder(this.activity!!)
-            .customView(R.layout.dialog_help, false)
-            .onNeutral { dialog, which ->
-                dialog.cancel()
-            }
-            .build()
-
-        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
-        helpDialog.tv_help_content.text = getString(R.string.test_text)
         menu?.let {
-            val helpItem = menu.findItem(R.id.action_help)
-            helpItem.setOnMenuItemClickListener {
-                helpDialog.show()
-                true
+            if(type.equals(NEW_ONES)) {
+                helpDialog = MaterialDialog.Builder(this.activity!!)
+                    .customView(R.layout.dialog_help, false)
+                    .onNeutral { dialog, which ->
+                        dialog.cancel()
+                    }
+                    .build()
+
+                helpDialog.btn_cancel.setOnClickListener { helpDialog.cancel() }
+                helpDialog.tv_help_content.text = getString(R.string.test_text)
+
+                val helpItem = menu.findItem(R.id.action_help)
+                helpItem.setOnMenuItemClickListener {
+                    helpDialog.show()
+                    true
+                }
             }
             setSearchMenuItem(it)
         }

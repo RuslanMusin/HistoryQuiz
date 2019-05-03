@@ -12,6 +12,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TEST_ITEM
 import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.fragment_test_card.*
@@ -64,6 +65,8 @@ class TestCardFragment: BaseFragment(), TestCardView {
                     .load(it)
                     .into(iv_portrait)
         }
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
 
         super.onViewCreated(view, savedInstanceState)
     }

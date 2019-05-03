@@ -15,6 +15,7 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
 import com.example.historyquiz.model.wiki_api.query.Page
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
@@ -58,9 +59,9 @@ class AddCardFragment : BaseFragment(), AddCardView, SeekBar.OnSeekBarChangeList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        setStatus(EDIT_STATUS)
-//        setHasOptionsMenu(true)
         initViews()
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         hideLoading()
     }
 

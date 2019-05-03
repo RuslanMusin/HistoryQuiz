@@ -46,12 +46,13 @@ class FastGameFragment : BaseFragment(), FastGameView, View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setStatus(Const.EDIT_STATUS)
         initViews(view)
         lobby = Lobby()
         arguments?.let {
             user = gson.fromJson(it.getString(USER_ITEM), User::class.java)
         }
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 

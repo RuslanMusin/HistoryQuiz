@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.tests.test_item.main
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -85,9 +84,6 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         val testStr: String? = arguments?.getString(TEST_ITEM)
         test = gson.fromJson(testStr,Test::class.java)
 
-
-        /*(activity as BaseBackActivity).currentTag = TEST_FRAGMENT
-        test.title?.let { (activity as ChangeToolbarListener).changeToolbar(TEST_FRAGMENT, it) }*/
         presenter.readCardForTest(test)
         setStatus(Const.ONLINE_STATUS)
         setWaitStatus(true)
@@ -199,18 +195,11 @@ class TestFragment : BaseFragment(), TestView, View.OnClickListener {
         when (v.id) {
 
             R.id.tv_do_test -> {
-                model = activity?.run {
-                    ViewModelProviders.of(this).get(TestViewModel::class.java)
-                } ?: throw Exception("Invalid Activity")
-                model.selectNumber(0)
-                model.selectTest(test)
                 val args: Bundle = Bundle()
                 args.putString(TEST_ITEM, gson.toJson(test))
                 args.putInt(QUESTION_NUMBER,0)
                 val fragment = QuestionFragment.newInstance(args)
                 pushFragments(fragment, true)
-//                (activity as BaseBackActivity).changeFragment(fragment, QUESTION_FRAGMENT + 0)
-
             }
 
             R.id.tv_check_result -> {

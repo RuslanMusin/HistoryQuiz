@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AlphaAnimation
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,12 +28,12 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.game.game_list.GameListFragment
 import com.example.historyquiz.ui.game.play.change_list.GameChangeListAdapter
 import com.example.historyquiz.ui.game.play.list.GameCardsListAdapter
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
 import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.MODE_CARD_VIEW
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.getRandom
@@ -91,7 +92,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        setStatus(IN_GAME_STATUS)
         val view = inflater.inflate(R.layout.layout_change_card, container, false)
         return view
     }
@@ -99,9 +99,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar = game_toolbar
+        setStatus(Const.IN_GAME_STATUS)
+        setWaitStatus(false)
+        toolbar = view.findViewById(R.id.game_toolbar)
         setActionBar(toolbar)
-        btn_cancel.setOnClickListener{quitGameBeforeGameStart()}
+        toolbar.findViewById<ImageButton>(R.id.btn_cancel).setOnClickListener{ quitGameBeforeGameStart()}
         rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
         AppHelper.currentUser?.gameLobby?.let { presenter.setInitState(it) }
 
@@ -146,7 +148,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                     timer.cancel()
                     disconnectTimer?.cancel()
-                    gameRepository.disconnectMe().subscribe()
+                    gameRepository.disconnectMe().subscribe { e ->
+                        goToFindGameActivity()
+                    }
                 }
 
             })
@@ -201,6 +205,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     override fun changeCards(cards: MutableList<Card>, mutCards: MutableList<Card>) {
+        li_change_loading.visibility = View.GONE
+        li_change_cards.visibility = View.VISIBLE
         Log.d(TAG_LOG,"changeCards")
         mode = MODE_CHANGE_CARDS
         rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange(15000))
@@ -244,8 +250,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         adapter = rv_game_my_cards.adapter as GameCardsListAdapter
         rv_game_my_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
 
-        setActionBar(game_toolbar)
-        btn_cancel.setOnClickListener{quitGame()}
+        toolbar = view?.findViewById((R.id.game_toolbar))!!
+        setActionBar(toolbar)
+        toolbar.btn_cancel.setOnClickListener{quitGame()}
         toolbar_title.text = "Round $round"
         Log.d(TAG_LOG,"Round $round")
         startTimer()
@@ -371,7 +378,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             presenter.changeGameMode(MODE_CARD_VIEW)
             presenter.waitEnemyGameMode(MODE_CARD_VIEW).subscribe { e ->
                 tv_time_title.text = getString(R.string.view_time)
-                timer = object : CountDownTimer(10000, 1000) {
+                timer = object : CountDownTimer(5000, 1000) {
 
                     override fun onTick(millisUntilFinished: Long) {
                         tv_time.text = "${millisUntilFinished / 1000}"
@@ -623,8 +630,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     private fun goToFindGameActivity() {
-        val fragment = GameListFragment.newInstance()
-        pushFragments(fragment, true)
+        (activity as NavigationView).performBackPressed()
+        /*val fragment = GameListFragment.newInstance()
+        pushFragments(fragment, true)*/
     }
 
 

@@ -1,8 +1,9 @@
 package com.example.historyquiz.ui.game.add_photo
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +12,9 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.PhotoItem
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.EDIT_STATUS
-import com.example.historyquiz.utils.Const.USER_ID
+import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.gson
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_add_list.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.*
@@ -43,16 +41,19 @@ class AddPhotoFragment: BaseFragment(), AddPhotoView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setStatus(EDIT_STATUS)
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         initRecycler()
         hideLoading()
         hideListLoading()
         setActionBar(toolbar)
-        setActionBarTitle(R.string.search_card)
-        arguments?.let {
-            userId = it.getString(USER_ID)
+        toolbar.setNavigationOnClickListener { hideFragment() }
+        setActionBarTitle(R.string.choose_avatar)
+        presenter.loadPhotos(BOT_ID)
+       /* arguments?.let {
+            userId = it.getString(BOT_ID)
             presenter.loadPhotos(userId)
-        }
+        }*/
 
     }
 
@@ -68,21 +69,21 @@ class AddPhotoFragment: BaseFragment(), AddPhotoView {
         pg_list.visibility = View.GONE
     }
 
-    override fun changeDataSet(tests: List<PhotoItem>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun loadNextElements(i: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun setNotLoading() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun changeDataSet(tests: List<PhotoItem>) {
+        adapter!!.changeDataSet(tests)
+        hideListLoading()
+        hideLoading()
     }
 
     private fun initRecycler() {
         adapter = AddPhotoAdapter(ArrayList())
-        val manager = LinearLayoutManager(this.activity)
+        val manager = GridLayoutManager(this.activity, 4)
         rv_list.layoutManager = manager
         rv_list.setEmptyView(tv_empty)
         adapter!!.attachToRecyclerView(rv_list)
@@ -93,12 +94,10 @@ class AddPhotoFragment: BaseFragment(), AddPhotoView {
 
 
     override fun onItemClick(item: PhotoItem) {
-        val args = Bundle()
-        val itemJson = gson.toJson(item)
-        args.putString(Const.ITEM_ITEM, itemJson)
-        val fragment = AddCardFragment.newInstance(args)
-        fragment.setTargetFragment(this, Const.ADD_CARD_CODE)
-        showFragment(this, fragment)
+        val intent = Intent()
+        intent.putExtra(Const.PHOTO_ITEM, gson.toJson(item))
+        targetFragment?.onActivityResult(Const.ADD_CARD_CODE, android.support.v7.app.AppCompatActivity.RESULT_OK, intent)
+        hideFragment()
     }
 
     companion object {

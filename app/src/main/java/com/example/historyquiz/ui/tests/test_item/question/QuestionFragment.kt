@@ -22,6 +22,7 @@ import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
@@ -51,22 +52,6 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
     private var textViews: MutableList<TextView> = ArrayList()
     private var checkBoxes: MutableList<CheckBox> = ArrayList()
 
-   /* override fun onBackPressed() {
-        shouldCancel()
-    }
-
-    override fun onCancel() {
-        shouldCancel()
-    }
-
-    override fun onForward() {
-        nextQuestion()
-    }
-
-    override fun onOk() {
-        finishQuestions()
-    }*/
-
     override fun performBackPressed() {
         shouldCancel()
     }
@@ -87,10 +72,6 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
                         }
                         removeStackDownTo(number + 1)
                         performBackPressed()
-                        /*val args = Bundle()
-                        args.putString(TEST_ITEM, gson.toJson(test))
-                        val fragment = TestFragment.newInstance(args)
-                        pushFragments(fragment, true)*/
                     }
 
                 })
@@ -104,15 +85,6 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
         number = arguments?.getInt(QUESTION_NUMBER)!!
         test = gson.fromJson(testStr, Test::class.java)
         question = test.questions[number]
-        /* model = activity?.run {
-             ViewModelProviders.of(this).get(TestViewModel::class.java)
-         } ?: throw Exception("Invalid Activity")
-         model.test.value?.let {
-             test = it
-         }
-         model.number.value?.let {
-             number = it
-         }*/
 
         return view
     }
@@ -120,6 +92,8 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
         setListeners()
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 

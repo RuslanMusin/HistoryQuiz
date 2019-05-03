@@ -22,6 +22,7 @@ import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.STUB_PATH
 import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.fragment_add_link.*
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import java.io.InputStream
 import javax.inject.Inject
@@ -98,7 +99,6 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
         user.password = et_password.text.toString()
         user.photoUrl = photoUrl
         user.lowerUsername = user.username?.toLowerCase()
-        user.description = et_description.text.toString()
         return user
     }
 

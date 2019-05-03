@@ -14,6 +14,7 @@ import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.base.interfaces.ReloadableView
 import com.example.historyquiz.ui.base.interfaces.SearchListener
 import com.example.historyquiz.ui.profile.list.list_item.MemberListFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_FRIEND
 import com.example.historyquiz.utils.Const.DEFAULT_USERS_TYPE
 import com.example.historyquiz.utils.Const.REMOVE_FRIEND
@@ -48,6 +49,8 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
     }
 
     private fun initViews() {
@@ -91,13 +94,14 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
-        menu?.let { setSearchMenuItem(it) }
+        menu?.let {
+            it.findItem(R.id.action_help).setVisible(false)
+            setSearchMenuItem(it) }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun setSearchMenuItem(menu: Menu) {
         val searchItem = menu.findItem(R.id.action_search)
-
         val searchView: SearchView = searchItem.actionView as SearchView
         val finalSearchView = searchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

@@ -16,6 +16,7 @@ import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.add_card.AddCardFragment
 import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
@@ -57,6 +58,8 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         hideLoading()
         hideListLoading()
         setToolbar()
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         setHasOptionsMenu(true)
     }
 

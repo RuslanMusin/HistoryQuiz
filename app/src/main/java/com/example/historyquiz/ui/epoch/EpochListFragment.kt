@@ -51,6 +51,8 @@ class EpochListFragment : BaseFragment(), EpochListView {
         arguments?.let {
             val hasDefault: Boolean = it.getBoolean(HAS_DEFAULT)
             presenter.loadEpoches(hasDefault)
+            setStatus(Const.EDIT_STATUS)
+            setWaitStatus(false)
         }
     }
 

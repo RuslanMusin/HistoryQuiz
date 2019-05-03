@@ -26,7 +26,6 @@ import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.ADD_EPOCH_CODE
 import com.example.historyquiz.utils.Const.CARD_NUMBER
-import com.example.historyquiz.utils.Const.EDIT_STATUS
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.gson
@@ -53,9 +52,10 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setStatus(EDIT_STATUS)
         initViews(view)
         lobby = Lobby()
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -70,6 +70,7 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
     }
 
     private fun setListeners() {
+        btn_back.setOnClickListener(this)
         btn_add_game_photo.setOnClickListener(this)
         li_choose_epoch.setOnClickListener(this)
         btn_create_game.setOnClickListener(this)
@@ -94,11 +95,6 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
             R.id.btn_create_game -> {
                 lobby.cardNumber = seekBarCards.progress
                 if(lobby.cardNumber >= CARD_NUMBER) {
-                    /* if (types[spinner.selectedIndex].equals(getString(R.string.official_type))) {
-                         lobby.type = OFFICIAL_TYPE
-                     } else {
-                         lobby.type = USER_TYPE
-                     }*/
                     Log.d(TAG_LOG,"lobby type = ${lobby.type}")
                     lobby.title = et_game_name.text.toString()
                     lobby.lowerTitle = lobby.title?.toLowerCase()
@@ -128,6 +124,8 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
                 fragment.setTargetFragment(this, ADD_EPOCH_CODE)
                 showFragment(this, fragment)
             }
+
+            R.id.btn_back -> activity?.onBackPressed()
         }
     }
 

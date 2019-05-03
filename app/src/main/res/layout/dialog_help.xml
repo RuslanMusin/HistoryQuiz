@@ -46,7 +46,7 @@
                         android:layout_height="wrap_content"
                         android:elegantTextHeight="true"
                         android:lineSpacingMultiplier="1.5"
-                        android:text="@string/game_text"
+                        android:text="@string/stats_text"
                         android:textSize="@dimen/text.16"
                         android:layout_gravity="center_horizontal"
                         android:padding="@dimen/margin.normal"

@@ -94,6 +94,8 @@ class BotGameFragment : BaseFragment(), BotGameView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setStatus(Const.IN_GAME_STATUS)
+        setWaitStatus(false)
         rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
         currentUser?.gameLobby?.let { presenter.setInitState(it) }
 

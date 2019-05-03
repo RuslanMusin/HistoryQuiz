@@ -20,7 +20,6 @@ import com.example.historyquiz.ui.game.bot_play.BotGameFragment
 import com.example.historyquiz.ui.game.play.PlayGameFragment
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
-import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import kotlinx.android.synthetic.main.dialog_help.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
@@ -54,9 +53,6 @@ class GameListFragment : BaseFragment(), GameListView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_list, container, false)
-        setStatus(ONLINE_STATUS)
-        setWaitStatus(true)
-//        waitEnemy()
         return view
     }
 
@@ -65,6 +61,8 @@ class GameListFragment : BaseFragment(), GameListView {
         super.onViewCreated(view, savedInstanceState)
         initViews(view)
         presenter.loadOfficialTests()
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
     }
 
     private fun initViews(view: View) {

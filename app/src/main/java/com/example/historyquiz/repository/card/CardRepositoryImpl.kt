@@ -9,6 +9,7 @@ import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AFTER_TEST
 import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.CARD_NUMBER
+import com.example.historyquiz.utils.Const.DEFAULT_EPOCH_ID
 import com.example.historyquiz.utils.Const.SEP
 import com.example.historyquiz.utils.Const.WIN_GAME
 import com.example.historyquiz.utils.RxUtils
@@ -249,7 +250,7 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
             findMyCards(userId).subscribe { cards ->
                 val officials: MutableList<Card> = ArrayList()
                 for (card in cards) {
-                    if (epochId.equals(card.epochId)) {
+                    if (epochId.equals(DEFAULT_EPOCH_ID) || epochId.equals(card.epochId)) {
                         officials.add(card)
                     }
                 }

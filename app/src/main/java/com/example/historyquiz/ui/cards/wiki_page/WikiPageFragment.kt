@@ -11,6 +11,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.PAGE_TITLE
 import com.example.historyquiz.utils.Const.PAGE_URL
 import kotlinx.android.synthetic.main.fragment_wiki_page.*
@@ -55,6 +56,8 @@ class WikiPageFragment : BaseFragment(), WikiPageView, View.OnClickListener {
         setToolbar()
         setData()
         setListeners()
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
     }
 
     private fun setListeners() {

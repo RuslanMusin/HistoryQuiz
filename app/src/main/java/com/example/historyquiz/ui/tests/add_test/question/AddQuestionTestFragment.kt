@@ -26,6 +26,7 @@ import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.TEST_ITEM
@@ -83,20 +84,10 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
         hideLoading()
-     /*   model = activity?.run {
-            ViewModelProviders.of(this).get(TestViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
-        model.test.value?.let {
-            test = it
-        }
-        model.number.value?.let {
-            number = it
-        }*/
         arguments?.let {
             test = gson.fromJson(it.getString(TEST_ITEM), Test::class.java)
             number = it.getInt(QUESTION_NUMBER)
         }
-//
         return view
     }
 
@@ -131,6 +122,8 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         if(editTexts.size == 0) {
             setStartParams()
         }
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
     }
 
     private fun setStartParams() {
@@ -234,7 +227,6 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
     private fun finishQuestions() {
         prepareQuestion()
-//        addTestView!!.createTest()
         Log.d(TAG_LOG, "after preparing")
         if(checkQuestion()) {
             Log.d(TAG_LOG, "create test")
@@ -243,7 +235,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     }
 
     override fun navigateToTest() {
-        removeStackDownTo()
+        removeStackDownTo(number + 2)
         val args = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         val fragment = TestFragment.newInstance(args)
@@ -258,10 +250,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
                 args.putString(TEST_ITEM, gson.toJson(test))
                 args.putInt(QUESTION_NUMBER, ++number)
                 val fragment = AddQuestionTestFragment.newInstance(args)
-                /*model.selectTest(test)
-                model.selectNumber(++number)*/
                 pushFragments(fragment, true)
-//                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
             }
         }
     }
@@ -297,7 +286,6 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     }
 
     private fun beforeQuestion() {
-//        removeStackDownTo(1)
         val args = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))
         var toQuestion = true
@@ -306,17 +294,14 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         }
         args.putInt(QUESTION_NUMBER, --number)
         if(toQuestion) {
-            removeStackDownTo(1)
+            removeStackDownTo(2)
             val fragment = AddQuestionTestFragment.newInstance(args)
             pushFragments(fragment, true)
         } else {
-            removeStackDownTo()
+            removeStackDownTo(2)
             val fragment = AddMainTestFragment.newInstance(args)
             pushFragments(fragment, true)
         }
-        /*model.selectTest(test)
-        model.selectNumber(--number)
-        super.performBackPressed()*/
     }
 
     override fun onClick(v: View) {

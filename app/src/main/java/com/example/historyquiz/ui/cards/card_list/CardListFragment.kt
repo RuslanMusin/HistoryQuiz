@@ -15,6 +15,7 @@ import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.NEW_ONES
 import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -147,20 +148,23 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
-        helpDialog = MaterialDialog.Builder(this.activity!!)
-            .customView(R.layout.dialog_help, false)
-            .onNeutral { dialog, which ->
-                dialog.cancel()
-            }
-            .build()
-
-        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
-        helpDialog.tv_help_content.text = getString(R.string.card_text)
         menu?.let {
-            val helpItem = menu.findItem(R.id.action_help)
-            helpItem.setOnMenuItemClickListener {
-                helpDialog.show()
-                true
+            if(type.equals(NEW_ONES)) {
+                helpDialog = MaterialDialog.Builder(this.activity!!)
+                    .customView(R.layout.dialog_help, false)
+                    .onNeutral { dialog, which ->
+                        dialog.cancel()
+                    }
+                    .build()
+
+                helpDialog.btn_cancel.setOnClickListener { helpDialog.cancel() }
+                helpDialog.tv_help_content.text = getString(R.string.card_text)
+
+                val helpItem = menu.findItem(R.id.action_help)
+                helpItem.setOnMenuItemClickListener {
+                    helpDialog.show()
+                    true
+                }
             }
             setSearchMenuItem(it)
         }

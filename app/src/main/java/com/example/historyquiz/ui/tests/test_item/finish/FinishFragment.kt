@@ -19,6 +19,7 @@ import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.WRONG_ANSWERS
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_item.winned_card.TestCardFragment
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.NEW_ONES
 import com.example.historyquiz.utils.Const.OLD_ONES
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
@@ -64,7 +65,8 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
         } else {
             checkAnswers(test)
         }
-
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 

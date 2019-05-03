@@ -94,7 +94,6 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
         li_statists.setOnClickListener(this)
         li_tests.setOnClickListener(this)
         li_cards.setOnClickListener(this)
-        li_description.setOnClickListener(this)
         li_logout.setOnClickListener(this)
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
     }
@@ -113,8 +112,6 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
             R.id.li_cards -> showCards()
 
             R.id.li_tests -> showTests()
-
-            R.id.li_description -> showDescription()
 
             R.id.li_logout -> presenter.logout()
         }
@@ -170,7 +167,6 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
             tv_email.text = user.email
             tv_username.text = user.username
             tv_level.text = getString(R.string.level, user.level)
-            tv_content.text = user.description
             progressBar.max = user.nextLevel.toInt()
             progressBar.progress = user.points.toInt()
             if(!type.equals(OWNER_TYPE)) {
@@ -205,21 +201,25 @@ class ProfileFragment: BaseFragment(), ProfileView, View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.help_menu, menu)
-        helpDialog = MaterialDialog.Builder(this.activity!!)
-            .customView(R.layout.dialog_help, false)
-            .onNeutral { dialog, which ->
-                dialog.cancel()
-            }
-            .build()
+        if (type.equals(OWNER_TYPE)) {
+            helpDialog = MaterialDialog.Builder(this.activity!!)
+                .customView(R.layout.dialog_help, false)
+                .onNeutral { dialog, which ->
+                    dialog.cancel()
+                }
+                .build()
 
-        helpDialog.btn_cancel.setOnClickListener{ helpDialog.cancel() }
-        helpDialog.tv_help_content.text = getString(R.string.profile_text)
-        menu?.let {
-            val helpItem = menu.findItem(R.id.action_help)
-            helpItem.setOnMenuItemClickListener {
-                helpDialog.show()
-                true
+            helpDialog.btn_cancel.setOnClickListener { helpDialog.cancel() }
+            helpDialog.tv_help_content.text = getString(R.string.profile_text)
+            menu?.let {
+                val helpItem = menu.findItem(R.id.action_help)
+                helpItem.setOnMenuItemClickListener {
+                    helpDialog.show()
+                    true
+                }
             }
+        } else {
+            menu?.findItem(R.id.action_help)?.setVisible(false)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }

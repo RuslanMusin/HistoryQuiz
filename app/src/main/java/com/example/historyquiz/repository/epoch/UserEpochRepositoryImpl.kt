@@ -10,6 +10,7 @@ import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.DEFAULT_EPOCH_ID
 import com.example.historyquiz.utils.Const.GAME_LOSE_POINTS
 import com.example.historyquiz.utils.Const.GAME_WIN_POINTS
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -191,39 +192,49 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
             playerId?.let {
                 userRepository.get().readUserById(it).subscribe { user ->
                     findUserEpoch(it, lobby.epochId).subscribe { epoch ->
-                        Log.d(TAG_LOG, "find epoch after game")
-                        if (isWin) {
-                            epoch.win++
-                            user.points += GAME_WIN_POINTS
-                        } else {
-                            epoch.lose++
-                            user.points += GAME_LOSE_POINTS
-                        }
-                        if (user.points >= user.nextLevel) {
-                            user.nextLevel = (1.5 * user.points + 20 * user.level).toLong()
-                            user.level++
-                            user.points = 0
-                        }
-                        epoch.updateGe()
-                        userRepository.get().updateUser(user)
-                        Log.d(TAG_LOG, "after update user")
-                        if (user.id.equals(AppHelper.currentUser.id)) {
-                            AppHelper.currentUser = user
-                        }
-                        epoch.right += score
-                        epoch.wrong += (lobby.cardNumber - score)
-                        updateUserEpoch(epoch).subscribe { e ->
-                            findUserEpoches(playerId, true).subscribe { epoches ->
-                                user.epochList = epoches.toMutableList()
-                                val leaderStat = LeaderStat(user)
-                                Log.d(TAG_LOG, "create leader stat")
-                                leaderStatRepository.updateLeaderStat(leaderStat).subscribe { e ->
-                                    Log.d(TAG_LOG, "created leaderStat")
+                        findUserEpoch(it, DEFAULT_EPOCH_ID).subscribe { defEpoch ->
+                            Log.d(TAG_LOG, "find epoch after game")
+                            if (isWin) {
+                                epoch.win++
+                                defEpoch.win++
+                                user.points += GAME_WIN_POINTS
+                            } else {
+                                epoch.lose++
+                                defEpoch.lose++
+                                user.points += GAME_LOSE_POINTS
+                            }
+                            if (user.points >= user.nextLevel) {
+                                user.nextLevel = (1.5 * user.points + 20 * user.level).toLong()
+                                user.level++
+                                user.points = 0
+                            }
+                            epoch.updateGe()
+                            defEpoch.updateGe()
+                            userRepository.get().updateUser(user)
+                            Log.d(TAG_LOG, "after update user")
+                            if (user.id.equals(AppHelper.currentUser.id)) {
+                                AppHelper.currentUser = user
+                            }
+                            epoch.right += score
+                            epoch.wrong += (lobby.cardNumber - score)
+                            defEpoch.right += score
+                            defEpoch.wrong += (lobby.cardNumber - score)
+                            updateUserEpoch(epoch).subscribe { e ->
+                                updateUserEpoch(defEpoch).subscribe { e ->
+                                    findUserEpoches(playerId, true).subscribe { epoches ->
+                                        user.epochList = epoches.toMutableList()
+                                        val leaderStat = LeaderStat(user)
+                                        Log.d(TAG_LOG, "create leader stat")
+                                        leaderStatRepository.updateLeaderStat(leaderStat).subscribe { e ->
+                                            Log.d(TAG_LOG, "created leaderStat")
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
 
+                        }
+
+                    }
                 }
             }
         }

@@ -81,6 +81,8 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
         setListeners()
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -150,11 +152,6 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
     private fun beforeQuestion() {
         if(number > 0) {
             (activity as NavigationView).performBackPressed()
-           /* val args: Bundle = Bundle()
-            args.putString(TEST_ITEM, gson.toJson(test))
-            args.putString(ANSWERS_TYPE, type)
-            args.putInt(QUESTION_NUMBER, --number)
-            val fragment = AnswersFragment.newInstance(args)*/
         } else {
             finishQuestions()
         }

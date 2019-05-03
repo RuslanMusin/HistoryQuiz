@@ -1,7 +1,6 @@
 package com.example.historyquiz.ui.tests.add_test.main
 
 import android.app.Activity.RESULT_OK
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -28,6 +27,7 @@ import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.add_test.add_link.AddLinkFragment
 import com.example.historyquiz.ui.tests.add_test.question.AddQuestionTestFragment
 import com.example.historyquiz.ui.tests.test_item.check_answers.AnswersFragment.Companion.QUESTION_NUMBER
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
 import com.example.historyquiz.utils.Const.ADD_EPOCH_CODE
 import com.example.historyquiz.utils.Const.ADD_LINK_CODE
@@ -83,23 +83,15 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
         setListeners()
-
-        model = activity?.run {
-            ViewModelProviders.of(this).get(TestViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
-
-        test = Test()
-        model.test.value?.let {
-            test = it
-        }
         hideLoading()
-     /*   if(arguments == null) {
+        if(arguments == null) {
             test = Test()
         } else {
             test = gson.fromJson(arguments?.getString(TEST_ITEM),Test::class.java)
             setTestData()
-        }*/
-
+        }
+        setStatus(Const.EDIT_STATUS)
+        setWaitStatus(false)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -139,19 +131,14 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 test!!.title = et_test_name.text.toString()
                 test!!.desc = et_test_desc.text.toString()
                 test.links = links
-//                addTestView!!.setTest(test!!)
 
                 if(checkTest()) {//
                     val args: Bundle = Bundle()
                     args.putString(TEST_ITEM, gson.toJson(test))
                     args.putInt(QUESTION_NUMBER, 0)
-                    model.selectNumber(0)
-                    model.selectTest(test)
                     Log.d(TAG_LOG, "Create quesitons")
                     val fragment = AddQuestionTestFragment.newInstance(args)
-//                    showFragment(this, fragment)
                     pushFragments(fragment, true)
-//                    (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + 0)
                 } else {
 
                 }
