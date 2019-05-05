@@ -104,6 +104,7 @@
 
     <string name="game_ended">Игра закончена</string>
     <string name="enemy_disconnected">Противник отключился от игры</string>
+    <string name="you_disconnected">Вы отключились от игры</string>
     <string name="old_game_will_be_deleted">Старая игра будет удалена</string>
     <string name="create_new_game">Создание новой игры</string>
     <string name="game_will_be_deleted">Удалить эту игру ?</string>
@@ -225,4 +226,11 @@
         Рейтинг показывает лучших игроков, с самыми высокими коэффициентами Kg(считается по всем эпохам).\n\n
     </string>
     <string name="choose_avatar">Выбор аватара</string>
+    <string name="choose_epoch_please">Выберите эпоху!</string>
+    <string name="input_name">Введите имя!</string>
+    <string name="you_win">Победа</string>
+    <string name="you_lose">Поражение</string>
+    <string name="draw">Ничья</string>
+    <string name="you_get_card">Вы выиграли карту</string>
+    <string name="you_lose_card">Вы проиграли карту</string>
 </resources>

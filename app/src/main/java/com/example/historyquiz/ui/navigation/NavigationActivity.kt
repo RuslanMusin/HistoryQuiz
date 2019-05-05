@@ -314,51 +314,60 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     }
 
     private fun selectedTab(tabId: String) {
-        showLoading()
-        val lastTab = currentTab
-        currentTab = tabId
-        relativeTabs[currentTab]?.let { showTab = it }
-        val size = stacks[tabId]?.size
-        setSupportActionBar(null)
-        if (size == 0) {
-            when(tabId) {
-
-                TAB_PROFILE -> showProfile(tabId)
-
-                TAB_GAME -> showGame(tabId)
-
-                TAB_CARDS -> showCards(tabId)
-
-                TAB_TESTS -> showTests(tabId)
-            }
+        if(tabId.equals(currentTab)) {
+            removeStackDownTo()
+            chooseTab(tabId)
         } else {
-            if(stacks[showTab]?.size == 0) {
-                stacks[currentTab]?.lastElement()?.let {
-                    pushFragments(it, false)
-                }
+            showLoading()
+            val lastTab = currentTab
+            currentTab = tabId
+            relativeTabs[currentTab]?.let { showTab = it }
+            val size = stacks[tabId]?.size
+            setSupportActionBar(null)
+            if (size == 0) {
+                chooseTab(tabId)
             } else {
-                val ft = supportFragmentManager.beginTransaction()
-                val iterator = stacks[showTab]?.iterator()
-                iterator?.let {
-                    stacks[showTab]?.firstElement()?.let { it1 -> ft.replace(R.id.container, it1) }
-                    for((i, frag) in iterator.withIndex()) {
-                        if(i > 0) {
-                            ft.hide(frag.targetFragment!!).add(R.id.container, frag).show(frag)
+                if (stacks[showTab]?.size == 0) {
+                    stacks[currentTab]?.lastElement()?.let {
+                        pushFragments(it, false)
+                    }
+                } else {
+                    val ft = supportFragmentManager.beginTransaction()
+                    val iterator = stacks[showTab]?.iterator()
+                    iterator?.let {
+                        stacks[showTab]?.firstElement()?.let { it1 -> ft.replace(R.id.container, it1) }
+                        for ((i, frag) in iterator.withIndex()) {
+                            if (i > 0) {
+                                ft.hide(frag.targetFragment!!).add(R.id.container, frag).show(frag)
+                            }
                         }
                     }
-                }
 //                stacks[showTab]?.lastElement()?.let {
 //                (it as BaseFragment<*>).showBottomNavigation()
 //                ft.hide(it.targetFragment!!).add(R.id.container, it).show(it)
-                ft.commit()
+                    ft.commit()
 
-                //                    ft.replace(R.id.container, it)
+                    //                    ft.replace(R.id.container, it)
 //                    ft.hide(it.targetFragment!!).add(R.id.container, it).show(it)
-                /*  stacks[lastTab]?.lastElement()?.let { it1 ->
+                    /*  stacks[lastTab]?.lastElement()?.let { it1 ->
                     ft.hide(it1).add(R.id.container, it).show(it)*/
+                }
+
+
             }
+        }
+    }
 
+    private fun chooseTab(tabId: String) {
+        when (tabId) {
 
+            TAB_PROFILE -> showProfile(tabId)
+
+            TAB_GAME -> showGame(tabId)
+
+            TAB_CARDS -> showCards(tabId)
+
+            TAB_TESTS -> showTests(tabId)
         }
     }
 
@@ -391,6 +400,7 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
 
     override fun removeStackDownTo() {
         stacks[currentTab]?.clear()
+        stacks[showTab]?.clear()
     }
 
     override fun removeStackDownTo(number: Int) {

@@ -175,9 +175,6 @@ class GameListFragment : BaseFragment(), GameListView {
         Log.d(TAG_LOG, "start usual game")
         val fragment = PlayGameFragment.newInstance()
         pushFragments(fragment, true)
-
-//            hideProgressDialog()
-//        PlayGameActivity.start(this)
     }
 
     override fun hideProgressDialog() {
@@ -232,7 +229,6 @@ class GameListFragment : BaseFragment(), GameListView {
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
                     override fun onQueryTextSubmit(query: String): Boolean {
-                        presenter.loadOfficialTestsByQuery(query)
                         if (!finalSearchView.isIconified) {
                             finalSearchView.isIconified = true
                         }
@@ -241,6 +237,7 @@ class GameListFragment : BaseFragment(), GameListView {
                     }
 
                     override fun onQueryTextChange(newText: String): Boolean {
+                        presenter.loadOfficialTestsByQuery(newText)
                         return false
                     }
                 })

@@ -70,6 +70,7 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
     override fun showBottomNavigation(navigationView: NavigationView) {
         navigationView.hideBottomNavigation()
         navigationView.changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        navigationView.setBottomNavigationStatus(false)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

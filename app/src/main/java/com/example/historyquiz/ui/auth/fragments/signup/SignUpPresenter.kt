@@ -98,6 +98,7 @@ class SignUpPresenter @Inject constructor() : BasePresenter<SignUpView>() {
         viewState.hideProgressDialog()
         AppHelper.currentUser = user
         currentUser.status = ONLINE_STATUS
+        AppHelper.userInSession = true
         userRepository.changeUserStatus(currentUser).subscribe()
         viewState.goToProfile(user)
     }

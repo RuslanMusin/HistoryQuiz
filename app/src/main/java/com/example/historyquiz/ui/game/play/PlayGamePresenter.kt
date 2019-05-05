@@ -12,7 +12,6 @@ import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
-import com.example.historyquiz.utils.Const.BOT_GAME
 import com.example.historyquiz.utils.Const.MODE_PLAY_GAME
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.getRandom
@@ -35,6 +34,14 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
     lateinit var botCards: MutableList<Card>
 
     lateinit var lobby: Lobby
+
+    var youCardChosed = false
+    var enemyCardChosed = false
+
+    var enemyAnswered = false
+    var youAnswered = false
+
+    var lastEnemyChoose: CardChoose? = null
 
     fun setInitState(initlobby: Lobby) {
         lobby = initlobby
@@ -79,11 +86,6 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
         waitEnemyGameMode(MODE_PLAY_GAME).subscribe { e ->
             viewState.setCardsList(ArrayList(myCards))
             viewState.setCardChooseEnabled(true)
-
-            /* RepositoryProvider.userRepository.readUserById(gameRepository.enemyId!!)
-                .subscribe { t: User? ->
-                    viewState.setEnemyUserData(t!!)
-                }*/
             lobby.gameData?.enemyId?.let {
                 userRepository.readUserById(it)
                     .subscribe { t: User? ->
@@ -101,73 +103,28 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
             gameRepository.chooseNextCard(lobby, card.id!!)
             viewState.showYouCardChoose(card)
             youCardChosed = true
-            if (lobby.gameData?.gameMode.equals(BOT_GAME)) {
-                Log.d(TAG_LOG, "bot choose card")
-                botChooseCard()
-            }
         }
-
-        /* if (enemyCardChosed) {
-             showQuestion()
-         }*/
-    }
-
-    fun botChooseCard() {
-        val card: Card? = botCards.getRandom()
-        botCards.remove(card)
-        card?.let {
-            //            viewState.showEnemyCardChoose(it)
-            card.id?.let { it1 -> gameRepository.botNextCard(lobby, it1) }
-        }
-//        enemyCardChosed = true
-//        showQuestion()
 
     }
 
     fun answer(correct: Boolean) {
         viewState.hideQuestionForYou()
-
         viewState.hideEnemyCardChoose()
         viewState.hideYouCardChoose()
-
         viewState.showYourAnswer(correct)
-
+        youAnswered = true
         gameRepository.findLobby(lobby.id).subscribe { e ->
             gameRepository.answerOnLastQuestion(lobby, correct)
             enemyCardChosed = false
             youCardChosed = false
-
-            if (lobby.gameData?.gameMode.equals(BOT_GAME)) {
-                Log.d(TAG_LOG, "bot answer")
-                answerBot()
-            }
         }
-
-
-    }
-
-    fun answerBot() {
-        val correct: Boolean = Random().nextBoolean()
-        gameRepository.botAnswer(lobby,correct)
     }
 
     override fun onGameEnd(type: GameRepositoryImpl.GameEndType, card: Card) {
         Log.d("Alm", "Game End: " + type)
-
         viewState.showGameEnd(type,card)
-
-//        when(type){
-//            GamesRepository.GameEndType.YOU_WIN->{
-//                viewState.
-//            }
-//        }
-
     }
 
-    var youCardChosed = false
-    var enemyCardChosed = false
-
-    var lastEnemyChoose: CardChoose? = null
 
     override fun onEnemyCardChosen(choose: CardChoose) {
         Log.d("Alm", "enemy chosen card " + choose.cardId)
@@ -177,7 +134,6 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
         cardRepository.readCard(choose.cardId).subscribe { card ->
             viewState.showEnemyCardChoose(card)
         }
-//        viewState.setCardChooseEnabled(true)
     }
 
     fun enemyDisconnected() {
@@ -198,6 +154,6 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
 
     override fun onEnemyAnswered(correct: Boolean) {
         viewState.showEnemyAnswer(correct)
-        viewState.setCardChooseEnabled(true)
+//        viewState.setCardChooseEnabled(true)
     }
 }

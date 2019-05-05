@@ -49,8 +49,8 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
         AppHelper.currentUser?.id?.let {
             gameRepository
                 .findOfficialTestsByQuery(query, it)
-                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-                .doAfterTerminate(Action { viewState.hideLoading() })
+                .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
+                .doAfterTerminate(Action { viewState.hideListLoading() })
                 .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
         }
     }
@@ -108,8 +108,6 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
                 viewState.showSnackBar("У противника не хватает карт для игры")
             }
         }
-
-
     }
 
     fun gameFinded(): () -> Unit {

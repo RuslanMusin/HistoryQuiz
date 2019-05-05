@@ -26,6 +26,6 @@
         android:layout_gravity="center_horizontal"
         android:id="@+id/card_in_end_dialog"
         layout="@layout/item_game_card_medium"
-        android:layout_width="130dp"
-        android:layout_height="210dp" />
+        android:layout_width="120dp"
+        android:layout_height="200dp" />
 </LinearLayout>

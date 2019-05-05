@@ -24,11 +24,11 @@ class CardListPresenter @Inject constructor() : BasePresenter<CardListView>() {
         compositeDisposable.add(dis)
     }
 
-    fun loadCardsByQuery(userId: String, query: String) {
+    fun loadCardsByQuery(query: String, userId: String) {
         val dis = abstractCardRepository
             .findMyAbstractCardsByQuery(query, userId)
-            .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
-            .doAfterTerminate(Action { viewState.hideLoading() })
+            .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
+            .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
 
         compositeDisposable.add(dis)

@@ -12,6 +12,7 @@ import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
+import com.example.historyquiz.utils.AppHelper.Companion.userInSession
 import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
@@ -89,6 +90,7 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
                     Log.d(TAG_LOG, "have user and userEmail = ${it.email}")
                     AppHelper.currentUser = it
                     it.status = ONLINE_STATUS
+                    userInSession = true
                     userRepository.changeUserStatus(it).subscribe()
                     gameRepository.removeRedundantLobbies(true)
                     viewState.goToProfile(it)

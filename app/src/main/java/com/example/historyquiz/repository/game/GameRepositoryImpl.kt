@@ -226,21 +226,13 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     override fun createLobby(lobby: Lobby, onFind: () -> (Unit)) {
         val lobbyId: String? = databaseReference.push().key
-//        currentLobbyRef!!.setValue(lobby)
-
-        /*   nowSearchingDbRef = searchingDbRef.child(currentLobbyRef!!.key!!)
-           nowSearchingDbRef!!.setValue(currentLobbyRef!!.key)
-
-           nowSearchingDbRef!!.onDisconnect().removeValue()
-
-           creatorLobbyRef = currentLobbyRef!!.child(Lobby.PARAM_creator)
-           invitedLobbyRef = currentLobbyRef!!.child(Lobby.PARAM_invited)*/
 
         lobbyId?.let {
             lobby.id = lobbyId
             databaseReference.child(it).setValue(lobby)
             currentUser?.let {
-                it.id?.let { it1 -> databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(it1).child(FIELD_LOBBY_ID).setValue(lobbyId)
+                it.id?.let { it1 ->
+                    databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(it1).child(FIELD_LOBBY_ID).setValue(lobbyId)
                     val relation:Relation = Relation()
                     relation.id = lobbyId
                     relation.relation = ONLINE_STATUS
@@ -250,8 +242,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             }
 
         }
-//        creatorLobbyRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().setValue(false)
-        //TODO remove lobby on disconnect?
         onFind()
     }
 
@@ -440,11 +430,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
        }*/
 
     override fun goToLobby(lobby: Lobby, onFind: () -> (Unit), onNotAccepted: () -> (Unit)) {
-        /* currentLobbyRef = lobbiesDbRef.child(lobbyId)
-
-         invitedLobbyRef = currentLobbyRef!!.child(Lobby.PARAM_creator)
-         creatorLobbyRef = currentLobbyRef!!.child(Lobby.PARAM_invited)
-         */
 
         setLobbyRefs(lobby.id)
 
@@ -454,26 +439,16 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
         myLobbyRef!!.setValue(playerData)
 
-//        invitedLobbyRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().setValue(false)
-
         val relation: Relation = Relation()
         relation.id = lobby.id
         relation.relation = ONLINE_STATUS
         lobby.creator?.playerId?.let {
             currentUser?.let { user ->
-                /* val gameData: GameData = GameData()
-                 gameData.gameMode = ONLINE_GAME
-                 gameData.enemyId = it
-                 gameData.role = FIELD_INVITED
-                 user.gameLobby = lobby
-                 user.gameLobby?.gameData = gameData*/
                 databaseReference.root.child(USERS_LOBBIES).child(user.id).child(lobby.id).setValue(relation)
             }
             relation.relation = IN_GAME_STATUS
             databaseReference.root.child(USERS_LOBBIES).child(it).child(lobby.id).setValue(relation)
         }
-
-
 
         databaseReference.root.child(USERS_LOBBIES).child(currentId).child(lobby.id).addValueEventListener(object:
             ValueEventListener {

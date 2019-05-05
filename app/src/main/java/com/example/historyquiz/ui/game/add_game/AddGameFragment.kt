@@ -152,6 +152,20 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
         }
     }
 
+    override fun showTitleError(b: Boolean) {
+        if(b) {
+            ti_game_name.error = getString(R.string.input_name)
+        } else {
+            ti_game_name.error = null
+        }
+    }
+
+    override fun showEpochError(b: Boolean) {
+        if(b) {
+            showSnackBar(R.string.choose_epoch_please)
+        }
+    }
+
     override fun onGameCreated() {
         val fragment = GameListFragment.newInstance()
         pushFragments(fragment, true)

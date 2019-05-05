@@ -58,8 +58,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.44" />
 
-    <ImageView
-
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_game_enemy_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -67,7 +66,8 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/knight" />
+        android:src="@drawable/knight"
+         />
 
     <TextView
         android:id="@+id/tv_game_enemy_name"

@@ -200,8 +200,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun setEnemyUserData(user: User) {
         tv_game_enemy_name.text = user.username
-
-        //TODO image, но еще нет Url в БД
+        AppHelper.loadUserPhoto(iv_game_enemy_image, user.photoUrl)
     }
 
     override fun changeCards(cards: MutableList<Card>, mutCards: MutableList<Card>) {
@@ -244,7 +243,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 if (choosingEnabled) {
                     presenter.chooseCard(it)
                 }
-//                    showYouCardChoose(it)
             }
         )
         adapter = rv_game_my_cards.adapter as GameCardsListAdapter
@@ -307,9 +305,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         } else {
             rv_game_my_cards.alpha = 0.5f
         }
-//        rv_game_my_cards.isClickable = enabled
-//        rv_game_my_cards.touc
-
     }
 
     override fun onAnswer(correct: Boolean) {
@@ -327,15 +322,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         a_anim.duration = 700;
         a_anim.fillAfter = true
         enemy_selected_card.startAnimation(a_anim)
-
-        //TODO?
-//        val m_anim = object : Animation() {
-//            override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
-////                super.applyTransformation(interpolatedTime, t)
-//                val params=enemy_selected_card.layoutParams as ConstraintLayout.LayoutParams
-//                params.
-//            }
-//        }
     }
 
     private fun updateTime() {
@@ -351,23 +337,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             timer.cancel()
             startTimer()
             adapter.isClickable = true
+            setCardChooseEnabled(true)
         }
-        /* if(!enemyAnswered && myAnswered) {
-             disconnectTimer?.cancel()
-             Log.d(TAG_LOG,"Disconnect Answer Time")
-             disconnectTimer = object : CountDownTimer(30000, 1000) {
-
-                 override fun onTick(millisUntilFinished: Long) {
-                     Log.d(TAG_LOG,"Disconnect Answer Time = ${millisUntilFinished / 1000}")
-                 }
-
-                 override fun onFinish() {
-                     Log.d(TAG_LOG,"enemy not asnwered dis")
-                     presenter.enemyDisconnected()
-                 }
-             }
-             disconnectTimer?.start()
-         }*/
         if(enemyChoosed and myChoosed) {
             Log.d(TAG_LOG,"show question mode")
             enemyChoosed = false
@@ -386,6 +357,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                     }
 
                     override fun onFinish() {
+                        setCardChooseEnabled(false)
                         presenter.changeGameMode(MODE_PLAY_GAME)
                         presenter.waitEnemyGameMode(MODE_PLAY_GAME).subscribe { e ->
                             presenter.showQuestion()
@@ -395,22 +367,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 }.start()
             }
         }
-        /*if(!enemyChoosed && myChoosed) {
-            Log.d(TAG_LOG,"Disconnect Choose Time")
-            disconnectTimer?.cancel()
-            disconnectTimer = object : CountDownTimer(30000, 1000) {
-
-                override fun onTick(millisUntilFinished: Long) {
-                    Log.d(TAG_LOG,"Disconnect Choose Time = ${millisUntilFinished / 1000}")
-                }
-
-                override fun onFinish() {
-                    Log.d(TAG_LOG,"enemy not choosed dis")
-                    presenter.enemyDisconnected()
-                }
-            }
-            disconnectTimer?.start()
-        }*/
     }
 
     private fun startTimer() {
@@ -575,6 +531,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 .neutralText("ok")
                 .buttonsGravity(GravityEnum.END)
                 .onNeutral { dialog, which ->
+                    dialog.dismiss()
                     goToFindGameActivity()
                 }
                 .canceledOnTouchOutside(false)
@@ -584,19 +541,19 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             val dialog = MaterialDialog.Builder(this.activity!!)
                 .title(when (type) {
                     GameRepositoryImpl.GameEndType.YOU_WIN,
-                    GameRepositoryImpl.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "You win"
+                    GameRepositoryImpl.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> getString(R.string.you_win)
 
                     GameRepositoryImpl.GameEndType.YOU_LOSE,
-                    GameRepositoryImpl.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "You lose"
+                    GameRepositoryImpl.GameEndType.YOU_DISCONNECTED_AND_LOSE -> getString(R.string.you_lose)
 
-                    GameRepositoryImpl.GameEndType.DRAW -> "Draw"//never
+                    GameRepositoryImpl.GameEndType.DRAW -> getString(R.string.draw)
                 })
                 .titleGravity(GravityEnum.CENTER)
                 .customView(R.layout.dialog_end_game, false)
-
                 .neutralText("ok")
                 .buttonsGravity(GravityEnum.END)
                 .onNeutral { dialog, which ->
+                    dialog.dismiss()
                     goToFindGameActivity()
                 }
                 .canceledOnTouchOutside(false)
@@ -607,21 +564,21 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
             dialog.view.tv_get_lose_card.text = when (type) {
                 GameRepositoryImpl.GameEndType.YOU_WIN,
-                GameRepositoryImpl.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "You get card:"
+                GameRepositoryImpl.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> getString(R.string.you_get_card)
 
                 GameRepositoryImpl.GameEndType.YOU_LOSE,
-                GameRepositoryImpl.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "You lose card:"
+                GameRepositoryImpl.GameEndType.YOU_DISCONNECTED_AND_LOSE -> getString(R.string.you_lose_card)
 
                 GameRepositoryImpl.GameEndType.DRAW -> "Draw"//never
             }
 
             if (type == GameRepositoryImpl.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN) {
-                dialog.view.tv_game_end_reason.text = "Enemy disconnected"
+                dialog.view.tv_game_end_reason.text = getString(R.string.enemy_disconnected)
                 dialog.view.tv_game_end_reason.visibility = View.VISIBLE
             }
 
             if (type == GameRepositoryImpl.GameEndType.YOU_DISCONNECTED_AND_LOSE) {
-                dialog.view.tv_game_end_reason.text = "You disconnected"
+                dialog.view.tv_game_end_reason.text = getString(R.string.you_disconnected)
                 dialog.view.tv_game_end_reason.visibility = View.VISIBLE
             }
 
@@ -630,7 +587,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     private fun goToFindGameActivity() {
-        (activity as NavigationView).performBackPressed()
+        activity?.let{
+            (it as NavigationView).performBackPressed()
+        }
         /*val fragment = GameListFragment.newInstance()
         pushFragments(fragment, true)*/
     }

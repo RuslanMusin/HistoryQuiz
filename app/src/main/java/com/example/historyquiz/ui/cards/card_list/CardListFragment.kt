@@ -96,7 +96,7 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
     }
 
     override fun showListLoading() {
-//        pb_list.visibility = View.VISIBLE
+        pg_list.visibility = View.VISIBLE
     }
 
     override fun hideListLoading() {
