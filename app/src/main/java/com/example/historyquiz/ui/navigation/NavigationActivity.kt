@@ -183,6 +183,12 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
 
     override fun setWaitStatus(isWaiting: Boolean) {
         presenter.isWaiting = isWaiting
+        if(isWaiting) {
+            presenter.waitEnemy()
+        } else {
+            presenter.disposeWaitEnemy()
+        }
+
     }
 
     override fun setBottomNavigationStatus(hasBottomNavigation: Boolean) {
@@ -218,7 +224,7 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
 
     override fun openNavigationPage() {
         hideStartView()
-        waitEnemy()
+//        waitEnemy()
         currentTab = TAB_PROFILE
         showTab = SHOW_PROFILE
         bottom_navigation.selectedItemId = R.id.action_profile
