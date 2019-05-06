@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/li_comment"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin.large"
+            android:layout_marginStart="@dimen/margin.large"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/li_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin.normal"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/profileInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/intrinsic_padding"
+                    android:paddingBottom="@dimen/margin.normal"
+                    android:paddingRight="@dimen/intrinsic_padding"
+                    >
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/iv_portrait"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_alignParentLeft="true"
+                            android:src="@mipmap/ic_launcher"
+                            android:alpha="1"
+                    />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout"
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/iv_portrait"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/margin.normal"
+                        android:layout_marginStart="@dimen/margin.normal"
+                        android:orientation="vertical">
+
+                        <TextView
+                                android:id="@+id/tv_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="Ульянов Владимир Ильич"
+                                android:layout_marginStart="@dimen/margin.normal"
+                        />
+
+                        <TextView
+                                android:id="@+id/tv_do_test"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/do_test"
+                                android:textSize="@dimen/text.16"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginStart="@dimen/margin.normal"
+                        />
+
+                        <TextView
+                                android:id="@+id/tv_check_result"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                android:text="@string/check_result"
+                                android:textSize="@dimen/text.16"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginStart="@dimen/margin.normal"
+                        />
+
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_divider"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin.small"
+                    android:paddingBottom="@dimen/margin.small"
+            >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/test_name"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/text.16" />
+
+                <TextView
+                        android:id="@+id/tv_test_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin.small"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/text.14"
+                        tools:text="Email" />
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_divider"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin.small"
+                    android:paddingBottom="@dimen/margin.small"
+            >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/question_numbers"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/text.16" />
+
+                <TextView
+                        android:id="@+id/tv_questions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin.small"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/text.14"
+                        tools:text="Email" />
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_divider"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin.small"
+                    android:paddingBottom="@dimen/margin.small"
+            >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/epoch"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/text.16" />
+
+                <TextView
+                        android:id="@+id/tv_epoch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin.small"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/text.14"
+                        tools:text="Email" />
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_divider"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin.small"
+                    android:paddingBottom="@dimen/margin.small"
+            >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/test_done"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/text.16" />
+
+                <TextView
+                        android:id="@+id/tv_done"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin.small"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/text.14"
+                        tools:text="Email" />
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_divider"/>
+
+            <LinearLayout
+                    android:id="@+id/li_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.normal"
+                    android:orientation="vertical">
+
+                <include layout="@layout/layout_expandable"/>
+
+                <include layout="@layout/layout_divider"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/li_links"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.normal"
+                    android:orientation="vertical">
+
+                <include layout="@layout/layout_links"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

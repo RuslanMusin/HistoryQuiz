@@ -6,29 +6,25 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.example.historyquiz.R
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.RepositoryProvider
-import com.example.historyquiz.ui.base.App
+import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
-import com.example.historyquiz.utils.ApplicationHelper
+import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.AVATAR
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.auth.FirebaseAuth
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 @InjectViewState
-class SignUpPresenter: BasePresenter<SignUpView>() {
-
-    init {
-        App.sAppComponent.inject(this)
-    }
-
-
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
+class SignUpPresenter @Inject constructor() : BasePresenter<SignUpView>() {
 
     @Inject
     lateinit var fireAuth: FirebaseAuth
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     internal fun createAccount(user: User, imageUri: Uri?) {
         Log.d(TAG_LOG, "createAccount:")
@@ -39,7 +35,7 @@ class SignUpPresenter: BasePresenter<SignUpView>() {
         fireAuth.createUserWithEmailAndPassword(user.email!!, user.password!!)
             .addOnCompleteListener( {task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
+                    // Sign in success, update UI with the signed-in user'setBottomNavigationStatus information
                     Log.d(TAG_LOG, "createUserWithEmail:success")
                     createInDatabase(user, imageUri)
                     updateUI(user)
@@ -59,13 +55,12 @@ class SignUpPresenter: BasePresenter<SignUpView>() {
                     + AVATAR)
             uploadPhoto(user, imageUri)
         }
-
-        RepositoryProvider.userRepository.createUser(user)
+        userRepository.createUser(user)
     }
 
     private fun uploadPhoto(user: User, imageUri: Uri) {
 
-            val childRef = ApplicationHelper.storageReference.child(user.photoUrl!!)
+            val childRef = AppHelper.storageReference.child(user.photoUrl!!)
 
             //uploading the image
             val uploadTask = childRef.putFile(imageUri)
@@ -101,6 +96,10 @@ class SignUpPresenter: BasePresenter<SignUpView>() {
 
     private fun updateUI(user: User) {
         viewState.hideProgressDialog()
+        AppHelper.currentUser = user
+        currentUser.status = ONLINE_STATUS
+        AppHelper.userInSession = true
+        userRepository.changeUserStatus(currentUser).subscribe()
         viewState.goToProfile(user)
     }
 }

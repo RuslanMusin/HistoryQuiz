@@ -1,6 +1,5 @@
 package com.example.historyquiz.ui.auth.fragments.signup
 
-import com.arellomobile.mvp.MvpView
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 

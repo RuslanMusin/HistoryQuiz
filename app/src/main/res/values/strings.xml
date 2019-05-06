@@ -6,13 +6,15 @@
     <string name="menu_cards">Карточки</string>
     <string name="menu_game">Игра</string>
 
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
+    <string name="email">Электронная почта</string>
+    <string name="password">Пароль</string>
+    <string name="sign_in">Войти</string>
+    <string name="toolbar_sign_in">Вход</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="toolbar_sign_up">Регистрация</string>
 
     <string name="friends">Друзья</string>
 
-    <string name="sign_up">Зарегистрироваться</string>
 
     <!--Auth-->
     <string name="enter_correct_name">Введите правильный email</string>
@@ -80,4 +82,155 @@
     <string name="create_game">Создать игру</string>
     <string name="select_game_type">Выберите тип игры</string>
     <string name="description">Описание</string>
+    <string name="loading">Загрузка…</string>
+
+    <string name="test_name">Название теста</string>
+    <string name="add_card">Добавить карточку</string>
+    <string name="added_cards">Добавленная карта</string>
+    <string name="create_questions">Создать вопросы</string>
+    <string name="qustionId">Вопрос</string>
+    <string name="add_answer">Добавить ответ</string>
+    <string name="next_question">Следующий вопрос</string>
+    <string name="finish_questions">Завершить</string>
+    <string name="test_desc">Описание</string>
+    <string name="select_test_type">Выберите тип теста</string>
+    <string name="test_type_one">Один ответ</string>
+    <string name="test_type_many">Много ответов</string>
+    <string name="intelligence">Интеллект</string>
+    <string name="strength">Сила</string>
+    <string name="hp">Здоровье</string>
+    <string name="support">Поддержка</string>
+    <string name="prestige">Влияние</string>
+
+    <string name="game_ended">Игра закончена</string>
+    <string name="enemy_disconnected">Противник отключился от игры</string>
+    <string name="you_disconnected">Вы отключились от игры</string>
+    <string name="old_game_will_be_deleted">Старая игра будет удалена</string>
+    <string name="create_new_game">Создание новой игры</string>
+    <string name="game_will_be_deleted">Удалить эту игру ?</string>
+    <string name="delete_game">Удаление игры</string>
+    <string name="enemy_not_online">Игрок не в сети</string>
+    <string name="choose_card_mode">Какие карты можно использовать</string>
+    <string name="default_card_number">5</string>
+    <string name="set_card_min">В игре должно быть минимум 5 карт</string>
+    <string name="enemy_doesnt_have_card_min">У противника недостаточно карт для этой игры</string>
+    <string name="you_dont_have_card_min">Вам не хватает карт для игры</string>
+    <string name="comments">Комментарии</string>
+    <string name="comment_text_hint">Комментарий</string>
+    <string name="search">Поиск</string>
+
+    //TimeFormat
+    <string name="now_time_range">now</string>
+
+    <string name="duration_minutes_shortest">%1$d m</string>
+    <string name="duration_hours_shortest">%1$d h</string>
+    <string name="duration_days_shortest">%1$d d</string>
+    <string name="duration_week_shortest">%1$d w</string>
+    <string name="description_default">Описание по умолчанию</string>
+    <string name="logout">Выйти</string>
+    <string name="test">Тест</string>
+
+    <string name="question_number">Вопрос %1$d/%2$d</string>
+    <string name="add_question_number">Вопрос %1$d</string>
+    <string name="card_stats">Статистика карты</string>
+    <string name="search_card">Поиск личности</string>
+
+    <string name="test_result">Результат</string>
+    <string name="no_wiki_page">Не существует страницы в Википедии</string>
+
+
+    <string name="epoch">Эпоха</string>
+    <string name="choose_epoch">Выберите эпоху</string>
+
+    <string-array name="epoches">
+        <item>Древняя Русь, IX – XIIIвв</item>
+        <item>Татаро-монгольское иго, XIII – XVвв</item>
+        <item>Московское царство, XVI – XVI вв</item>
+        <item>Российская империя, XVIII – начало XXвв(1917)</item>
+        <item>СССР, 1917 – 1991</item>
+        <item>Российская федерация, 1991 - наст.время</item>
+        <item>Все периоды, IX век - наст.время</item>
+    </string-array>
+
+    <string name="level">Уровень: %1$d</string>
+    <string name="cardnumber">3</string>
+
+    <string name="game_dialog">Приглашение сыграть</string>
+    <string name="game_dialog_content">Принять приглашение ?</string>
+
+    <string name="common_stats">Общая</string>
+    <string name="game_stats">Игровая</string>
+    <string name="leaderboard">Топ игроков</string>
+    <string name="update_list">Обновить список</string>
+    <string name="users">Пользователи</string>
+    <string name="all_users">Все</string>
+    <string name="requests">Запросы</string>
+
+
+    <string name="ke_arg">Общий коэффициент Ke : %1$s</string>
+    <string name="ke_change_arg">Изменения Ke : %1$s</string>
+    <string name="right_arg">Правильных ответов : %1$d</string>
+    <string name="wrong_arg">Неправильных ответов : %1$d</string>
+
+    <string name="ge_arg">Игровой коэффициент Ge : %1$s</string>
+    <string name="ge_change_arg">Изменения Ge : %1$s</string>
+    <string name="win_arg">Побед : %1$d</string>
+    <string name="lose_arg">Проигрышей : %1$d</string>
+
+    <string name="kg_arg">Общий игровой коэффициент Kg : %1$s</string>
+    <string name="statists">Статистика</string>
+    <string name="tab_common_stat">Общее</string>
+    <string name="tab_game_stat">Игровая</string>
+    <string name="tab_leader_stat">Рейтинг</string>
+    <string name="tab_all_users">Все</string>
+    <string name="tab_requests">Предложения</string>
+    <string name="tab_friends">Друзья</string>
+    <string name="tab_users">Пользователи</string>
+    <string name="question_numbers">Количество вопросов</string>
+    <string name="add_link">Добавить ссылку</string>
+    <string name="links">Ссылки</string>
+    <string name="add_epoch">Добавить эпоху</string>
+    <string name="link_name">Название ссылки</string>
+    <string name="url">URL</string>
+    <string name="create_fast_game">Предложить игру</string>
+    <string name="time_end">Время ожидания истекло</string>
+    <string name="not_accepted">Противник не принял приглашение</string>
+    <string name="check_result">Посмотреть результат</string>
+    <string name="test_procent">Процент прохождения</string>
+    <string name="help">Помощь</string>
+    <string name="profile_text">В профиле вы можете посмотреть свои данные, своих друзей, статистику по играм и т.д.
+        \nТакже можно посмотреть пройденные тесты и полученные в играх и тестах карточки</string>
+    <string name="card_text">В карточках вы можете посмотреть все карточки, которые имеются на данный момент.
+        \nТакже можно посмотреть конкретную карточку для лучшего ознакомления и оставить комментарий.</string>
+    <string name="test_text">В тестах вы можете выбрать нужный вам тест и проверить свои знания по теме.
+        При успешном прохождении вы сможете получить карточку, которую можно будет использовать в игре.
+        Тест относятся к определенной исторической эпохе, также как и карточка за прохождение теста.
+        Карточку можно использовать только в играх с соответсвующей эпохой или когда выбраны "все" периоды!\n
+    </string>
+    <string name="game_text">Вы можете выбрать игру из списка или создать собственную.
+        После создания игры ожидайте пока кто-нибудь из игроков не присоединиться к вашей игре.
+        Ожидать не обязательно в списке игр, вы можете смотреть карточки, тесты.Если вы не заняты, то игрок
+        сможет вас уведомить о своем подключении к созданной игре.
+        \nТакже же вы можете подключиться к уже готовой игре.
+        Играть также можно с друзьями. Для этого вам нужно найти друга через профиль и предложить игру.
+        Игра состоит из нескольких раундов(равно кол-ву карт), каждый из которых представляет собой
+        обмен с противником вопросами и ответом на них. При правильном ответе добавляет одно игровое очко.
+        В конце раундом определяется победитель по количеству очков. Победителю достается одна из карточек соперника.\n
+    </string>
+    <string name="stats_text">
+        В статистике можно увидеть три раздела: общее, игровая и рейтинг.
+        Общая показывает кол-во правильных и
+        неправильных ответов в тестах и играх, коэффициент Ke, который высчитывается из этих данных и его изменение(динамика)
+        по каждой эпохе.
+        Игровая статистика показывает примерно тоже, только коэффициент Ge исходит только от выиграшей/проигрышей.
+        Рейтинг показывает лучших игроков, с самыми высокими коэффициентами Kg(считается по всем эпохам).\n\n
+    </string>
+    <string name="choose_avatar">Выбор аватара</string>
+    <string name="choose_epoch_please">Выберите эпоху!</string>
+    <string name="input_name">Введите имя!</string>
+    <string name="you_win">Победа</string>
+    <string name="you_lose">Поражение</string>
+    <string name="draw">Ничья</string>
+    <string name="you_get_card">Вы выиграли карту</string>
+    <string name="you_lose_card">Вы проиграли карту</string>
 </resources>

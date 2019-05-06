@@ -1,9 +1,16 @@
 package com.example.historyquiz.ui.base.interfaces
 
+import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
+import android.widget.TextView
 import com.arellomobile.mvp.MvpView
+import com.example.historyquiz.ui.navigation.NavigationView
 
 interface BasicFunctional: MvpView {
+
+    fun showLoading()
+
+    fun hideLoading()
 
     fun showProgressDialog(message: String)
 
@@ -15,10 +22,41 @@ interface BasicFunctional: MvpView {
 
     fun showSnackBar(messageId: Int)
 
-    fun setBottomVisibility(flag: Boolean)
+    fun hideBottomNavigation()
+
+    fun showBottomNavigation(navigationView: NavigationView)
 
     fun setActionBar(toolbar: Toolbar)
 
-    fun setToolbarTitle(id: Int)
+    fun setActionBarTitle(id: Int)
 
+    fun setToolbarTitle(tvToolbar: TextView, title: String)
+
+    fun changeWindowsSoftInputMode(mode: Int)
+
+    fun pushFragments(fragment: Fragment, shouldAdd: Boolean)
+
+    fun showFragment(lastFragment: Fragment, fragment: Fragment)
+
+    fun hideFragment()
+
+    fun openLoginPage()
+
+    fun openNavigationPage()
+
+    fun performBackPressed()
+
+    fun removeStackDownTo()
+
+    fun removeStackDownTo(number: Int)
+
+    fun waitEnemy()
+
+    fun setWaitStatus(isWaiting: Boolean)
+
+    fun setBottomNavigationStatus(hasBottomNavigation: Boolean)
+
+    fun setStatus(status: String)
+
+    fun setOfflineChecking()
 }

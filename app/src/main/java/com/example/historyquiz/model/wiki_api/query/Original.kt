@@ -1,7 +1,6 @@
 package com.example.historyquiz.model.wiki_api.query
 
 import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
 
 class Original {
 

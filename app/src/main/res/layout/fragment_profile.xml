@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:id="@+id/main_content"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
+<android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         xmlns:tools="http://schemas.android.com/tools"
+         android:id="@+id/main_content"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
 >
 
 
@@ -18,11 +20,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                app:title="@string/menu_profile"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
                     xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -54,6 +60,9 @@
                             android:layout_width="match_parent"
                             android:minHeight="120dp"
                             android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/intrinsic_padding"
+                            android:paddingRight="@dimen/intrinsic_padding"
+                            android:paddingTop="@dimen/intrinsic_padding"
                     >
 
                         <RelativeLayout
@@ -88,34 +97,56 @@
                                     android:id="@+id/tv_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="16dp"
+                                    android:layout_marginTop="@dimen/margin.normal"
                                     android:text="@string/app_name"
                                     android:textColor="@color/primary_text"
                                     android:textSize="@dimen/text.22"
                             />
 
-                            <android.support.v7.widget.AppCompatButton
-                                    android:id="@+id/btn_add_friend"
+                            <TextView
+                                    android:id="@+id/tv_level"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/margin.small"
+                                    android:text="@string/level"
+                                    android:textColor="@color/primary_text"
+                                    android:textSize="@dimen/text.16"
+                            />
+
+                            <ProgressBar
+                                    android:id="@+id/progressBar"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="100dp"
+                                    android:layout_height="8dp"
+                                    android:layout_marginTop="@dimen/margin.normal"
+                                    android:indeterminate="false"
+                                    android:progressDrawable="@drawable/progress_style"
+                                    android:max="100"
+                                    android:progress="50"
+                                    android:visibility="visible"
+                            />
+
+
+                            <TextView
+                                    android:id="@+id/tv_add_friend"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/add_friend"
-                                    android:textAllCaps="false"
-                                    android:background="@color/primary"
-                                    android:layout_marginTop="@dimen/margin.normal"
-                                    android:padding="@dimen/padding_small"
-                                    android:textColor="@color/white"
-                            />
+                                    android:textSize="@dimen/text.16"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/primary"
+                                    android:layout_marginTop="8dp"/>
 
-                            <android.support.v7.widget.AppCompatButton
-                                    android:id="@+id/btn_play_game"
+                            <TextView
+                                    android:id="@+id/tv_play_game"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/margin.normal"
                                     android:text="@string/play_game"
-                                    android:textAllCaps="false"
-                                    android:background="@color/primary"
-                                    android:padding="@dimen/padding_small"
-                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/text.16"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/primary"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="@dimen/margin.normal"
                             />
 
                         </LinearLayout>
@@ -129,34 +160,145 @@
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray"/>
 
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingTop="@dimen/margin.small"
+                            android:paddingBottom="@dimen/margin.small"
+                    >
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/email"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+
+                        <TextView
+                                android:id="@+id/tv_email"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/margin.small"
+                                android:textColor="@color/secondary_text"
+                                android:textSize="@dimen/text.14"
+                                tools:text="Email" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingTop="@dimen/margin.small"
+                            android:paddingBottom="@dimen/margin.small"
+                    >
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/username"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+
+                        <TextView
+                                android:id="@+id/tv_username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/margin.small"
+                                android:textColor="@color/secondary_text"
+                                android:textSize="@dimen/text.14"
+                                tools:text="Email" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
                 <LinearLayout
+                        android:id="@+id/li_friends"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginTop="@dimen/margin.normal"
                 >
 
                     <LinearLayout
-                            android:id="@+id/li_tests"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.normal"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:layout_marginBottom="@dimen/margin.small"
                             android:orientation="horizontal">
 
                         <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/padding_small"
-                                android:paddingBottom="@dimen/padding_small"
-                                android:src="@drawable/ic_insert_drive_file_black_24dp"/>
+                                android:src="@drawable/ic_people_black_24dp"/>
 
                         <TextView
                                 android:id="@+id/tv_crossings"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingStart="@dimen/padding_small"
-                                android:paddingTop="@dimen/padding_small"
-                                android:paddingBottom="@dimen/padding_small"
+                                android:text="@string/friends"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+                    </LinearLayout>
+
+                        <include layout="@layout/layout_divider"/>
+
+                    </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:id="@+id/li_statists"
+            >
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:layout_marginBottom="@dimen/margin.small"
+                            android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_trending_up_black_24dp"/>
+
+                        <TextView
+                                android:id="@+id/tv_cards"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/padding_small"
+                                android:text="@string/statists"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+            </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical"
+                              android:id="@+id/li_tests"
+                >
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:layout_marginBottom="@dimen/margin.small"
+                            android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_note_black_24dp"/>
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/padding_small"
                                 android:text="@string/menu_tests"
                                 android:textColor="@color/primary_text"
                                 android:textSize="@dimen/text.16" />
@@ -164,27 +306,29 @@
 
                     <include layout="@layout/layout_divider"/>
 
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical"
+                              android:id="@+id/li_cards"
+                >
                     <LinearLayout
-                            android:id="@+id/li_cards"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.normal"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:layout_marginBottom="@dimen/margin.small"
                             android:orientation="horizontal">
 
                         <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/padding_small"
-                                android:paddingBottom="@dimen/padding_small"
                                 android:src="@drawable/ic_portrait_black_24dp"/>
 
                         <TextView
-                                android:id="@+id/tv_cards"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingStart="@dimen/padding_small"
-                                android:paddingTop="@dimen/padding_small"
-                                android:paddingBottom="@dimen/padding_small"
                                 android:text="@string/menu_cards"
                                 android:textColor="@color/primary_text"
                                 android:textSize="@dimen/text.16" />
@@ -192,7 +336,51 @@
 
                     <include layout="@layout/layout_divider"/>
 
-                    <TextView
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/li_logout"
+                        android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical"
+
+                >
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:layout_marginBottom="@dimen/margin.small"
+                            android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_exit_to_app_black_24dp"/>
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/padding_small"
+                                android:text="@string/logout"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/text.16" />
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                </LinearLayout>
+               <!--     <TextView
+                            android:id="@+id/tv_add_epoches"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/choose_epoch"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/text.16"
+                            android:visibility="visible"
+                    />-->
+
+                  <!--  <TextView
                             android:id="@+id/tv_desc_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -201,19 +389,9 @@
                             android:textColor="@color/primary_text"
                             android:textSize="@dimen/text.16" />
 
-                    <include layout="@layout/layout_expandable_text_view"/>
+                    <include layout="@layout/layout_expandable_text_view"/>-->
 
-                    <ProgressBar
-                            android:id="@+id/progress_loader"
-                            style="?android:attr/progressBarStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin.small"
-                            android:visibility="gone"
-                            tools:visibility="visible"/>
                 </LinearLayout>
-
-            </LinearLayout>
 
         </ScrollView>
 

@@ -2,7 +2,6 @@ package com.example.historyquiz.model.wiki_api.opensearch
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
-import kotlin.text.Typography.section
 
 class SearchSuggestion {
     @field:Element(name = "Section") var section: Section? = null

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+>
+
+    <RelativeLayout
+            android:id="@+id/expand_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+    >
+
+        <View
+                android:id="@+id/iv_arrow"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:background="@drawable/arrow"
+        />
+
+      <!--  <ImageView
+                android:id="@+id/iv_arrow"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_drop_down_black_24dp"
+        />-->
+    </RelativeLayout>
+
+    <TextView
+            android:id="@+id/tv_content_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/expand_button"
+            android:textColor="@color/primary_dark_text"
+            android:text="@string/description"
+            android:textSize="16sp"
+    />
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+            android:id="@+id/expandable_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/tv_content_name"
+            app:el_duration="300"
+            app:el_expanded="false"
+    >
+
+          <TextView
+              android:id="@+id/tv_content"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:elevation="4dp"
+              android:textSize="@dimen/text.14"
+              android:paddingBottom="8dp"
+              android:text="Content"
+              android:textColor="@color/primary_dark_text" />
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
+</RelativeLayout>

@@ -1,47 +1,51 @@
 package com.example.historyquiz.ui.auth.fragments.signup
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.Navigation
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.bumptech.glide.Glide
 import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.PhotoItem
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.ui.auth.fragments.login.LoginFragment.Companion.KEY
 import com.example.historyquiz.ui.base.BaseFragment
-import com.example.historyquiz.utils.Const
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.Const.PHOTO_ITEM
 import com.example.historyquiz.utils.Const.STUB_PATH
-import com.example.historyquiz.utils.Const.USER_KEY
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.dialog_pick_image.*
+import com.example.historyquiz.utils.Const.gson
+import kotlinx.android.synthetic.main.fragment_add_link.*
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import java.io.InputStream
 import javax.inject.Inject
+import javax.inject.Provider
 
 class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
 
     @InjectPresenter
     lateinit var signUpPresenter: SignUpPresenter
-
     @Inject
-    lateinit var gson: Gson
+    lateinit var presenterProvider: Provider<SignUpPresenter>
+    @ProvidePresenter
+    fun providePresenter(): SignUpPresenter = presenterProvider.get()
 
     lateinit var photoDialog: MaterialDialog
 
     var imageUri: Uri? = null
     var photoUrl: String = STUB_PATH
 
+    override fun showBottomNavigation(navigationView: NavigationView) {
+        navigationView.hideBottomNavigation()
+        navigationView.setBottomNavigationStatus(false)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_sign_up, container, false)
@@ -54,7 +58,8 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     }
 
     private fun initViews() {
-        setBottomVisibility(false)
+        hideBottomNavigation()
+        setBottomNavigationStatus(false)
         setListeners()
     }
 
@@ -94,7 +99,6 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
         user.password = et_password.text.toString()
         user.photoUrl = photoUrl
         user.lowerUsername = user.username?.toLowerCase()
-
         return user
     }
 
@@ -117,18 +121,17 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     }
 
     private fun goToLogin() {
-        Navigation.findNavController(btn_login).navigate(R.id.action_signUpFragment_to_loginFragment2)
+        openLoginPage()
     }
 
     override fun goToProfile(user: User) {
-        val args = Bundle()
-        args.putString(USER_KEY, gson.toJson(user))
-        Navigation.findNavController(btn_sign_up)
-            .navigate(R.id.action_signUpFragment_to_profileFragment,args)
+        removeStackDownTo()
+        openNavigationPage()
     }
 
     private fun addPhoto() {
-        activity?.let {
+        showGallery()
+       /* activity?.let {
             photoDialog = MaterialDialog.Builder(it)
                 .customView(R.layout.dialog_pick_image, false).build()
 
@@ -136,7 +139,7 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
             photoDialog.btn_choose_standart.setOnClickListener{ showStandarts()}
 
             photoDialog.show()
-        }
+        }*/
 
 
     }
@@ -144,7 +147,7 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == android.support.v7.app.AppCompatActivity.RESULT_OK) {
             if(reqCode == GALLERY_PHOTO) {
                 imageUri = data?.data
                 activity?.let {
@@ -168,7 +171,7 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
     }
 
     fun showGallery() {
-        photoDialog.hide()
+//        photoDialog.hide()
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
@@ -187,5 +190,15 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
         private val GALLERY_PHOTO = 0
 
         private val STANDART_PHOTO = 1
+
+            fun newInstance(args: Bundle): Fragment {
+                val fragment = SignUpFragment()
+                fragment.arguments = args
+                return fragment
+            }
+
+            fun newInstance(): Fragment {
+                return SignUpFragment()
+            }
     }
 }

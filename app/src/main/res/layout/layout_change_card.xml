@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <include layout="@layout/toolbar_game"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.game.play.PlayGameActivity">
+
+    <LinearLayout
+            android:id="@+id/li_change_cards"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+    >
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="150dp"
+                android:text="@string/change_two_cards"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="@dimen/text.20"
+        />
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_game_start_cards"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="150dp"
+                android:layout_marginTop="@dimen/margin.large"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_game_card_medium" />
+
+    </LinearLayout>
+
+
+        <LinearLayout
+                android:id="@+id/li_change_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="200dp"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin.normal"
+                    android:paddingTop="@dimen/padding_medium"
+                    android:text="@string/wait_enemy"
+                    android:textColor="@color/primary_text"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text.22"
+            />
+
+            <ProgressBar
+                    android:id="@+id/progress_loader"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.small"
+                    android:visibility="visible"
+            />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

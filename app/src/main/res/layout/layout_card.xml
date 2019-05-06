@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+>
+
+    <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_above="@id/li_comment"
+    >
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin.large"
+                android:layout_marginStart="@dimen/margin.large"
+                android:orientation="vertical">
+
+            <LinearLayout
+                    android:id="@+id/linlay_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.normal"
+                    android:layout_marginBottom="@dimen/margin.normal"
+                    android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/iv_portrait"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentLeft="true"
+                        android:src="@mipmap/ic_launcher"
+                        android:alpha="1"
+                />
+
+                <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toRightOf="@id/iv_portrait"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        tools:text="Ульянов Владимир Ильич" />
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_divider"/>
+
+            <!--<View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/margin.large"
+                    android:background="@android:color/darker_gray"/>-->
+
+            <LinearLayout
+                    android:id="@+id/li_wiki"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.small"
+                    android:layout_marginBottom="@dimen/margin.small"
+                    android:orientation="horizontal">
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_book_black_24dp"/>
+
+                <TextView
+                        android:id="@+id/tv_wiki"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/padding_small"
+                        android:text="@string/wiki"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/text.16" />
+
+            </LinearLayout>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@android:color/darker_gray"/>
+
+
+            <TextView
+                    android:id="@+id/tv_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.normal"
+                    android:layout_marginBottom="@dimen/margin.normal"
+                    android:text="@string/description"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/text.16" />
+
+
+            <include layout="@layout/layout_expandable_text_view"/>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@android:color/darker_gray"/>
+
+            <TextView
+                    android:id="@+id/tv_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin.normal"
+                    android:layout_marginBottom="@dimen/margin.normal"
+                    android:text="@string/comments"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/text.16" />
+
+
+            <include layout="@layout/fragment_recycler_list" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include layout="@layout/layout_add_comment"/>
+
+</RelativeLayout>
