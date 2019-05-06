@@ -25,7 +25,6 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.game.play.change_list.GameChangeListAdapter
@@ -33,6 +32,7 @@ import com.example.historyquiz.ui.game.play.list.GameCardsListAdapter
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
 import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.MODE_CARD_VIEW
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -51,8 +51,6 @@ import javax.inject.Provider
 
 class PlayGameFragment : BaseFragment(), PlayGameView {
 
-    var mode: String = MODE_PLAY_GAME
-
     @InjectPresenter
     lateinit var presenter: PlayGamePresenter
     @Inject
@@ -60,53 +58,31 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     @ProvidePresenter
     fun providePresenter(): PlayGamePresenter = presenterProvider.get()
 
-    @Inject
-    lateinit var gameRepository: GameRepository
-
     lateinit var myCard: Card
     lateinit var enemyCard:Card
 
     var enemyChoosed: Boolean = false
     var myChoosed: Boolean = false
+
     var enemyAnswered: Boolean = false
     var myAnswered: Boolean = false
-    var isQuestionMode: Boolean = false
 
     lateinit var myCards: MutableList<Card>
 
+    var mode: String = MODE_PLAY_GAME
     var choosingEnabled = false
-
+    var isQuestionMode: Boolean = false
     var round: Int = 1
 
     lateinit var timer: CountDownTimer
     var disconnectTimer: CountDownTimer? = null
 
     lateinit var toolbar: Toolbar
-
-
     lateinit var adapter: GameCardsListAdapter
 
     override fun showBottomNavigation(navigationView: NavigationView) {
         navigationView.hideBottomNavigation()
         navigationView.changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.layout_change_card, container, false)
-        return view
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setStatus(Const.IN_GAME_STATUS)
-        setWaitStatus(false)
-        toolbar = view.findViewById(R.id.game_toolbar)
-        setActionBar(toolbar)
-        toolbar.findViewById<ImageButton>(R.id.btn_cancel).setOnClickListener{ quitGameBeforeGameStart()}
-        rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
-        AppHelper.currentUser?.gameLobby?.let { presenter.setInitState(it) }
-
     }
 
     override fun performBackPressed() {
@@ -118,43 +94,17 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         }
     }
 
-    fun quitGameBeforeGameStart() {
-        Log.d(TAG_LOG,"quit game before game start")
-        MaterialDialog.Builder(this.activity!!)
-            .title(R.string.question_dialog_title)
-            .content(R.string.question_dialog_content)
-            .positiveText(R.string.agree)
-            .negativeText(R.string.disagree)
-            .onPositive(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    timer.cancel()
-                    gameRepository.disconnectMe().subscribe{ e ->
-                        goToFindGameActivity()
-                    }
-                }
-
-            })
-            .show()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.layout_change_card, container, false)
+        return view
     }
 
-    fun quitGame() {
-        Log.d(TAG_LOG,"quit game")
-        MaterialDialog.Builder(this.activity!!)
-            .title(R.string.question_dialog_title)
-            .content(R.string.question_dialog_content)
-            .positiveText(R.string.agree)
-            .negativeText(R.string.disagree)
-            .onPositive(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    timer.cancel()
-                    disconnectTimer?.cancel()
-                    gameRepository.disconnectMe().subscribe { e ->
-                        goToFindGameActivity()
-                    }
-                }
-
-            })
-            .show()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setWaitStatus(false)
+        setStatus(Const.IN_GAME_STATUS)
+        setStartView(view)
+        currentUser.gameLobby?.let { presenter.setInitState(it) }
     }
 
     fun stopChange(time: Long): () -> Unit {
@@ -189,9 +139,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             .onPositive(object : MaterialDialog.SingleButtonCallback {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                     timer.cancel()
-                    gameRepository.disconnectMe().subscribe{ e ->
-                        goToFindGameActivity()
-                    }
+                    presenter.disconnectMe()
                 }
 
             })
@@ -204,80 +152,26 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     override fun changeCards(cards: MutableList<Card>, mutCards: MutableList<Card>) {
-        li_change_loading.visibility = View.GONE
-        li_change_cards.visibility = View.VISIBLE
         Log.d(TAG_LOG,"changeCards")
         mode = MODE_CHANGE_CARDS
-        rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange(15000))
-
-        toolbar.tv_time_title.text = "Замена карт"
-        timer = object : CountDownTimer(10000, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                toolbar.tv_time.text =  "${millisUntilFinished / 1000}"
-                Log.d(TAG_LOG,"Card Change Time = ${millisUntilFinished / 1000}")
-            }
-
-            override fun onFinish() {
-                Log.d(TAG_LOG,"stop change cards")
-                stopChange(10000)()
-            }
-        }.start()
+        setChangeCardsView(cards, mutCards)
+        setChangeCardsTimer()
     }
 
     override fun setCardsList(cards: ArrayList<Card>) {
         timer.cancel()
         myCards = cards
-        Log.d(TAG_LOG,"set cards")
-        val viewGroup = view as ViewGroup
-        viewGroup.removeAllViews()
-        viewGroup.addView(LayoutInflater.from(context).inflate(R.layout.activity_game, viewGroup, false))
-        enemy_selected_card.visibility = View.INVISIBLE
-        my_selected_card.visibility = View.INVISIBLE
-        game_questions_container.visibility = View.GONE
-        Log.d(TAG_LOG,"set game adapter")
-        rv_game_my_cards.adapter = GameCardsListAdapter(
-            cards,
-            this.activity!!,
-            {
-                if (choosingEnabled) {
-                    presenter.chooseCard(it)
-                }
-            }
-        )
-        adapter = rv_game_my_cards.adapter as GameCardsListAdapter
-        rv_game_my_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
-
-        toolbar = view?.findViewById((R.id.game_toolbar))!!
-        setActionBar(toolbar)
-        toolbar.btn_cancel.setOnClickListener{quitGame()}
-        toolbar_title.text = "Round $round"
-        Log.d(TAG_LOG,"Round $round")
+        setEndView()
         startTimer()
+    }
 
-        val listener: View.OnClickListener = View.OnClickListener {
-
-            when(it.id) {
-
-                R.id.enemy_selected_card -> {
-                    if(enemy_selected_card.visibility == View.VISIBLE) {
-                        showDialogCard(enemyCard)
-                    }
-                }
-
-                R.id.my_selected_card -> {
-                    if(my_selected_card.visibility == View.VISIBLE) {
-                        showDialogCard(myCard)
-                    }
-                }
-            }
-
-        }
-
-        enemy_selected_card.setOnClickListener(listener)
-        my_selected_card.setOnClickListener(listener)
-
-
+    private fun setEndView() {
+        Log.d(TAG_LOG,"set cards")
+        setEndMainViews()
+        setEndVisibility()
+        setEndRecycler()
+        setEndToolbar()
+        setCardListeners()
     }
 
     private fun showDialogCard(card: Card) {
@@ -516,8 +410,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
 
-
-
     override fun showGameEnd(type: GameRepositoryImpl.GameEndType, card: Card) {
 
         timer.cancel()
@@ -590,12 +482,145 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         activity?.let{
             (it as NavigationView).performBackPressed()
         }
-        /*val fragment = GameListFragment.newInstance()
-        pushFragments(fragment, true)*/
+    }
+
+    private fun setStartView(view: View) {
+        setStartToolbar(view)
+        setStartRecycler()
+    }
+
+    private fun setStartRecycler() {
+        rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
+    }
+
+    private fun setStartToolbar(view: View) {
+        toolbar = view.findViewById(R.id.game_toolbar)
+        setActionBar(toolbar)
+        toolbar.findViewById<ImageButton>(R.id.btn_cancel).setOnClickListener{ quitGameBeforeGameStart()}
+    }
+
+    private fun setChangeCardsView(
+        cards: MutableList<Card>,
+        mutCards: MutableList<Card>
+    ) {
+        li_change_loading.visibility = View.GONE
+        li_change_cards.visibility = View.VISIBLE
+        rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange(15000))
+        toolbar.tv_time_title.text = getString(R.string.change_cards)
+    }
+
+    private fun setChangeCardsTimer() {
+        timer = object : CountDownTimer(CHANGE_CARDS_TIME, DEF_INTERVAL) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                toolbar.tv_time.text =  "${millisUntilFinished / DEF_INTERVAL}"
+                Log.d(TAG_LOG,"Card Change Time = ${millisUntilFinished / 1000}")
+            }
+
+            override fun onFinish() {
+                Log.d(TAG_LOG,"stop change cards")
+                stopChange(10000)()
+            }
+        }.start()
+    }
+
+    private fun setEndMainViews() {
+        val viewGroup = view as ViewGroup
+        viewGroup.removeAllViews()
+        viewGroup.addView(LayoutInflater.from(context).inflate(R.layout.activity_game, viewGroup, false))
+    }
+
+    private fun setEndVisibility() {
+        enemy_selected_card.visibility = View.INVISIBLE
+        my_selected_card.visibility = View.INVISIBLE
+        game_questions_container.visibility = View.GONE
+    }
+
+    private fun setEndRecycler() {
+        Log.d(TAG_LOG,"set game adapter")
+        rv_game_my_cards.adapter = GameCardsListAdapter(
+            myCards,
+            this.activity!!,
+            {
+                if (choosingEnabled) {
+                    presenter.chooseCard(it)
+                }
+            }
+        )
+        adapter = rv_game_my_cards.adapter as GameCardsListAdapter
+        rv_game_my_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
+    }
+
+    private fun setEndToolbar() {
+        toolbar = view?.findViewById((R.id.game_toolbar))!!
+        setActionBar(toolbar)
+        toolbar.btn_cancel.setOnClickListener{quitGame()}
+        toolbar_title.text = "Round $round"
+        Log.d(TAG_LOG,"Round $round")
+    }
+
+    private fun setCardListeners() {
+        val listener: View.OnClickListener = View.OnClickListener {
+            when(it.id) {
+
+                R.id.enemy_selected_card -> {
+                    if(enemy_selected_card.visibility == View.VISIBLE) {
+                        showDialogCard(enemyCard)
+                    }
+                }
+
+                R.id.my_selected_card -> {
+                    if(my_selected_card.visibility == View.VISIBLE) {
+                        showDialogCard(myCard)
+                    }
+                }
+            }
+
+        }
+        enemy_selected_card.setOnClickListener(listener)
+        my_selected_card.setOnClickListener(listener)
+    }
+
+    fun quitGameBeforeGameStart() {
+        Log.d(TAG_LOG,"quit game before game start")
+        MaterialDialog.Builder(this.activity!!)
+            .title(R.string.question_dialog_title)
+            .content(R.string.question_dialog_content)
+            .positiveText(R.string.agree)
+            .negativeText(R.string.disagree)
+            .onPositive(object : MaterialDialog.SingleButtonCallback {
+                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                    timer.cancel()
+                    presenter.disconnectMe()
+                }
+
+            })
+            .show()
+    }
+
+    fun quitGame() {
+        Log.d(TAG_LOG,"quit game")
+        MaterialDialog.Builder(this.activity!!)
+            .title(R.string.question_dialog_title)
+            .content(R.string.question_dialog_content)
+            .positiveText(R.string.agree)
+            .negativeText(R.string.disagree)
+            .onPositive(object : MaterialDialog.SingleButtonCallback {
+                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                    timer.cancel()
+                    disconnectTimer?.cancel()
+                    presenter.disconnectMe()
+                }
+
+            })
+            .show()
     }
 
 
     companion object {
+
+        const val CHANGE_CARDS_TIME: Long = 10000
+        const val DEF_INTERVAL: Long = 1000
 
         const val MAX_LENGTH = 30
 

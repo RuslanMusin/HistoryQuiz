@@ -46,13 +46,11 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
     fun setInitState(initlobby: Lobby) {
         lobby = initlobby
         gameRepository.setLobbyRefs(lobby.id)
-        gameRepository.watchMyStatus()
-        val single: Single<List<Card>> = cardRepository.findMyCardsByEpoch(currentId, lobby.epochId)
-        single.subscribe { cards: List<Card>? ->
+//        gameRepository.watchMyStatus()
+        val dis = cardRepository.findMyCardsByEpoch(currentId, lobby.epochId).subscribe { cards: List<Card>? ->
             cards?.let {
                 val mutCards = cards.toMutableList()
                 val myCards: MutableList<Card> = ArrayList()
-
                 for (i in 1..lobby.cardNumber) {
                     mutCards.getRandom()?.let {
                         Log.d(TAG_LOG,"random card num = $i and name = ${it.abstractCard?.name}")
@@ -68,6 +66,7 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
                 }
             }
         }
+        compositeDisposable.add(dis)
     }
 
     fun waitEnemyGameMode(mode: String): Single<Boolean> {
@@ -155,5 +154,9 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
     override fun onEnemyAnswered(correct: Boolean) {
         viewState.showEnemyAnswer(correct)
 //        viewState.setCardChooseEnabled(true)
+    }
+
+    fun disconnectMe() {
+        gameRepository.disconnectMe().subscribe()
     }
 }

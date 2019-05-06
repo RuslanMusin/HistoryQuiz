@@ -533,7 +533,6 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     }
 
     override fun waitEnemy() {
-        Log.d(TAG_LOG,"wait enemy")
         presenter.waitEnemy()
     }
 

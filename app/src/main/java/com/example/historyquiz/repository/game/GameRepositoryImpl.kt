@@ -871,6 +871,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                                     myLobbyRef.setValue(playerData)
                                     enemyLobbyRef.setValue(null)
                                 }
+                                Log.d(TAG_LOG, "removeLobby in users_lobbies")
                                 databaseReference.root.child(USERS_LOBBIES).child(user.id).child(it.id).setValue(null)
                                 if (shouldFind) {
                                     findLobby(it.id).subscribe { lobby ->
