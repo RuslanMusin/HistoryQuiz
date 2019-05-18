@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -113,6 +114,11 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
         hideListLoading()
         hideLoading()
         Log.d(TAG_LOG, "test loaded")
+    }
+
+    override fun showTests(list: List<Test>) {
+        this.skills = list.toMutableList()
+        changeDataSet(list)
     }
 
     override fun handleError(throwable: Throwable) {
@@ -212,12 +218,25 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                presenter.loadOfficialTestsByQUery(userId, newText, type)
-//                findFromList(newText)
+//                presenter.loadOfficialTestsByQUery(userId, newText, type)
+                findFromList(newText)
                 return false
             }
         })
 
+    }
+
+    private fun findFromList(query: String) {
+        val pattern: Pattern = Pattern.compile("(\\w*\\s+)*${query.toLowerCase()}.*")
+        val list: MutableList<Test> = java.util.ArrayList()
+        for(skill in skills) {
+            if (pattern.matcher(skill.title?.toLowerCase()).matches()) {
+                list.add(skill)
+            }
+        }
+
+        Log.d(TAG_LOG, "list.size = ${list.size}")
+        changeDataSet(list)
     }
 
     companion object {

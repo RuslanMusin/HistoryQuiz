@@ -32,7 +32,7 @@ class MemberListPresenter @Inject constructor() : BasePresenter<MemberListView>(
             .findUsersByTypeByQuery(query, userId, type)
             .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
             .doAfterTerminate(Action { viewState.hideListLoading() })
-            .subscribe({ viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
+            .subscribe({ viewState.showItems(it) }, { viewState.handleError(it) })
     }
 
     /* @SuppressLint("CheckResult")
@@ -56,7 +56,7 @@ class MemberListPresenter @Inject constructor() : BasePresenter<MemberListView>(
         single
             .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
             .doAfterTerminate(Action { viewState.hideListLoading() })
-            .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
+            .subscribe({ viewState.showItems(it) }, { viewState.handleError(it) })
     }
 
     @SuppressLint("CheckResult")

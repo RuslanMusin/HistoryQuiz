@@ -13,6 +13,7 @@ import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.ui.game.fast_game.FastGameFragment
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
+import com.example.historyquiz.utils.AppHelper.Companion.userInSession
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_REQUEST
 import com.example.historyquiz.utils.Const.OWNER_TYPE
@@ -97,6 +98,7 @@ class ProfilePresenter @Inject constructor() : BasePresenter<ProfileView>() {
 
     fun logout() {
         currentUser.status = Const.OFFLINE_STATUS
+        userInSession = false
         userRepository.changeUserStatus(currentUser).subscribe()
         FirebaseAuth.getInstance().signOut()
         currentUser = User()

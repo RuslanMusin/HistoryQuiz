@@ -88,6 +88,7 @@ class MemberListFragment : BaseFragment(), MemberListView {
 
     override fun changeDataSet(tests: List<User>) {
         adapter.changeDataSet(tests)
+        adapter.changeDataSet(tests)
         hideLoading()
     }
 
@@ -122,7 +123,7 @@ class MemberListFragment : BaseFragment(), MemberListView {
     }
 
     override fun findByQuery(query: String) {
-        val pattern: Pattern = Pattern.compile("${query.toLowerCase()}.*")
+        val pattern: Pattern = Pattern.compile("(.*\\s+)*${query.toLowerCase()}.*")
         val list: MutableList<User> = java.util.ArrayList()
         for(skill in tests) {
             if(pattern.matcher(skill.username?.toLowerCase()).matches()) {

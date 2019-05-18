@@ -19,7 +19,7 @@ class CardListPresenter @Inject constructor() : BasePresenter<CardListView>() {
             .findMyAbstractCards(userId)
             .doOnSubscribe(Consumer<Disposable> { viewState.showLoading() })
             .doAfterTerminate(Action { viewState.hideLoading() })
-            .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
+            .subscribe({ viewState.showCards(it) }, { viewState.handleError(it) })
 
         compositeDisposable.add(dis)
     }

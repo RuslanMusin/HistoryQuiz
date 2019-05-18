@@ -12,6 +12,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.AbstractCard
 import com.example.historyquiz.model.card.Card
+import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.card_item.CardFragment
 import com.example.historyquiz.utils.Const
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -36,7 +38,7 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
     lateinit var type: String
     private lateinit var adapter: CardAdapter
 
-    lateinit var skills: MutableList<Card>
+    lateinit var skills: MutableList<AbstractCard>
 
     @InjectPresenter
     lateinit var presenter: CardListPresenter
@@ -114,6 +116,11 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
         Log.d(Const.TAG_LOG, "cards loaded and size = ${cards.size}")
     }
 
+    override fun showCards(list: List<AbstractCard>) {
+        this.skills = list.toMutableList()
+        changeDataSet(list)
+    }
+
     override fun handleError(throwable: Throwable) {
 
     }
@@ -187,12 +194,25 @@ class CardListFragment : BaseFragment(), CardListView, View.OnClickListener {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                presenter.loadCardsByQuery(newText, userId)
-//                findFromList(newText)
+//                presenter.loadCardsByQuery(newText, userId)
+                findFromList(newText)
                 return false
             }
         })
 
+    }
+
+    private fun findFromList(query: String) {
+        val pattern: Pattern = Pattern.compile("(\\w*,?\\s+)*${query.toLowerCase()}.*")
+        val list: MutableList<AbstractCard> = java.util.ArrayList()
+        for(skill in skills) {
+            if (pattern.matcher(skill.name?.toLowerCase()).matches()) {
+                list.add(skill)
+            }
+        }
+
+        Log.d(TAG_LOG, "list.size = ${list.size}")
+        changeDataSet(list)
     }
 
     companion object {

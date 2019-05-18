@@ -515,10 +515,10 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     fun offlineMode(): () -> (Unit) {
         return {
             Log.d(TAG_LOG,"offline mode")
-            if(li_offline != null && container != null) {
+            /*if(li_offline != null && container != null) {
                 li_offline.visibility = View.VISIBLE
                 container.visibility = View.GONE
-            }
+            }*/
         }
     }
 
