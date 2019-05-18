@@ -16,7 +16,7 @@ import com.example.historyquiz.model.card.Card
 import com.ms.square.android.expandabletextview.ExpandableTextView
 
 class GameCardsListAdapter(
-    val items: ArrayList<Card>,
+    val items: MutableList<Card>,
     val context: Context,
     val onClick: (card: Card) -> Unit) :
     RecyclerView.Adapter<GameCardsListHolder>() {

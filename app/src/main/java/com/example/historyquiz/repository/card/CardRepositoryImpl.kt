@@ -1,5 +1,6 @@
 package com.example.historyquiz.repository.card
 
+import android.util.Log
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.db_dop_models.ElementId
 import com.example.historyquiz.model.db_dop_models.Relation
@@ -11,6 +12,7 @@ import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.CARD_NUMBER
 import com.example.historyquiz.utils.Const.DEFAULT_EPOCH_ID
 import com.example.historyquiz.utils.Const.SEP
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.WIN_GAME
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
@@ -95,8 +97,12 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
                         test?.id?.let {
                             val addCardValues = toMapId(cardId)
                             childUpdates[USERS_CARDS + Const.SEP + winnerId + SEP + cardId] = addCardValues
-                            val removeCardValues = toMapId(null)
-                            childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
+                            Log.d(TAG_LOG, "cards winner path = ${USERS_CARDS + Const.SEP + winnerId + SEP + cardId}")
+                            if(loserCards.size > CARD_NUMBER && !loserId.equals(BOT_ID)) {
+                                val removeCardValues = toMapId(null)
+                                childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
+                                Log.d(TAG_LOG, "cards loser path = ${USERS_CARDS + Const.SEP + loserId + SEP + cardId}")
+                            }
                             this.findMyAbstractCardStates(it, winnerId)
                                 .subscribe { winnerCards ->
                                     if (winnerCards.size == 0) {

@@ -68,6 +68,7 @@ class GameListFragment : BaseFragment(), GameListView {
     private fun initViews(view: View) {
         setToolbar()
         initRecycler()
+        isClickable = true
 
     }
 
@@ -164,6 +165,7 @@ class GameListFragment : BaseFragment(), GameListView {
     }
 
     override fun onItemClick(item: Lobby) {
+        Log.d(TAG_LOG, "onItemClick clickable = $isClickable")
         if(isClickable) {
             setWaitStatus(false)
             presenter!!.onItemClick(item)
