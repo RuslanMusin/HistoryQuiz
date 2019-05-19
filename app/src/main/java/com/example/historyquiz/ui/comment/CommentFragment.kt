@@ -102,6 +102,7 @@ abstract class CommentFragment: BaseFragment(), CommentView {
 
     override fun showComments(comments: List<Comment>) {
         this.comments = comments.toMutableList()
+        Log.d(TAG_LOG, "comments size = ${comments.size}")
         adapter.changeDataSet(comments)
     }
 

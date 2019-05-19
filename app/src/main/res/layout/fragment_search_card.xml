@@ -34,6 +34,14 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
+        <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/spinner"
+                ms_background_color="@color/primary"
+                ms_text_color="@color/white"
+                android:text="@string/select_test_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
     <include layout="@layout/fragment_recycler_list"/>
 
     </LinearLayout>

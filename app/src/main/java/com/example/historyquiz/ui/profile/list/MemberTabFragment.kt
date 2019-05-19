@@ -95,7 +95,6 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
         menu?.let {
-            it.findItem(R.id.action_help).setVisible(false)
             setSearchMenuItem(it) }
         super.onCreateOptionsMenu(menu, inflater)
     }

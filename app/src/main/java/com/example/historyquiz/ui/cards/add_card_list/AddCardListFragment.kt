@@ -1,20 +1,22 @@
 package com.example.historyquiz.ui.cards.add_card_list
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
+import android.widget.SeekBar
 import com.annimon.stream.Stream
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.wiki_api.opensearch.Item
+import com.example.historyquiz.model.wiki_api.query.Page
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.cards.add_card.AddCardFragment
-import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.ADD_CARD_CODE
@@ -22,12 +24,15 @@ import com.example.historyquiz.utils.Const.CARD_ITEM
 import com.example.historyquiz.utils.Const.ITEM_ITEM
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.gson
-import kotlinx.android.synthetic.main.activity_add_list.*
+import com.jaredrummler.materialspinner.MaterialSpinner
+import kotlinx.android.synthetic.main.fragment_search_card.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.layout_add_card.*
 import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
+import kotlin.random.Random
 
 class AddCardListFragment: BaseFragment(), AddCardListView {
 
@@ -42,12 +47,14 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
 
     private var adapter: AddCardListAdapter? = null
 
+    var personFlag = true
+    var lastSearch = ""
     /*override fun showBottomNavigation(navigationView: NavigationView) {
         navigationView.hideBottomNavigation()
     }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.activity_add_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_search_card, container, false)
         return view
     }
 
@@ -58,15 +65,36 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         hideLoading()
         hideListLoading()
         setToolbar()
+        setListeners()
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
         setHasOptionsMenu(true)
     }
 
+    private fun setListeners() {
+        spinner.setItems(getString(R.string.search_person), getString(R.string.common_search))
+        spinner?.setOnItemSelectedListener(object : MaterialSpinner.OnItemSelectedListener<Any> {
+            override fun onItemSelected(view: MaterialSpinner?, position: Int, id: Long, item: Any?) {
+                when (position) {
+                    0 -> {
+                        personFlag = true
+
+                    }
+
+                    1 -> {
+                        personFlag =  false
+                    }
+                }
+                presenter.opensearch(lastSearch)
+            }
+
+        })
+    }
+
     private fun setToolbar() {
         setActionBar(toolbar)
         setActionBarTitle(R.string.search_card)
-        toolbar.setOnClickListener { activity?.onBackPressed() }
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
     }
 
     override fun handleError(throwable: Throwable) {
@@ -106,56 +134,58 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
         val sep = "-----------"
         Log.d(TAG_LOG, sep)
 
-        val names: List<String> = AppHelper.readFileFromAssets("regular.txt",this.requireContext())
-        for(name in names) {
-            Log.d(TAG_LOG,"name = " + name)
-        }
-        itemList = Stream.of(itemList)
-            .filter { e ->
-                var flag: Boolean = false
-                e.description?.let {
-                    flag = true
-                    val text = it.content
-                    Log.d(TAG_LOG, "text = " + text)
+        if(personFlag) {
+            val names: List<String> = AppHelper.readFileFromAssets("regular.txt", this.requireContext())
+            for (name in names) {
+                Log.d(TAG_LOG, "name = " + name)
+            }
+            itemList = Stream.of(itemList)
+                .filter { e ->
+                    var flag: Boolean = false
+                    e.description?.let {
+                        flag = true
+                        val text = it.content
+                        Log.d(TAG_LOG, "text = " + text)
 //                    val pattern = Pattern.compile(".*\\(.*[0-9]{1,4}.*(\\setBottomNavigationStatus*-\\setBottomNavigationStatus*[0-9]{1,4}.*)?\\).*")
-                    val mainPattern = Pattern.compile(".*\\(.*(([0-9]{1,4})|(век|др\\.)).*\\).*")
-                    val secondPattern = Pattern.compile("\\(.*\\)\\setBottomNavigationStatus*—")
-                    val thirdPattern = Pattern.compile("\\setBottomNavigationStatus+|,|\\.")
-                    flag = mainPattern.matcher(text!!).matches()
-                    if (flag) {
-                        Log.d(TAG_LOG, "text true = " + text)
-                        val partsOne = text.split(secondPattern)
-                        val parts: MutableList<String> = ArrayList()
-                        for(part in partsOne) {
-                            Log.d(TAG_LOG,"big_part = $part")
-                            val partsMin: List<String> = part.split(thirdPattern)
-                            for(partMin in partsMin) {
-                                Log.d(TAG_LOG,"partMin = $partMin")
+                        val mainPattern = Pattern.compile(".*\\(.*(([0-9]{1,4})|(век|др\\.)).*\\).*")
+                        val secondPattern = Pattern.compile("\\(.*\\)\\s*—")
+                        val thirdPattern = Pattern.compile("\\s+|,|\\.")
+                        flag = mainPattern.matcher(text!!).matches()
+                        if (flag) {
+                            Log.d(TAG_LOG, "text true = " + text)
+                            val partsOne = text.split(secondPattern)
+                            val parts: MutableList<String> = ArrayList()
+                            for (part in partsOne) {
+                                Log.d(TAG_LOG, "big_part = $part")
+                                val partsMin: List<String> = part.split(thirdPattern)
+                                for (partMin in partsMin) {
+                                    Log.d(TAG_LOG, "partMin = $partMin")
+                                }
+                                parts.addAll(partsMin)
                             }
-                            parts.addAll(partsMin)
-                        }
-                        /* val partOne = parts[0]
-                         var partTwo = ""
-                         if (parts.size > 1) {
-                             partTwo = parts[1]
-                         }
-                         Log.d(TAG_LOG, "part = " + partOne)
-                         Log.d(TAG_LOG, "partTwo = " + partTwo)*/
-                        for (name in names) {
-                            for(part in parts) {
-                                if (part.equals(name)) {
-                                    flag = false
-                                    Log.d(TAG_LOG, "flag = $flag and name = $name")
-                                    break
+                            val partOne = parts[0]
+                            var partTwo = ""
+                            if (parts.size > 1) {
+                                partTwo = parts[1]
+                            }
+                            Log.d(TAG_LOG, "part = " + partOne)
+                            Log.d(TAG_LOG, "partTwo = " + partTwo)
+                            for (name in names) {
+                                for (part in parts) {
+                                    if (part.equals(name)) {
+                                        flag = false
+                                        Log.d(TAG_LOG, "flag = $flag and name = $name")
+                                        break
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                flag
-            }
-            .toList()
+                    flag
+                }
+                .toList()
+        }
         for (item in itemList) {
             /*  Log.d(TAG_LOG, "text " + item.text!!.content!!)
               Log.d(TAG_LOG, "desc " + item.description!!.content!!)
@@ -185,19 +215,24 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
 
                 override fun onQueryTextSubmit(query: String): Boolean {
                     Log.d(TAG_LOG, "opensearch")
-                    if (checkSearch(query)) {
-                        presenter.opensearch(query)
                         if (!finalSearchView.isIconified) {
                             finalSearchView.isIconified = true
                         }
                         searchItem!!.collapseActionView()
-                    } else {
-                        showSnackBar("Поиск возможен только на русском с использованием цифр и тире")
-                    }
+
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
+                    if(!newText.equals("")) {
+                        if (checkSearch(newText)) {
+                            lastSearch = newText
+                            presenter.opensearch(newText)
+                        } else {
+                            showSnackBar("Поиск возможен только на русском с использованием цифр, пробелов и тире")
+                        }
+                    }
+
                     return false
                 }
             })
@@ -206,7 +241,7 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
     }
 
     private fun checkSearch(query: String): Boolean {
-        val pattern: Pattern = Pattern.compile("[А-я0-9_\\-,.]+")
+        val pattern: Pattern = Pattern.compile("([А-я0-9_\\-,.]+\\s*)+")
         return (pattern.matcher(query).matches())
     }
 
@@ -223,12 +258,57 @@ class AddCardListFragment: BaseFragment(), AddCardListView {
 
 
     override fun onItemClick(item: Item) {
-        val args = Bundle()
+        showLoading()
+        buildCard(item)
+       /* val args = Bundle()
         val itemJson = gson.toJson(item)
         args.putString(ITEM_ITEM, itemJson)
         val fragment = AddCardFragment.newInstance(args)
         fragment.setTargetFragment(this, ADD_CARD_CODE)
-        showFragment(this, fragment)
+        showFragment(this, fragment)*/
+    }
+
+    private fun buildCard(item: Item) {
+        card = Card()
+        card?.abstractCard?.wikiUrl = item!!.url!!.content
+        card?.abstractCard?.description = item!!.description!!.content
+        item!!.text!!.content?.let { presenter.query(it) }
+    }
+
+    override fun setQueryResults(list: List<Page>) {
+        val page = list[0]
+        card!!.abstractCard?.name = page.title
+        card!!.abstractCard?.photoUrl = page.original!!.source
+        card!!.abstractCard?.extract = page.extract!!.content
+        prepareStats()
+        prepareBackResult()
+    }
+
+    private fun prepareBackResult() {
+        val intent = Intent()
+        val cardJson = gson.toJson(card)
+        intent.putExtra(CARD_ITEM, cardJson)
+        targetFragment?.onActivityResult(ADD_CARD_CODE, Activity.RESULT_OK, intent)
+        hideFragment()
+    }
+
+    private fun prepareStats() {
+        var maxValue = 51
+        val hp = Random.nextInt(0, maxValue)
+        maxValue -= hp
+        val strength = Random.nextInt(0, maxValue)
+        maxValue -= strength
+        val support = Random.nextInt(0, maxValue)
+        maxValue -= support
+        val prestige = Random.nextInt(0, maxValue)
+        maxValue -= prestige
+        val intelligence = Random.nextInt(0, maxValue)
+        card?.hp = hp
+        card?.strength = strength
+        card?.support = support
+        card?.prestige = prestige
+        card?.intelligence = intelligence
+        Log.d(TAG_LOG, "$hp $strength $support $prestige $intelligence")
     }
 
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {

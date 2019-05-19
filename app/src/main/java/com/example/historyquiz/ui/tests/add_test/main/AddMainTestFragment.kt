@@ -210,6 +210,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 .load(card.abstractCard.photoUrl)
                 .into(iv_cover)
             tv_test_card_name.setError(null);
+            hideLoading()
         }
 
         if (reqCode == ADD_EPOCH_CODE && resultCode == RESULT_OK) {

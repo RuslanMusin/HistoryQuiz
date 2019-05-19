@@ -178,8 +178,9 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.search_menu, menu)
+        inflater?.inflate(R.menu.search_help_menu, menu)
         menu?.let {
+            val helpItem = menu.findItem(R.id.action_help)
             if(type.equals(NEW_ONES)) {
                 helpDialog = MaterialDialog.Builder(this.activity!!)
                     .customView(R.layout.dialog_help, false)
@@ -191,11 +192,12 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
                 helpDialog.btn_cancel.setOnClickListener { helpDialog.cancel() }
                 helpDialog.tv_help_content.text = getString(R.string.test_text)
 
-                val helpItem = menu.findItem(R.id.action_help)
                 helpItem.setOnMenuItemClickListener {
                     helpDialog.show()
                     true
                 }
+            } else {
+                helpItem.setVisible(false)
             }
             setSearchMenuItem(it)
         }

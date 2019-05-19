@@ -134,7 +134,7 @@
     <string name="question_number">Вопрос %1$d/%2$d</string>
     <string name="add_question_number">Вопрос %1$d</string>
     <string name="card_stats">Статистика карты</string>
-    <string name="search_card">Поиск личности</string>
+    <string name="search_card">Поиск карточки</string>
 
     <string name="test_result">Результат</string>
     <string name="no_wiki_page">Не существует страницы в Википедии</string>
@@ -234,4 +234,6 @@
     <string name="draw">Ничья</string>
     <string name="you_get_card">Вы выиграли карту</string>
     <string name="you_lose_card">Вы проиграли карту</string>
+    <string name="search_person">Поиск личностей</string>
+    <string name="common_search">Общий поиск</string>
 </resources>

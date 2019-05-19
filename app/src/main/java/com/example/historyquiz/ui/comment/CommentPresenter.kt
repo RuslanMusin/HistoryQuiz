@@ -34,7 +34,7 @@ open class CommentPresenter @Inject constructor() : BasePresenter<CommentView>()
         val single: Single<Boolean> = commentRepository.createComment(type, elemId, comment)
         val disposable = single
             ?.subscribe { res ->
-                viewState.showSnackBar("Comment added")
+//                viewState.showSnackBar("Comment added")
 //                interceptSecondResponse(res, {viewState.stopTimeout()}, R.string.failed_post_comment)
             }
         disposable?.let { compositeDisposable.add(it) }

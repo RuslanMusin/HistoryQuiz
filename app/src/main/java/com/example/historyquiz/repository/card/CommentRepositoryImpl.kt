@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.historyquiz.model.comment.Comment
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import io.reactivex.Single
@@ -42,16 +43,19 @@ class CommentRepositoryImpl @Inject constructor() : CommentRepository {
     override fun getComments(type: String, testId: String): Single<List<Comment>> {
         val single: Single<List<Comment>> = Single.create { e ->
             val query: Query = getRef(type).child(testId)
+            Log.d(TAG_LOG, "query = $type . $testId")
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val comments: MutableList<Comment> = ArrayList()
                     for (postSnapshot in dataSnapshot.children) {
                         val comment = postSnapshot.getValue(Comment::class.java)!!
+                        Log.d(TAG_LOG, "comment author = ${comment.authorName}")
+                        comments.add(comment)
+/*
                         userRepository.readUserById(comment.authorId).subscribe { it ->
                             comment.authorName = it.username
                             comment.authorPhotoUrl = it.photoUrl
-                            comments.add(comment)
-                        }
+                        }*/
                     }
                     e.onSuccess(comments)
 
@@ -77,7 +81,7 @@ class CommentRepositoryImpl @Inject constructor() : CommentRepository {
     }
 
     private fun getRef(type: String): DatabaseReference {
-        return databaseReference.child(type)
+        return databaseReference.root.child(type)
     }
 
 

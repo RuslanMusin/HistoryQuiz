@@ -206,13 +206,12 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     }
 
     override fun openLoginPage() {
-        hideStartView()
         clearAllStacks()
         currentTab = TAB_AUTH
         showTab = SHOW_AUTH
         val fragment = SignInFragment.newInstance()
         pushFragments(fragment, true)
-
+        hideStartView()
 
     }
 
@@ -223,12 +222,11 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     }
 
     override fun openNavigationPage() {
-        hideStartView()
 //        waitEnemy()
         currentTab = TAB_PROFILE
         showTab = SHOW_PROFILE
         bottom_navigation.selectedItemId = R.id.action_profile
-
+        hideStartView()
     }
 
     private fun initListeners() {
