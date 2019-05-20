@@ -23,7 +23,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="top"
-            android:src="@drawable/student"
+            android:src="@drawable/knight"
             app:civ_border_width="1dp"
             app:civ_border_color="#FF000000"/>
 
@@ -100,7 +100,6 @@
                         android:id="@+id/iv_reply"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         app:srcCompat="@drawable/ic_reply_black_24dp"
                     />
 

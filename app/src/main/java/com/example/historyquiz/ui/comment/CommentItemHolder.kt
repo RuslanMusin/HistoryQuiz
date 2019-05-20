@@ -40,7 +40,7 @@ class CommentItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private fun fillComment(comment: Comment) {
         Glide.with(itemView.getContext())
-            .load(R.drawable.student)
+            .load(R.drawable.knight)
             .into(itemView.iv_cover)
     }
 
