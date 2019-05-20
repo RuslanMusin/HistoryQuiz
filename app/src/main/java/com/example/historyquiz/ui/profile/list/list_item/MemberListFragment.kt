@@ -52,8 +52,9 @@ class MemberListFragment : BaseFragment(), MemberListView {
         arguments?.let {
             type = it.getString(USERS_LIST_TYPE)
             presenter.loadUsers(type)
-
         }
+        setStatus(Const.ONLINE_STATUS)
+        setWaitStatus(true)
     }
 
     override fun reloadList() {

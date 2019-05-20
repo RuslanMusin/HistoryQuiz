@@ -20,6 +20,7 @@ import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
+import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.test_item.finish.FinishFragment
 import com.example.historyquiz.utils.Const
@@ -70,8 +71,8 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
                                 answer.userClicked = false
                             }
                         }
-                        removeStackDownTo(number + 1)
-                        performBackPressed()
+                        removeStackDownTo(number)
+                        (activity as NavigationView).performBackPressed()
                     }
 
                 })

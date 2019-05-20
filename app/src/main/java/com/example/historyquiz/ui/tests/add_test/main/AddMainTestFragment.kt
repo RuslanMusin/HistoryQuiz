@@ -77,6 +77,13 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
         et_test_name.setText(test?.title)
         et_test_desc.setText(test?.desc)
         tv_added_card.text =test?.card?.abstractCard?.name
+        Glide.with(this)
+            .load(test.card?.abstractCard?.photoUrl)
+            .into(iv_cover)
+        tv_added_epoch.text = test.epoch?.name
+        for(link in test.links) {
+            addLinkView(link)
+        }
     }
 
 
@@ -180,9 +187,7 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
             }
             if(it.desc == null  || it.desc?.trim().equals("")) {
                 ti_test_desc.error = "Введите описание теста!"
-
                 flag = false
-
             } else {
                 ti_test_desc?.error = null
             }
@@ -193,6 +198,17 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
             } else {
                 tv_test_card_name.setError(null);
             }
+            if(it.epoch == null) {
+                tv_test_epoch_name.setError("Выберите эпоху!")
+                flag = false
+            } else {
+                tv_test_epoch_name.setError(null);
+            }
+            if(it.links.size == 0) {
+                showSnackBar("Добавьте хотя бы одну ссылку")
+                flag = false
+            }
+
         }
         Log.d(TAG_LOG, "flag = $flag")
         return flag
@@ -210,6 +226,11 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 .load(card.abstractCard.photoUrl)
                 .into(iv_cover)
             tv_test_card_name.setError(null);
+            val link = card.abstractCard.wikiUrl?.let { Link("Википедия", it, "Подробная информация") }
+            link?.let {
+                links.add(it)
+                addLinkView(it)
+            }
             hideLoading()
         }
 

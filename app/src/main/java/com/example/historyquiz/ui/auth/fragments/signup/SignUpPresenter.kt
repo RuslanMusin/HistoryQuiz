@@ -40,6 +40,7 @@ class SignUpPresenter @Inject constructor() : BasePresenter<SignUpView>() {
                     createInDatabase(user, imageUri)
                     updateUI(user)
                 } else {
+                    Log.d(TAG_LOG, "local = ${task.exception?.localizedMessage}")
                     // If sign in fails, display a message to the user.
                     Log.w(TAG_LOG, "createUserWithEmail:failure", task.exception)
                     viewState.hideProgressDialog()
@@ -74,7 +75,7 @@ class SignUpPresenter @Inject constructor() : BasePresenter<SignUpView>() {
     }
 
     private fun checkEmail(email: String): Boolean {
-        return if (TextUtils.isEmpty(email)) {
+        return if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.length < 6) {
             viewState.showEmailError(true)
             false
         } else {

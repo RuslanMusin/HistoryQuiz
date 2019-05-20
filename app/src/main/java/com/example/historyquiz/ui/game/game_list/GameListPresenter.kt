@@ -65,8 +65,8 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
                 .doAfterTerminate({ viewState.setNotLoading() })*/
                 .subscribe({games ->
                     Log.d(TAG_LOG, "change games")
-                    viewState.loadOfficialTests()
-                    viewState.changeDataSet(games) }, { viewState.handleError(it) })
+                    viewState.hideLoading()
+                    viewState.showGames(games) }, { viewState.handleError(it) })
             compositeDisposable.add(disposable)
 
         }
@@ -82,31 +82,43 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
 
     fun findGame(lobby: Lobby) {
         Log.d(TAG_LOG,"find game online")
-        val gameData: GameData = GameData()
-        lobby.creator?.playerId?.let{ gameData.enemyId = it}
-        cardRepository.findMyCardsByEpoch(gameData.enemyId, lobby.epochId).subscribe{ enemyCards ->
-            val cardsSize = enemyCards.size
-            if(cardsSize >= lobby.cardNumber) {
-                gameData.role = FIELD_INVITED
-                gameData.gameMode = ONLINE_GAME
-                lobby.gameData = gameData
-                AppHelper.currentUser?.let { it.gameLobby = lobby }
+        lobby.creator?.playerId?.let {creatorId ->
+            val gameData: GameData = GameData()
+            gameData.enemyId = creatorId
+            userRepository.readUserById(creatorId).subscribe { enemy ->
+                if(!lobby.id.equals(enemy.lobbyId)) {
+                    viewState.showSnackBar("Игра была удалена. Список будет обновлен")
+                    loadOfficialTests()
+                    viewState.setItemClickable(true)
+                } else {
+                    cardRepository.findMyCardsByEpoch(gameData.enemyId, lobby.epochId).subscribe { enemyCards ->
+                        val cardsSize = enemyCards.size
+                        if (cardsSize >= lobby.cardNumber) {
+                            gameData.role = FIELD_INVITED
+                            gameData.gameMode = ONLINE_GAME
+                            lobby.gameData = gameData
+                            AppHelper.currentUser?.let { it.gameLobby = lobby }
 //                viewState.showProgressDialog(R.string.loading)
-                timer = object : CountDownTimer(25000, 1000) {
+                            timer = object : CountDownTimer(25000, 1000) {
 
-                    override fun onTick(millisUntilFinished: Long) {
-                    }
+                                override fun onTick(millisUntilFinished: Long) {
+                                }
 
-                    override fun onFinish() {
-                        viewState.hideProgressDialog()
-                        gameRepository.notAccepted(lobby)
+                                override fun onFinish() {
+                                    viewState.hideProgressDialog()
+                                    gameRepository.notAccepted(lobby)
+                                }
+                            }
+                            timer.start()
+                            gameRepository.goToLobby(lobby, gameFinded(), gameNotAccepted(lobby))
+                        } else {
+                            viewState.showSnackBar("У противника не хватает карт для игры")
+                            viewState.setItemClickable(true)
+                        }
                     }
                 }
-                timer.start()
-                gameRepository.goToLobby(lobby, gameFinded(), gameNotAccepted(lobby))
-            } else {
-                viewState.showSnackBar("У противника не хватает карт для игры")
             }
+
         }
     }
 
@@ -123,54 +135,6 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
             viewState.setWaitStatus(true)
             viewState.hideProgressDialog()
             gameRepository.notAccepted(lobby)
-        }
-    }
-
-    fun findBotGame() {
-        val lobby: Lobby = Lobby()
-
-        val playerData = LobbyPlayerData()
-        playerData.playerId = currentId
-        playerData.online = true
-
-        lobby.creator = playerData
-        lobby.status = IN_GAME_STATUS
-        lobby.isFastGame = true
-        lobby.type = USER_TYPE
-
-        val enemyData = LobbyPlayerData()
-        enemyData.playerId = BOT_ID
-        enemyData.online = true
-
-        val gameData: GameData = GameData()
-        gameData.enemyId = BOT_ID
-        gameData.gameMode = BOT_GAME
-        gameData.role = FIELD_CREATOR
-        lobby.gameData = gameData
-
-        AppHelper.currentUser?.let {
-            it.gameLobby = lobby
-            Log.d(TAG_LOG,"enemyId = ${lobby.gameData?.enemyId}")
-            Log.d(TAG_LOG,"enemyId 2= ${it.gameLobby?.gameData?.enemyId}")
-            gameRepository.createBotLobby(lobby) {
-                //            viewState.waitEnemy()
-                val relation: Relation = Relation()
-                relation.relation = IN_GAME_STATUS
-                relation.id = lobby.id
-//                gameRepository.setRelation(relation, UserRepositoryImpl.currentId)
-                userRepository.changeJustUserStatus(IN_GAME_STATUS).subscribe()
-                viewState.onBotGameFinded()
-                /*gameRepository.joinBot(lobby).subscribe{ e ->
-
-
-                    Log.d(TAG_LOG,"gameLobby loaded")
-                    Log.d(TAG_LOG,"change user status")
-                    userRepository.changeUserStatus(it).subscribe()
-                }
-                viewState.onGameFinded()
-            }*/
-            }
-
         }
     }
 }

@@ -88,13 +88,10 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
     }
 
     override fun addCardAfterGame(cardId: String , winnerId: String, loserId: String): Single<Boolean> {
+        val childUpdates = HashMap<String, Any>()
         val single: Single<Boolean> = Single.create { e ->
-            val childUpdates = HashMap<String, Any>()
             findMyCards(loserId).subscribe { loserCards ->
-                this.readCard(cardId)
-                    .subscribe { card ->
-                        val test: Test? = card?.test
-                        test?.id?.let {
+                readCard(cardId).subscribe { card ->
                             val addCardValues = toMapId(cardId)
                             childUpdates[USERS_CARDS + Const.SEP + winnerId + SEP + cardId] = addCardValues
                             Log.d(TAG_LOG, "cards winner path = ${USERS_CARDS + Const.SEP + winnerId + SEP + cardId}")
@@ -103,20 +100,20 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
                                 childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
                                 Log.d(TAG_LOG, "cards loser path = ${USERS_CARDS + Const.SEP + loserId + SEP + cardId}")
                             }
-                            this.findMyAbstractCardStates(it, winnerId)
-                                .subscribe { winnerCards ->
+                            card.cardId?.let { absCardId ->
+                            findMyAbstractCardStates(absCardId, winnerId).subscribe { winnerCards ->
                                     if (winnerCards.size == 0) {
-                                        val addAbstractCardValues = abstractCardRepository.toMapId(it)
-                                        childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + it] =
+                                        val addAbstractCardValues = abstractCardRepository.toMapId(absCardId)
+                                        childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + absCardId] =
                                                 addAbstractCardValues
                                     }
                                     if (loserCards.size > CARD_NUMBER && !loserId.equals(BOT_ID)) {
-                                        this.findMyAbstractCardStates(it, loserId)
+                                        findMyAbstractCardStates(absCardId, loserId)
                                             .subscribe { loserCards ->
                                                 if (loserCards.size == 1) {
                                                     val removeAbstractCardValues =
                                                         abstractCardRepository.toMapId(null)
-                                                    childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + it] =
+                                                    childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + absCardId] =
                                                             removeAbstractCardValues
                                                 }
                                                 databaseReference.root.updateChildren(childUpdates)
@@ -254,13 +251,17 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
     override fun findMyCardsByEpoch(userId: String, epochId: String): Single<List<Card>> {
         val single:Single<List<Card>> =  Single.create { e ->
             findMyCards(userId).subscribe { cards ->
-                val officials: MutableList<Card> = ArrayList()
-                for (card in cards) {
-                    if (epochId.equals(DEFAULT_EPOCH_ID) || epochId.equals(card.epochId)) {
-                        officials.add(card)
+                if(epochId.equals(DEFAULT_EPOCH_ID)) {
+                    e.onSuccess(cards)
+                } else {
+                    val officials: MutableList<Card> = ArrayList()
+                    for (card in cards) {
+                        if (epochId.equals(card.epochId)) {
+                            officials.add(card)
+                        }
                     }
+                    e.onSuccess(officials)
                 }
-                e.onSuccess(officials)
             }
         }
         return single.compose(RxUtils.asyncSingle())

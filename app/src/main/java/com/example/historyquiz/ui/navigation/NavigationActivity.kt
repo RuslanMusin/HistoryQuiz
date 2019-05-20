@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
@@ -166,19 +167,32 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     }
 
     override fun setDialog(gameData: GameData, lobby: Lobby) {
+        val timer = object : CountDownTimer(5000, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+            }
+
+            override fun onFinish() {
+                dialog.dismiss()
+                refuseAndWait(lobby)
+            }
+        }
         dialog = dialog
             .builder
             .onPositive(object : MaterialDialog.SingleButtonCallback {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                    timer.cancel()
                     presenter.chooseDialogDecision(gameData, lobby)
                 }
 
             })
             .onNegative { dialog: MaterialDialog, which: DialogAction ->
+                timer.cancel()
                 dialog.hide()
                 refuseAndWait(lobby) }
             .build()
         dialog.show()
+        timer.start()
     }
 
     override fun setWaitStatus(isWaiting: Boolean) {

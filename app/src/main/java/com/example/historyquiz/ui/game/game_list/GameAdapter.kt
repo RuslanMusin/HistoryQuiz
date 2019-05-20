@@ -53,6 +53,7 @@ class GameAdapter(items: MutableList<Lobby>) : BaseAdapter<Lobby, GameItemHolder
             for(item in items) {
                 if(item.id.equals(it)) {
                     removeItem(item)
+                    break
                 }
             }
         }

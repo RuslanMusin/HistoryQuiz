@@ -141,7 +141,7 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
                                 userInSession = true
                                 it.status = Const.ONLINE_STATUS
                                 userRepository.changeUserStatus(it).subscribe()
-                                gameRepository.removeRedundantLobbies(true)
+                                gameRepository.removeRedundantLobbies(true).subscribe()
                                 val args = Bundle()
                                 args.putString(Const.USER_ITEM, gson.toJson(currentUser))
                                 viewState.openNavigationPage()

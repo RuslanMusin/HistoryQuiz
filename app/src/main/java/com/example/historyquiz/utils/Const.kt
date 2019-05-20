@@ -109,7 +109,7 @@ object Const {
     const val MODE_CARD_VIEW = "card_view"
     const val MODE_END_GAME = "end_game"
 
-    const val CARD_NUMBER = 3
+    const val CARD_NUMBER = 5
 
     //Friend type
     const val ADD_FRIEND = "addF"

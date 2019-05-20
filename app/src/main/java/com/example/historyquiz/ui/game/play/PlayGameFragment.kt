@@ -34,6 +34,7 @@ import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.CARD_NUMBER
 import com.example.historyquiz.utils.Const.MODE_CARD_VIEW
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.getRandom
@@ -68,6 +69,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     var myAnswered: Boolean = false
 
     lateinit var myCards: MutableList<Card>
+    var cardsSize: Int = CARD_NUMBER
 
     var mode: String = MODE_PLAY_GAME
     var choosingEnabled = false
@@ -87,8 +89,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun performBackPressed() {
         if(mode.equals(MODE_CHANGE_CARDS)) {
-            mode = MODE_PLAY_GAME
-            stopChange(20000)()
+            quitGameBeforeGameStart()
+            /*mode = MODE_PLAY_GAME
+            stopChange(20000)()*/
         } else {
             quitGame()
         }
@@ -117,10 +120,10 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun waitEnemyTimer(time: Long) {
         toolbar.tv_time_title.text = getString(R.string.wait_enemy)
-        timer = object : CountDownTimer(time, 1000) {
+        timer = object : CountDownTimer(time, DEF_INTERVAL) {
 
             override fun onTick(millisUntilFinished: Long) {
-                toolbar.tv_time.text =  "${millisUntilFinished / 1000}"
+                toolbar.tv_time.text =  "${millisUntilFinished / DEF_INTERVAL}"
                 Log.d(TAG_LOG,"Wait Change Time = ${millisUntilFinished / 1000}")
             }
 
@@ -132,6 +135,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     fun enemyDisconnectedBeforeGame() {
+        timer.cancel()
         MaterialDialog.Builder(this.activity!!)
             .title(R.string.game_ended)
             .content(R.string.enemy_disconnected)
@@ -139,9 +143,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             .onPositive(object : MaterialDialog.SingleButtonCallback {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                     timer.cancel()
-                    presenter.disconnectMe()
+                    presenter.removeRedundantLobbies()
                 }
-
             })
             .show()
     }
@@ -161,6 +164,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     override fun setCardsList(cards: ArrayList<Card>) {
         timer.cancel()
         myCards = cards
+        cardsSize = myCards.size
         setEndView()
         startTimer()
     }
@@ -220,7 +224,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     private fun updateTime() {
         Log.d(TAG_LOG,"updateTime")
-        if(enemyAnswered and myAnswered) {
+        if(enemyAnswered and myAnswered and (cardsSize >= 0)) {
             Log.d(TAG_LOG,"choose card mode")
             enemyAnswered = false
             myAnswered = false
@@ -243,11 +247,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             presenter.changeGameMode(MODE_CARD_VIEW)
             presenter.waitEnemyGameMode(MODE_CARD_VIEW).subscribe { e ->
                 tv_time_title.text = getString(R.string.view_time)
-                timer = object : CountDownTimer(5000, 1000) {
+                timer = object : CountDownTimer(WATCH_CARDS_TIME, DEF_INTERVAL) {
 
                     override fun onTick(millisUntilFinished: Long) {
-                        tv_time.text = "${millisUntilFinished / 1000}"
-                        Log.d(TAG_LOG,"View Time = ${millisUntilFinished / 1000}")
+                        tv_time.text = "${millisUntilFinished / DEF_INTERVAL}"
+                        Log.d(TAG_LOG,"View Time = ${millisUntilFinished / DEF_INTERVAL}")
                     }
 
                     override fun onFinish() {
@@ -267,11 +271,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         disconnectTimer?.cancel()
         timer.cancel()
         tv_time_title.text = getString(R.string.time)
-        timer = object : CountDownTimer(30000, 1000) {
+        timer = object : CountDownTimer(MAIN_TIME, DEF_INTERVAL) {
 
             override fun onTick(millisUntilFinished: Long) {
-                tv_time.text =  "${millisUntilFinished / 1000}"
-                Log.d(TAG_LOG,"Card/Answer time = ${millisUntilFinished / 1000}")
+                tv_time.text =  "${millisUntilFinished / DEF_INTERVAL}"
+                Log.d(TAG_LOG,"Card/Answer time = ${millisUntilFinished / DEF_INTERVAL}")
             }
 
             override fun onFinish() {
@@ -280,11 +284,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                     if (!enemyAnswered) {
                         Log.d(TAG_LOG, "Disconnect Answer Time")
                         tv_time_title.text = getString(R.string.wait_enemy)
-                        disconnectTimer = object : CountDownTimer(10000, 1000) {
+                        disconnectTimer = object : CountDownTimer(DISCONNECT_TIME, DEF_INTERVAL) {
 
                             override fun onTick(millisUntilFinished: Long) {
-                                tv_time.text = "${millisUntilFinished / 1000}"
-                                Log.d(TAG_LOG, "Disconnect Answer Time = ${millisUntilFinished / 1000}")
+                                tv_time.text = "${millisUntilFinished / DEF_INTERVAL}"
+                                Log.d(TAG_LOG, "Disconnect Answer Time = ${millisUntilFinished / DEF_INTERVAL}")
                             }
 
                             override fun onFinish() {
@@ -308,11 +312,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 } else {
                     if (!enemyChoosed) {
                         tv_time_title.text = getString(R.string.wait_enemy)
-                        disconnectTimer = object : CountDownTimer(10000, 1000) {
+                        disconnectTimer = object : CountDownTimer(DISCONNECT_TIME, DEF_INTERVAL) {
 
                             override fun onTick(millisUntilFinished: Long) {
-                                tv_time.text = "${millisUntilFinished / 1000}"
-                                Log.d(TAG_LOG, "Disconnect Choose Time = ${millisUntilFinished / 1000}")
+                                tv_time.text = "${millisUntilFinished / DEF_INTERVAL}"
+                                Log.d(TAG_LOG, "Disconnect Choose Time = ${millisUntilFinished / DEF_INTERVAL}")
                             }
 
                             override fun onFinish() {
@@ -330,7 +334,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                         Log.d(TAG_LOG, "notChoosed")
                         myChoosed = true
                         val card: Card? = myCards.getRandom()
-                        card?.let { adapter.removeElement(it) }
+                        card?.let {
+                            adapter.removeElement(it)
+                        }
                         updateTime()
                     }
                 }
@@ -341,7 +347,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun showQuestionForYou(question: Question) {
         game_questions_container.visibility = View.VISIBLE
-
         childFragmentManager
             .beginTransaction()
             .replace(
@@ -411,7 +416,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
 
     override fun showGameEnd(type: GameRepositoryImpl.GameEndType, card: Card) {
-
         timer.cancel()
         disconnectTimer?.cancel()
 
@@ -424,7 +428,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 .buttonsGravity(GravityEnum.END)
                 .onNeutral { dialog, which ->
                     dialog.dismiss()
-                    goToFindGameActivity()
+                    goToLastFragment()
                 }
                 .canceledOnTouchOutside(false)
                 .cancelable(false)
@@ -446,7 +450,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 .buttonsGravity(GravityEnum.END)
                 .onNeutral { dialog, which ->
                     dialog.dismiss()
-                    goToFindGameActivity()
+                    goToLastFragment()
                 }
                 .canceledOnTouchOutside(false)
                 .cancelable(false)
@@ -478,7 +482,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     }
 
-    private fun goToFindGameActivity() {
+    override fun goToLastFragment() {
         activity?.let{
             (it as NavigationView).performBackPressed()
         }
@@ -544,6 +548,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             {
                 if (choosingEnabled) {
                     presenter.chooseCard(it)
+                    cardsSize--
                 }
             }
         )
@@ -560,7 +565,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     private fun setCardListeners() {
-        val listener: View.OnClickListener = View.OnClickListener {
+        /*val listener: View.OnClickListener = View.OnClickListener {
             when(it.id) {
 
                 R.id.enemy_selected_card -> {
@@ -578,7 +583,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
         }
         enemy_selected_card.setOnClickListener(listener)
-        my_selected_card.setOnClickListener(listener)
+        my_selected_card.setOnClickListener(listener)*/
     }
 
     fun quitGameBeforeGameStart() {
@@ -591,9 +596,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             .onPositive(object : MaterialDialog.SingleButtonCallback {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                     timer.cancel()
-                    presenter.disconnectMe()
+                    presenter.removeRedundantLobbies()
+//                    presenter.disconnectMe()
                 }
-
             })
             .show()
     }
@@ -621,6 +626,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
         const val CHANGE_CARDS_TIME: Long = 10000
         const val DEF_INTERVAL: Long = 1000
+        const val MAIN_TIME: Long = 30000
+        const val DISCONNECT_TIME: Long = 10000
+        const val WATCH_CARDS_TIME: Long = 5000
 
         const val MAX_LENGTH = 30
 

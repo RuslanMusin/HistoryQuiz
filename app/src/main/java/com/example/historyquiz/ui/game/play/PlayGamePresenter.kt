@@ -91,19 +91,17 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
                         viewState.setEnemyUserData(t!!)
                     }
             }
-
             gameRepository.startGame(lobby, this)
         }
     }
 
     fun chooseCard(card: Card) {
+        viewState.setCardChooseEnabled(false)
         gameRepository.findLobby(lobby.id).subscribe { e ->
-            viewState.setCardChooseEnabled(false)
             gameRepository.chooseNextCard(lobby, card.id!!)
             viewState.showYouCardChoose(card)
             youCardChosed = true
         }
-
     }
 
     fun answer(correct: Boolean) {
@@ -158,5 +156,11 @@ class PlayGamePresenter @Inject constructor() : BasePresenter<PlayGameView>(), G
 
     fun disconnectMe() {
         gameRepository.disconnectMe().subscribe()
+    }
+
+    fun removeRedundantLobbies() {
+        gameRepository.removeRedundantLobbies(true).subscribe { e ->
+            viewState.goToLastFragment()
+        }
     }
 }

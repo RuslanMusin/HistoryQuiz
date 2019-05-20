@@ -11,8 +11,6 @@ interface GameRepository {
 
     fun removeLobby(id: String)
 
-    fun joinBot(lobby: Lobby): Single<Boolean>
-
     fun setRelation(relation: Relation, userId: String)
 
     fun createLobby(lobby: Lobby, onFind: () -> (Unit))
@@ -22,8 +20,6 @@ interface GameRepository {
     fun removeFastLobby(userId: String, lobby: Lobby): Single<Boolean>
 
     fun createFastLobby(userId: String, lobby: Lobby): Single<Lobby>
-
-    fun createBotLobby(lobby: Lobby, onFind: () -> (Unit))
 
     fun refuseGame(lobby: Lobby): Single<Boolean>
 
@@ -43,15 +39,9 @@ interface GameRepository {
 
     fun startGame(lobby: Lobby, callbacks: GameRepositoryImpl.InGameCallbacks)
 
-    fun selectOnBotLoseCard(cards: List<Card>)
-
-    fun botNextCard(lobby: Lobby, cardId: String)
-
     fun answerOnLastQuestion(lobby: Lobby, correct: Boolean)
 
-    fun botAnswer(lobby: Lobby, correct: Boolean)
-
-    fun removeRedundantLobbies(shouldFind: Boolean)
+    fun removeRedundantLobbies(shouldFind: Boolean): Single<Boolean>
 
     fun waitGameMode(mode: String): Single<Boolean>
 

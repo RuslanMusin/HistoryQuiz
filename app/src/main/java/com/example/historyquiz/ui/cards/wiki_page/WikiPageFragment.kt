@@ -56,6 +56,7 @@ class WikiPageFragment : BaseFragment(), WikiPageView, View.OnClickListener {
         setToolbar()
         setData()
         setListeners()
+        hideLoading()
         setStatus(Const.ONLINE_STATUS)
         setWaitStatus(true)
     }

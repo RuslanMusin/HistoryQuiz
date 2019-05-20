@@ -50,9 +50,9 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
                     viewState.createCookie(email,password)
                     updateUI(user)
                 } else {
+                    Log.d(TAG_LOG, "task ex = ${task.exception?.localizedMessage}")
                     updateUI(null)
                 }
-
                 viewState.hideProgressDialog()
             })
     }
@@ -62,7 +62,7 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
     }
 
     private fun checkEmail(email: String): Boolean {
-        return if (TextUtils.isEmpty(email)) {
+        return if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.length < 6) {
             viewState.showEmailError(true)
             false
         } else {
@@ -92,8 +92,9 @@ class SignInPresenter @Inject constructor() : BasePresenter<SignInView>() {
                     it.status = ONLINE_STATUS
                     userInSession = true
                     userRepository.changeUserStatus(it).subscribe()
-                    gameRepository.removeRedundantLobbies(true)
-                    viewState.goToProfile(it)
+                    gameRepository.removeRedundantLobbies(true).subscribe { e ->
+                        viewState.goToProfile(it)
+                    }
                 }
             }
         } else {

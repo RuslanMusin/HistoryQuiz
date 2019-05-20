@@ -29,4 +29,6 @@ interface PlayGameView : PlayView {
     fun showGameEnd(type: GameRepositoryImpl.GameEndType, card: Card)
 
     fun waitEnemyTimer(time: Long)
+
+    fun goToLastFragment()
 }

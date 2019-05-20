@@ -198,11 +198,11 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
                                 Log.d(TAG_LOG, "find epoch after game")
                                 if (isWin) {
                                     epoch.win++
-                                    if (!isDefEpoch) defEpoch.win++
+//                                    if (!isDefEpoch) defEpoch.win++
                                     user.points += GAME_WIN_POINTS
                                 } else {
                                     epoch.lose++
-                                    if (!isDefEpoch) defEpoch.lose++
+//                                    if (!isDefEpoch) defEpoch.lose++
                                     user.points += GAME_LOSE_POINTS
                                 }
                                 if (user.points >= user.nextLevel) {
@@ -210,19 +210,19 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
                                     user.level++
                                     user.points = 0
                                 }
-                                epoch.updateGe()
-                                Log.d(TAG_LOG, "updateGe and ge = ${epoch.ge}")
-                                if (!isDefEpoch) defEpoch.updateGe()
-                                userRepository.get().updateUser(user)
-                                Log.d(TAG_LOG, "after update user")
-                                if (user.id.equals(AppHelper.currentUser.id)) {
-                                    AppHelper.currentUser = user
-                                }
                                 epoch.right += score
                                 epoch.wrong += (lobby.cardNumber - score)
                                 if (!isDefEpoch) {
                                     defEpoch.right += score
                                     defEpoch.wrong += (lobby.cardNumber - score)
+                                }
+                                epoch.updateEpoch()
+                                Log.d(TAG_LOG, "updateGe and ge = ${epoch.ge}")
+                                if (!isDefEpoch) defEpoch.updateKe()
+                                userRepository.get().updateUser(user)
+                                Log.d(TAG_LOG, "after update user")
+                                if (user.id.equals(AppHelper.currentUser.id)) {
+                                    AppHelper.currentUser = user
                                 }
                                 if (!isDefEpoch) {
                                     updateUserEpoch(epoch).subscribe { e ->
@@ -234,8 +234,7 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
                                 } else {
                                     updateUserEpoch(epoch).subscribe { e ->
                                         updateLeaderStatAfterGame(playerId, user, outResult)
-                                    }
-
+                                }
                             }
                         }
 
@@ -251,7 +250,7 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
         user: User,
         outResult: SingleEmitter<Boolean>
     ) {
-        findUserEpoches(playerId, false).subscribe { epoches ->
+        findUserEpoches(playerId, true).subscribe { epoches ->
             user.epochList = epoches.toMutableList()
             val leaderStat = LeaderStat(user)
             Log.d(TAG_LOG, "update leader stat")
@@ -265,14 +264,22 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
     override fun updateAfterTest(userId: String, test: Test): Single<Boolean> {
         val single: Single<Boolean> = Single.create { e ->
             findUserEpoch(userId, test.epochId).subscribe { userEpoch ->
-                Log.d(TAG_LOG, "epoch was finded")
-                val right = test.rightQuestions.size
-                val wrong = test.wrongQuestions.size
-                userEpoch.right += right
-                userEpoch.wrong += wrong
-                userEpoch.ke += ((right - wrong).toDouble() / (right + wrong))
-                Log.d(TAG_LOG, "userEpoch.ke = ${userEpoch.ke}")
-                updateUserEpoch(userEpoch).subscribe { flag  -> e.onSuccess(true)}
+                findUserEpoch(userId, DEFAULT_EPOCH_ID).subscribe { defEpoch ->
+                    Log.d(TAG_LOG, "epoch was finded")
+                    val right = test.rightQuestions.size
+                    val wrong = test.wrongQuestions.size
+                    userEpoch.right += right
+                    userEpoch.wrong += wrong
+                    defEpoch.right += right
+                    defEpoch.wrong += wrong
+                    userEpoch.updateKe()
+                    defEpoch.updateKe()
+                    Log.d(TAG_LOG, "userEpoch.ke = ${userEpoch.ke}")
+                    updateUserEpoch(userEpoch).subscribe { flag ->
+                        updateUserEpoch(defEpoch).subscribe { defFlag ->
+                            e.onSuccess(true) }
+                    }
+                }
             }
         }
         return single.compose(RxUtils.asyncSingle())

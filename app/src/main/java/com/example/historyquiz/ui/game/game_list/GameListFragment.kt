@@ -14,6 +14,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.historyquiz.R
 import com.example.historyquiz.model.game.Lobby
+import com.example.historyquiz.model.test.Test
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.game.add_game.AddGameFragment
 import com.example.historyquiz.ui.game.bot_play.BotGameFragment
@@ -26,10 +27,13 @@ import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
 
 class GameListFragment : BaseFragment(), GameListView {
+
+    var games: List<Lobby> = ArrayList()
 
     lateinit var adapter: GameAdapter
 
@@ -140,10 +144,10 @@ class GameListFragment : BaseFragment(), GameListView {
         hideListLoading()
     }
 
-    override fun loadOfficialTests() {
-        Log.d(Const.TAG_LOG, "load requests")
-        hideLoading()
-//        presenter!!.loadOfficialTests()
+    override fun showGames(list: List<Lobby>) {
+        this.games = list
+        changeDataSet(list)
+        adapter.attachToRecyclerView(rv_list)
     }
 
     override fun setNotLoading() {
@@ -182,10 +186,10 @@ class GameListFragment : BaseFragment(), GameListView {
     override fun hideProgressDialog() {
         showSnackBar("Противник не принял приглашение")
         isClickable = true
-        /*if (dialog != null && dialog!!.isShowing) {
-            dialog!!.dismiss()
-        }
-        isClickable = true*/
+    }
+
+    override fun setItemClickable(isClickable: Boolean) {
+        this.isClickable = isClickable
     }
 
     override fun onBotGameFinded() {
@@ -213,13 +217,6 @@ class GameListFragment : BaseFragment(), GameListView {
                 true
             }
 
-            /*  val botItem = menu.findItem(R.id.action_find_bot)
-            botItem.setOnMenuItemClickListener {
-                Log.d(TAG_LOG, "find bot")
-                presenter.findBotGame()
-                true
-            }*/
-
             val searchItem = menu.findItem(R.id.action_search)
 
             var searchView: SearchView? = null
@@ -239,13 +236,27 @@ class GameListFragment : BaseFragment(), GameListView {
                     }
 
                     override fun onQueryTextChange(newText: String): Boolean {
-                        presenter.loadOfficialTestsByQuery(newText)
+//                        presenter.loadOfficialTestsByQuery(newText)
+                        findFromList(newText)
                         return false
                     }
                 })
             }
         }
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun findFromList(query: String) {
+        val pattern: Pattern = Pattern.compile("(\\w*\\s+)*${query.toLowerCase()}.*")
+        val list: MutableList<Lobby> = java.util.ArrayList()
+        for(skill in games) {
+            if (pattern.matcher(skill.title?.toLowerCase()).matches()) {
+                list.add(skill)
+            }
+        }
+
+        Log.d(TAG_LOG, "list.size = ${list.size}")
+        changeDataSet(list)
     }
 
     override fun loadNextElements(i: Int) {

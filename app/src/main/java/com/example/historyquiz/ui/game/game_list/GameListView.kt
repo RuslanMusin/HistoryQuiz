@@ -5,13 +5,15 @@ import com.example.historyquiz.ui.base.interfaces.BaseRecyclerView
 
 interface GameListView : BaseRecyclerView<Lobby> {
 
-    fun showDetails(comics: Lobby)
+    fun showGames(list: List<Lobby>)
 
-    fun loadOfficialTests()
+    fun showDetails(comics: Lobby)
 
     fun onGameFinded()
 
     fun onBotGameFinded()
 
     fun removeLobby(lobbyId: String)
+
+    fun setItemClickable(isClickable: Boolean)
 }

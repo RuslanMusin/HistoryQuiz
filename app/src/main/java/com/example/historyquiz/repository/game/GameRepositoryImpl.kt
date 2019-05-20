@@ -12,6 +12,7 @@ import com.example.historyquiz.repository.card.CardRepository
 import com.example.historyquiz.repository.epoch.UserEpochRepository
 import com.example.historyquiz.repository.user.UserRepositoryImpl
 import com.example.historyquiz.repository.user.UserRepositoryImpl.Companion.FIELD_LOBBY_ID
+import com.example.historyquiz.repository.user.UserRepositoryImpl.Companion.FIELD_RELATION
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
@@ -31,6 +32,7 @@ import com.example.historyquiz.utils.getRandom
 import com.google.firebase.database.*
 import io.reactivex.Single
 import javax.inject.Inject
+import kotlin.random.Random
 
 class GameRepositoryImpl @Inject constructor() : GameRepository {
 
@@ -155,71 +157,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         listeners.clear()
     }
 
-
-    /*  fun startSearchGame(onFind: () -> (Unit)): Single<Boolean> {
-          val single: Single<Boolean> = Single.create() { e ->
-              searchingDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                  override fun onCancelled(p0: DatabaseError) {
-                      TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                  }
-
-                  override fun onDataChange(dataSnapshot: DataSnapshot) {
-                      if (dataSnapshot.hasChildren()) {
-                          val selected = dataSnapshot.children.first()
-
-                          val lobbyId = selected.value as String
-
-                          selected.ref.removeValue()
-
-                          goToLobby(lobbyId, onFind)
-
-                      } else {
-                          Log.d(TAG_LOG, "create lobby")
-                          createLobby(onFind)
-                      }
-                      e.onSuccess(true)
-
-                  }
-              })
-          }
-          return single.compose(RxUtils.asyncSingle())
-      }*/
-
-    override fun joinBot(lobby: Lobby): Single<Boolean> {
-        Log.d(TAG_LOG,"join bot")
-        val single: Single<Boolean> = Single.create { e ->
-            currentLobbyRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    /*   currentLobbyRef = lobbiesDbRef.child(currentId)
-
-                       val lobbyPlayerData = LobbyPlayerData(BOT_ID, true, null, null, null)
-                       invitedLobbyRef!!.setValue(lobbyPlayerData)
-
-                       invitedLobbyRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().setValue(false)
-*/
-                    val lobbyPlayerData = LobbyPlayerData()
-                    lobbyPlayerData.playerId = BOT_ID
-                    lobbyPlayerData.online = true
-                    lobby.id?.let {
-                        val relation: Relation = Relation()
-                        relation.relation = IN_GAME_STATUS
-                        relation.id = it
-                        databaseReference.root.child(USERS_LOBBIES).child(currentId).child(it).child(FIELD_RELATION).setValue(relation)
-                        enemyLobbyRef.setValue(lobbyPlayerData)
-                        e.onSuccess(true)
-                    }
-
-
-                }
-            })
-        }
-        return single.compose(RxUtils.asyncSingle())
-    }
-
     override fun setRelation(relation: Relation,userId: String) {
         databaseReference.root.child(USERS_LOBBIES).child(userId).child(relation.id).child(FIELD_RELATION).setValue(relation)
     }
@@ -302,17 +239,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             }
         }
         return single.compose(RxUtils.asyncSingle())
-    }
-
-    override fun createBotLobby(lobby: Lobby, onFind: () -> (Unit)) {
-        val lobbyId: String? = databaseReference.push().key
-
-        lobbyId?.let {
-            lobby.id = lobbyId
-            setLobbyRefs(lobbyId)
-//            currentLobbyRef.setValue(lobby)
-        }
-        onFind()
     }
 
     override fun refuseGame(lobby: Lobby): Single<Boolean> {
@@ -410,25 +336,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    /*   fun createNotification(gameMode: String): Notification {
-           // Create PendingIntent
-           val resultIntent = Intent(com.summer.itis.cardsproject.Application.getContext(), PlayGameActivity::class.java)
-           resultIntent.putExtra(PlayGameActivity.GAME_MODE,gameMode)
-           val resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent,
-                   PendingIntent.FLAG_UPDATE_CURRENT)
-
-   // Create Notification
-           val builder = NotificationCompat.Builder(this)
-                   .setSmallIcon(R.mipmap.ic_launcher)
-                   .setContentTitle("Title")
-                   .setContentText("Notification text")
-                   .setContentIntent(resultPendingIntent)
-
-           return builder.build()
-
-
-       }*/
-
     override fun goToLobby(lobby: Lobby, onFind: () -> (Unit), onNotAccepted: () -> (Unit)) {
 
         setLobbyRefs(lobby.id)
@@ -471,20 +378,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             }
 
         })
-
-
-
-        /* invitedLobbyRef!!.child(LobbyPlayerData.PARAM_playerId).addListenerForSingleValueEvent(object : ValueEventListener {
-             override fun onCancelled(p0: DatabaseError) {
-                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-             }
-
-             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                 enemyId = dataSnapshot.value as String
-
-                 onFind()
-             }
-         })*/
     }
 
     override fun notAccepted(lobby: Lobby) {
@@ -520,53 +413,37 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         return currentId
     }
 
-    //in game
+    private fun trackEnemyCards() {
+        val enemyCardListener = object : ChildEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
 
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
 
-    override fun startGame(lobby: Lobby, callbacks: InGameCallbacks) {
-        this.callbacks = callbacks
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
 
-        selectOnLoseCard(lobby)
+            override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                lastEnemyChoose = dataSnapshot.getValue(CardChoose::class.java)!!
+                callbacks?.onEnemyCardChosen(lastEnemyChoose!!)
+            }
 
-//        invitedLobbyRef!!.child(LobbyPlayerData.PARAM_choosedCards)
+            override fun onChildRemoved(p0: DataSnapshot) {}
+        }
+        val enemyCardRef = enemyLobbyRef.child(LobbyPlayerData.PARAM_choosedCards)
+        enemyCardRef.addChildEventListener(enemyCardListener)
+    }
 
-        enemyLobbyRef.child(LobbyPlayerData.PARAM_choosedCards)
-            .addChildEventListener(object : ChildEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
-
-                override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
-
-                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-//                        val cardChoose: CardChoose = dataSnapshot.getValue(CardChoose::class.java)!!
-//                        callbacks.onEnemyCardChosen(cardChoose)
-//                        lastEnemyChoose=cardChoose
-
-                    lastEnemyChoose = dataSnapshot.getValue(CardChoose::class.java)!!
-                    callbacks.onEnemyCardChosen(lastEnemyChoose!!)
-                }
-
-                override fun onChildRemoved(p0: DataSnapshot) {}
-            })
-
+    private fun trackEnemyAnswers(lobby: Lobby) {
         enemyLobbyRef.child(LobbyPlayerData.PARAM_answers)
             .addChildEventListener(object : ChildEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
+                override fun onCancelled(p0: DatabaseError) {}
 
                 override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
 
                 override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
 
                 override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-                    Log.d("Alm", "onChildAdded to enemy answers")
                     val correct = dataSnapshot.value as Boolean
-                    callbacks.onEnemyAnswered(correct)
-
+                    callbacks?.onEnemyAnswered(correct)
                     enemy_answers++
                     if (correct) {
                         enemy_score++
@@ -578,87 +455,59 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
                 override fun onChildRemoved(p0: DataSnapshot) {}
             })
+    }
 
-
-
-        val myConnect = databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(currentId).child(UserRepositoryImpl.FIELD_STATUS)
-        val connectedRef = myLobbyRef.child(FIELD_ONLINE)
-        connectedRef.setValue(true)
-        myConnect.addValueEventListener(object: ValueEventListener {
+    private fun trackMyConnection() {
+        val myConnect = databaseReference.root.child(UserRepositoryImpl.TABLE_NAME)
+            .child(currentId).child(UserRepositoryImpl.FIELD_STATUS)
+        val myConnectListener = object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(OFFLINE_STATUS.equals(snapshot.value)) {
                     Log.d(TAG_LOG,"my disconnect")
+                    myConnect.removeEventListener(this)
                     onDisconnectAndLose(true)
                 }
             }
 
-        })
+        }
+        myConnect.addValueEventListener(myConnectListener)
+        listeners.put(myConnect, myConnectListener)
         myConnect.onDisconnect().setValue(OFFLINE_STATUS)
+    }
 
+    private fun trackEnemyConnection(lobby: Lobby) {
         lobby.gameData?.enemyId?.let {
-            val enemyConnect = databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(it).child(UserRepositoryImpl.FIELD_STATUS)
-            enemyConnect.addValueEventListener(object : ValueEventListener {
+            val enemyConnect = databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(it)
+                .child(UserRepositoryImpl.FIELD_STATUS)
+            val enemyConnectListener = object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists() && OFFLINE_STATUS.equals(snapshot.value)) {
                         Log.d(TAG_LOG, "enemy disconnect")
+                        enemyConnect.removeEventListener(this)
                         onEnemyDisconnectAndYouWin(lobby)
                     }
                 }
-            })
-        }
-
-
-
-        /*val connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected")
-
-          val myConnectingLisener = connectedRef.addValueEventListener(object : ValueEventListener {
-              override fun onDataChange(snapshot: DataSnapshot) {
-                  val connected = snapshot.getValue(Boolean::class.java)!!
-                  if (!connected) {
-                      onDisconnectAndLose()
-                  }
-              }
-
-              override fun onCancelled(error: DatabaseError) {
-  //                System.err.println("Listener was cancelled")
-              }
-          })
-        listeners.put(connectedRef, myConnectingLisener)
-
-
-        val enemyConnectionListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.value == false) {
-                    onEnemyDisconnectAndYouWin(lobby)
-                }
-            }
+            enemyConnect.addValueEventListener(enemyConnectListener)
+            listeners.put(enemyConnect, enemyConnectListener)
         }
-        enemyLobbyRef!!.child(LobbyPlayerData.PARAM_online)
-                .addValueEventListener(enemyConnectionListener)
-        listeners.put(enemyLobbyRef!!.child(LobbyPlayerData.PARAM_online), enemyConnectionListener)*/
     }
 
-    /*private fun readCardsByType(lobbyId: String, lobby: Lobby): Single<List<Card>> {
-        val singleCards: Single<List<Card>>
-        if(lobby.type.equals(OFFICIAL_TYPE)) {
-            singleCards = cardRepository.findMyCards(lobbyId)
-        } else {
-            singleCards = cardRepository.findMyCards(lobbyId)
-        }
-        return singleCards
-    }*/
+    override fun startGame(lobby: Lobby, callbacks: InGameCallbacks) {
+        this.callbacks = callbacks
+        selectOnLoseCard(lobby)
+        trackEnemyCards()
+        trackEnemyAnswers(lobby)
+        myLobbyRef.child(FIELD_ONLINE).setValue(true)
+        trackMyConnection()
+        trackEnemyConnection(lobby)
+    }
 
     private fun selectOnLoseCard(lobby: Lobby) {
 
@@ -701,10 +550,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     }
 
-    override fun selectOnBotLoseCard(cards: List<Card>) {
-        onEnemyLoseCard = cards.getRandom()
-    }
-
     override fun chooseNextCard(lobby: Lobby,cardId: String) {
         lastMyChosenCardId = cardId;
         cardRepository.readCard(cardId).subscribe { card: Card? ->
@@ -717,18 +562,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 //            creatorLobbyRef!!.child(LobbyPlayerData.PARAM_choosedCards).push().setValue(choose)
             myLobbyRef.child(LobbyPlayerData.PARAM_choosedCards).push().setValue(choose)
 
-        }
-    }
-
-    override fun botNextCard(lobby: Lobby, cardId: String) {
-        cardRepository.readCard(cardId).subscribe { card: Card? ->
-
-            val questionId = card!!.test.questions.getRandom()!!.id
-
-
-            val choose = CardChoose(cardId, questionId!!)
-
-            enemyLobbyRef.child(LobbyPlayerData.PARAM_choosedCards).push().setValue(choose)
         }
     }
 
@@ -765,31 +598,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             override fun onChildRemoved(p0: DataSnapshot) {}
         })
 
-    }
-
-    override fun botAnswer(lobby: Lobby, correct: Boolean) {
-        val query: Query = enemyLobbyRef
-            .child(LobbyPlayerData.PARAM_choosedCards)
-            .orderByKey()
-            .limitToLast(1)
-
-        query.addChildEventListener(object : ChildEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
-
-            override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
-                val key = dataSnapshot.key!!
-
-                enemyLobbyRef.child(LobbyPlayerData.PARAM_answers)
-                    .child(key)
-                    .setValue(correct)
-
-                query.removeEventListener(this)
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {}
-        })
     }
 
     private fun checkGameEnd(lobby: Lobby) {
@@ -837,64 +645,68 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             enemyLobbyRef.setValue(null)
             databaseReference.root.child(USERS_LOBBIES).child(currentId).child(lobby.id).setValue(null)
         }
-
-        /*   AppHelper.currentUser?.let{
-               it.status = ONLINE_STATUS
-               userRepository.changeUserStatus(it).subscribe()
-           }*/
     }
 
-    override fun removeRedundantLobbies(shouldFind: Boolean) {
+    override fun removeRedundantLobbies(shouldFind: Boolean): Single<Boolean> {
         Log.d(TAG_LOG,"removeRedundantLobbies")
-        if(userInSession) {
+        var single: Single<Boolean> = Single.create { e -> e.onSuccess(true)}
+            if(userInSession) {
             currentUser.let { user ->
-                databaseReference.root.child(USERS_LOBBIES).child(user.id).addListenerForSingleValueEvent(object :
-                    ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
+                single = Single.create { e ->
+                    databaseReference.root.child(USERS_LOBBIES).child(user.id).addListenerForSingleValueEvent(object :
+                        ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                        }
 
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        for (snap in snapshot.children) {
-                            val relation: Relation? = snap.getValue(Relation::class.java)
-                            relation?.let {
-                                if (user.lobbyId.equals(it.id)) {
-                                    val playerData: LobbyPlayerData = LobbyPlayerData()
-                                    playerData.online = true
-                                    playerData.playerId = currentId
-                                    if (user.gameLobby == null) {
-                                        user.gameLobby = Lobby()
-                                        user.gameLobby?.gameData?.role = FIELD_CREATOR
-
-                                    }
-                                    setLobbyRefs(it.id)
-                                    myLobbyRef.setValue(playerData)
-                                    enemyLobbyRef.setValue(null)
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if(!snapshot.exists()) {
+                                e.onSuccess(true)
+                            }
+                            for (snap in snapshot.children) {
+                                val relation: Relation? = snap.getValue(Relation::class.java)
+                                if(relation == null) {
+                                    e.onSuccess(true)
                                 }
-                                Log.d(TAG_LOG, "removeLobby in users_lobbies")
-                                databaseReference.root.child(USERS_LOBBIES).child(user.id).child(it.id).setValue(null)
-                                if (shouldFind) {
-                                    findLobby(it.id).subscribe { lobby ->
-                                        if (lobby.isFastGame) {
-                                            databaseReference.child(lobby.id).setValue(null)
+                                relation?.let {
+                                    if (user.lobbyId.equals(it.id)) {
+                                        val playerData: LobbyPlayerData = LobbyPlayerData()
+                                        playerData.online = true
+                                        playerData.playerId = currentId
+                                        if (user.gameLobby == null) {
+                                            user.gameLobby = Lobby()
+                                            user.gameLobby?.gameData?.role = FIELD_CREATOR
+
+                                        }
+                                        setLobbyRefs(it.id)
+                                        myLobbyRef.setValue(playerData)
+                                        enemyLobbyRef.setValue(null)
+                                    }
+                                    Log.d(TAG_LOG, "removeLobby in users_lobbies")
+                                    databaseReference.root.child(USERS_LOBBIES).child(user.id).child(it.id)
+                                        .setValue(null).addOnCompleteListener { e.onSuccess(true) }
+                                    if (shouldFind) {
+                                        findLobby(it.id).subscribe { lobby ->
+                                            if (lobby.isFastGame) {
+                                                databaseReference.child(lobby.id).setValue(null)
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
 
+                    })
+                }
 
-                })
+                }
             }
-        }
+        return single.compose(RxUtils.asyncSingle())
     }
 
     override fun waitGameMode(mode: String): Single<Boolean> {
         val single: Single<Boolean> = Single.create{ e ->
             enemyLobbyRef.child(FIELD_MODE).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -938,7 +750,9 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                         } else if (c < 0) {
                             onLose()
                         } else {
-                            onDraw()
+                            val flag = Random.nextBoolean()
+                            if (flag) onWin(lobby) else onLose()
+//                            onDraw()
                         }
 
                     }
@@ -954,18 +768,14 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
     }
 
     private fun onWin(lobby: Lobby) {
-        //TODO move card
         moveCardAfterWin(lobby)
-
         callbacks!!.onGameEnd(GameEndType.YOU_WIN, onEnemyLoseCard!!)
-
         removeListeners()
 
     }
 
     private fun onLose() {
         callbacks!!.onGameEnd(GameEndType.YOU_LOSE, onYouLoseCard!!)
-
         removeListeners()
 
     }
@@ -974,13 +784,12 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         val myConnect = databaseReference.root.child(UserRepositoryImpl.TABLE_NAME).child(currentId).child(UserRepositoryImpl.FIELD_STATUS)
         myConnect.addValueEventListener(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(OFFLINE_STATUS.equals(snapshot.value)) {
                     Log.d(TAG_LOG,"my disconnect")
-                    removeRedundantLobbies(true)
+                    removeRedundantLobbies(true).subscribe()
                 }
             }
 
@@ -990,21 +799,19 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     override fun onDisconnectAndLose(shouldFind: Boolean) {
         callbacks!!.onGameEnd(GameEndType.YOU_DISCONNECTED_AND_LOSE, onYouLoseCard!!)
-        removeRedundantLobbies(shouldFind)
+        removeRedundantLobbies(shouldFind).subscribe()
         removeListeners()
     }
 
     override fun onEnemyDisconnectAndYouWin(lobby: Lobby) {
         moveCardAfterWin(lobby)
-
         callbacks!!.onGameEnd(GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN, onEnemyLoseCard!!)
-        removeRedundantLobbies(true)
+        removeRedundantLobbies(true).subscribe()
         removeListeners()
 
     }
 
     private fun moveCardAfterWin(lobby: Lobby) {
-
         lobby.gameData?.enemyId?.let {
             cardRepository.addCardAfterGame(onEnemyLoseCard!!.id!!, getPlayerId()!!, it)
                 .subscribe { e ->

@@ -128,6 +128,8 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
                     }
                 }*/
                 removeStackDownTo(2)
+                test.testDone = true
+                test.type = OLD_ONES
                 val args: Bundle = Bundle()
                 args.putString(TEST_ITEM, gson.toJson(test))
                 val fragment = TestFragment.newInstance(args)
@@ -147,12 +149,12 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
             }
 
             R.id.li_winned_card -> {
-                if(procent >= 80) {
+                /*if(procent >= 80) {
                     val args: Bundle = Bundle()
                     args.putString(TEST_ITEM, gson.toJson(test))
                     val fragment = TestCardFragment.newInstance(args)
                     pushFragments(fragment, true)
-                }
+                }*/
 
             }
         }
