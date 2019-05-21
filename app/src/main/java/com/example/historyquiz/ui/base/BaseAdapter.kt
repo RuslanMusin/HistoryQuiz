@@ -44,7 +44,6 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>
 
     fun changeDataSet(values: List<T>) {
         Log.d(TAG_BASE_ADAPTER, "values size = " + values.size)
-
         items.clear()
         items.addAll(values)
         refreshRecycler()

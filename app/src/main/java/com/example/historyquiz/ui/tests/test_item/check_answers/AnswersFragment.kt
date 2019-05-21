@@ -159,7 +159,7 @@ class AnswersFragment : BaseFragment(), AnswersView, View.OnClickListener {
 
     private fun finishQuestions() {
         Log.d(TAG_LOG, "remove num = ${number + 1}")
-        removeStackDownTo(number + 1)
+        removeStackDownTo(number)
         (activity as NavigationView).performBackPressed()
         /*val args: Bundle = Bundle()
         args.putString(TEST_ITEM, gson.toJson(test))

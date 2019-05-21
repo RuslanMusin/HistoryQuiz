@@ -2,6 +2,7 @@ package com.example.historyquiz.ui.game.play.question
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.test.Answer
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.ui.game.play.PlayView
+import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.gson
 import kotlinx.android.synthetic.main.layout_question.*
 import java.util.*
@@ -21,7 +23,9 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
     private lateinit var question: Question
 
     private var textViews: MutableList<TextView>? = null
-    private var checkBoxes: MutableList<CheckBox>? = null
+    private var checkBoxes: MutableList<CheckBox> = ArrayList()
+
+    var clickable = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.layout_question, container, false)
@@ -60,22 +64,29 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_next_question -> {
-                checkAnswers()
-                (parentFragment as PlayView).onAnswer(question.userRight)
+                if (clickable) {
+                    clickable = false
+                    checkAnswers()
+                    (parentFragment as PlayView).onAnswer(question.userRight)
+                }
             }
         }
     }
 
     private fun checkAnswers() {
+        Log.d(Const.TAG_LOG,"questioin = ${question.question}")
         question.userRight = true
-        for (i in question.answers.indices) {
+        for(i in question.answers.indices) {
             val answer: Answer = question.answers[i]
-            if (checkBoxes?.get(i)?.isChecked!!) {
+            if(checkBoxes.get(i).isChecked) {
                 answer.userClicked = true
+                Log.d(Const.TAG_LOG,"checked answer = ${answer.text}")
             }
-            if (answer.isRight && answer.userClicked != answer.isRight) {
+            if(answer.userClicked != answer.isRight) {
                 question.userRight = false
+                Log.d(Const.TAG_LOG, "wrong i = $i and answer = " + question.answers[i])
             }
+            Log.d(Const.TAG_LOG,"userclick = ${answer.userClicked} and q right = ${answer.isRight} and content = ${answer.text}")
         }
     }
 

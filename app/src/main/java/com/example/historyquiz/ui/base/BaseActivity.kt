@@ -38,13 +38,11 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
     }
 
     override fun showProgressDialog(message: String) {
-        if (progressDialog == null) {
-            progressDialog = ProgressDialog(this)
-            progressDialog?.let{
-                it.setMessage(message)
-                it.isIndeterminate = true
-                it.setCancelable(false)
-            }
+        progressDialog = ProgressDialog(this)
+        progressDialog?.let{
+            it.setMessage(message)
+            it.isIndeterminate = true
+            it.setCancelable(false)
         }
         progressDialog?.show()
     }

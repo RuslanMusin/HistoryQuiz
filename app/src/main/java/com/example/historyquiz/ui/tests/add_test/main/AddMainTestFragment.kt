@@ -76,9 +76,18 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     private fun setTestData() {
         et_test_name.setText(test?.title)
         et_test_desc.setText(test?.desc)
+        li_added_card.visibility = View.VISIBLE
         tv_added_card.text =test?.card?.abstractCard?.name
+        Glide.with(this)
+            .load(test.card?.abstractCard?.photoUrl)
+            .into(iv_cover)
+        li_added_epoch.visibility = View.VISIBLE
+        tv_added_epoch.text = test.epoch?.name
+        links = test.links
+        for(link in test.links) {
+            addLinkView(link)
+        }
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
@@ -170,29 +179,44 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
     }
 
     private fun checkTest(): Boolean {
-        var flag: Boolean = if(test == null) false else true
+        var flag: Boolean = true
         test?.let {
             if(it.title == null  || it.title?.trim().equals("")) {
                 ti_test_name.error = "Введите название теста!"
                 flag = false
+                return flag
             } else {
                 ti_test_name.error = null
             }
             if(it.desc == null  || it.desc?.trim().equals("")) {
                 ti_test_desc.error = "Введите описание теста!"
-
                 flag = false
-
+                return flag
             } else {
                 ti_test_desc?.error = null
             }
             if(it.card == null) {
-                tv_test_card_name.requestFocus();
-                tv_test_card_name.setError("Добавьте карту!");
+                /*tv_test_card_name.requestFocus();
+                tv_test_card_name.setError("Добавьте карту!");*/
+                showSnackBar("Добавьте карту!")
                 flag = false
+                return flag
             } else {
                 tv_test_card_name.setError(null);
             }
+            if(it.epoch == null) {
+                showSnackBar("Выберите эпоху")
+                flag = false
+                return flag
+            } else {
+                tv_test_epoch_name.setError(null);
+            }
+            if(it.links.size == 0) {
+                showSnackBar("Добавьте хотя бы одну ссылку")
+                flag = false
+                return flag
+            }
+
         }
         Log.d(TAG_LOG, "flag = $flag")
         return flag
@@ -210,6 +234,12 @@ class AddMainTestFragment : BaseFragment(), AddMainTestView, View.OnClickListene
                 .load(card.abstractCard.photoUrl)
                 .into(iv_cover)
             tv_test_card_name.setError(null);
+            val link = card.abstractCard.wikiUrl?.let { Link("Википедия", it, "Подробная информация") }
+            link?.let {
+                links.add(it)
+                addLinkView(it)
+            }
+            hideLoading()
         }
 
         if (reqCode == ADD_EPOCH_CODE && resultCode == RESULT_OK) {

@@ -14,6 +14,7 @@ import com.example.historyquiz.ui.base.BasePresenter
 import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.AppHelper.Companion.currentId
 import com.example.historyquiz.utils.AppHelper.Companion.currentUser
+import com.example.historyquiz.utils.AppHelper.Companion.userInSession
 import com.example.historyquiz.utils.AppHelper.Companion.userStatus
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -45,7 +46,8 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
     }
 
     fun refuseGame(lobby: Lobby) {
-        gameRepository.refuseGame(lobby).subscribe { e -> waitEnemy() }
+        val dis = gameRepository.refuseGame(lobby).subscribe { e -> waitEnemy() }
+        compositeDisposable.add(dis)
     }
 
     fun changeJustUserStatus(status: String) {
@@ -57,47 +59,55 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
     }
 
     fun waitEnemy() {
+        Log.d(TAG_LOG,"wait enemy")
         waitSingle = gameRepository.waitEnemy().subscribe { relation ->
             afterEnemyWaited(relation)
         }
     }
 
     fun disposeWaitEnemy() {
+        Log.d(TAG_LOG,"dispose wait enemy")
         waitSingle?.dispose()
     }
 
     fun afterEnemyWaited(relation: Relation) {
+        Log.d(TAG_LOG, "afterEnemyWaited")
         if (isWaiting) {
-            Log.d(TAG_LOG, "enemy waited")
+            Log.d(TAG_LOG, "enemyWaiting")
             if (!isStopped && relation.relation.equals(Const.IN_GAME_STATUS)) {
-                gameRepository.findLobby(relation.id).subscribe { lobby ->
-                    Log.d(TAG_LOG, "waited lobby finded/ isStopped = $isStopped")
-                    AppHelper.currentUser.let {
-                        it.gameLobby = lobby
-                        val gameData: GameData = GameData()
-                        gameData.gameMode = Const.ONLINE_GAME
-                        val invitedId = lobby.invited?.playerId
-                        val creatorId = lobby.creator?.playerId
-                        if (invitedId != null && creatorId.equals(currentId)) {
-                            invitedId.let {
-                                gameData.enemyId = it
-                                gameData.role = GameRepositoryImpl.FIELD_CREATOR
-                            }
-                        } else {
-                            creatorId?.let {
-                                gameData.enemyId = it
-                                gameData.role = GameRepositoryImpl.FIELD_INVITED
-                            }
-                        }
-                        it.gameLobby?.gameData = gameData
-                        Log.d(TAG_LOG, "setDialog")
-                        viewState.setDialog(gameData, lobby)
-                    }
+                Log.d(TAG_LOG, "enemy not stopped and in game status")
+                val dis = gameRepository.findLobby(relation.id).subscribe { lobby ->
+                    Log.d(TAG_LOG, "waited lobby finded")
+                    val gameLobby = buildGameLobby(lobby)
+                    Log.d(TAG_LOG, "setDialog")
+                    viewState.setDialog(gameLobby.gameData!!, gameLobby)
                 }
+                compositeDisposable.add(dis)
             } else {
                 waitEnemy()
             }
         }
+    }
+
+    private fun buildGameLobby(lobby: Lobby): Lobby {
+        currentUser.gameLobby = lobby
+        val gameData: GameData = GameData()
+        gameData.gameMode = Const.ONLINE_GAME
+        val invitedId = lobby.invited?.playerId
+        val creatorId = lobby.creator?.playerId
+        if (invitedId != null && creatorId.equals(currentId)) {
+            invitedId.let {
+                gameData.enemyId = it
+                gameData.role = GameRepositoryImpl.FIELD_CREATOR
+            }
+        } else {
+            creatorId?.let {
+                gameData.enemyId = it
+                gameData.role = GameRepositoryImpl.FIELD_INVITED
+            }
+        }
+        currentUser.gameLobby?.gameData = gameData
+        return lobby
     }
 
     fun chooseDialogDecision(gameData: GameData, lobby: Lobby) {
@@ -128,9 +138,10 @@ class NavigationPresenter @Inject constructor() : BasePresenter<NavigationView>(
                             user?.let {
                                 Log.d(TAG_LOG, "have user")
                                 AppHelper.currentUser = it
+                                userInSession = true
                                 it.status = Const.ONLINE_STATUS
                                 userRepository.changeUserStatus(it).subscribe()
-                                gameRepository.removeRedundantLobbies(true)
+                                gameRepository.removeRedundantLobbies(true).subscribe()
                                 val args = Bundle()
                                 args.putString(Const.USER_ITEM, gson.toJson(currentUser))
                                 viewState.openNavigationPage()

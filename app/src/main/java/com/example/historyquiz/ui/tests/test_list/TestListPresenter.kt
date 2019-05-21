@@ -36,7 +36,7 @@ class TestListPresenter @Inject constructor() : BasePresenter<TestListView>() {
                 .doOnSubscribe({ viewState.showListLoading() })
                 .doAfterTerminate({ viewState.hideListLoading() })
                 .doAfterTerminate({ viewState.setNotLoading() })
-                .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })
+                .subscribe({ viewState.showTests(it) }, { viewState.handleError(it) })
         }
     }
 }

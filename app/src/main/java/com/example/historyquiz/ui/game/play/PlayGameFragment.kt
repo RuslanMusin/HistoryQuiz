@@ -25,7 +25,6 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.test.Question
 import com.example.historyquiz.model.user.User
-import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.game.GameRepositoryImpl
 import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.ui.game.play.change_list.GameChangeListAdapter
@@ -33,7 +32,9 @@ import com.example.historyquiz.ui.game.play.list.GameCardsListAdapter
 import com.example.historyquiz.ui.game.play.question.GameQuestionFragment
 import com.example.historyquiz.ui.navigation.NavigationView
 import com.example.historyquiz.utils.AppHelper
+import com.example.historyquiz.utils.AppHelper.Companion.currentUser
 import com.example.historyquiz.utils.Const
+import com.example.historyquiz.utils.Const.CARD_NUMBER
 import com.example.historyquiz.utils.Const.MODE_CARD_VIEW
 import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.getRandom
@@ -51,8 +52,6 @@ import javax.inject.Provider
 
 class PlayGameFragment : BaseFragment(), PlayGameView {
 
-    var mode: String = MODE_PLAY_GAME
-
     @InjectPresenter
     lateinit var presenter: PlayGamePresenter
     @Inject
@@ -60,35 +59,45 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     @ProvidePresenter
     fun providePresenter(): PlayGamePresenter = presenterProvider.get()
 
-    @Inject
-    lateinit var gameRepository: GameRepository
-
     lateinit var myCard: Card
     lateinit var enemyCard:Card
 
     var enemyChoosed: Boolean = false
     var myChoosed: Boolean = false
+
     var enemyAnswered: Boolean = false
     var myAnswered: Boolean = false
-    var isQuestionMode: Boolean = false
 
     lateinit var myCards: MutableList<Card>
+    var cardsSize: Int = CARD_NUMBER
 
+    var mode: String = MODE_PLAY_GAME
     var choosingEnabled = false
-
+    var isQuestionMode: Boolean = false
     var round: Int = 1
 
     lateinit var timer: CountDownTimer
     var disconnectTimer: CountDownTimer? = null
 
     lateinit var toolbar: Toolbar
-
-
     lateinit var adapter: GameCardsListAdapter
+
+    var myScore = 0
+    var enemyScore = 0
 
     override fun showBottomNavigation(navigationView: NavigationView) {
         navigationView.hideBottomNavigation()
         navigationView.changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    override fun performBackPressed() {
+        if(mode.equals(MODE_CHANGE_CARDS)) {
+            quitGameBeforeGameStart()
+            /*mode = MODE_PLAY_GAME
+            stopChange(20000)()*/
+        } else {
+            quitGame()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -96,65 +105,12 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         return view
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setStatus(Const.IN_GAME_STATUS)
         setWaitStatus(false)
-        toolbar = view.findViewById(R.id.game_toolbar)
-        setActionBar(toolbar)
-        toolbar.findViewById<ImageButton>(R.id.btn_cancel).setOnClickListener{ quitGameBeforeGameStart()}
-        rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
-        AppHelper.currentUser?.gameLobby?.let { presenter.setInitState(it) }
-
-    }
-
-    override fun performBackPressed() {
-        if(mode.equals(MODE_CHANGE_CARDS)) {
-            mode = MODE_PLAY_GAME
-            stopChange(20000)()
-        } else {
-            quitGame()
-        }
-    }
-
-    fun quitGameBeforeGameStart() {
-        Log.d(TAG_LOG,"quit game before game start")
-        MaterialDialog.Builder(this.activity!!)
-            .title(R.string.question_dialog_title)
-            .content(R.string.question_dialog_content)
-            .positiveText(R.string.agree)
-            .negativeText(R.string.disagree)
-            .onPositive(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    timer.cancel()
-                    gameRepository.disconnectMe().subscribe{ e ->
-                        goToFindGameActivity()
-                    }
-                }
-
-            })
-            .show()
-    }
-
-    fun quitGame() {
-        Log.d(TAG_LOG,"quit game")
-        MaterialDialog.Builder(this.activity!!)
-            .title(R.string.question_dialog_title)
-            .content(R.string.question_dialog_content)
-            .positiveText(R.string.agree)
-            .negativeText(R.string.disagree)
-            .onPositive(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    timer.cancel()
-                    disconnectTimer?.cancel()
-                    gameRepository.disconnectMe().subscribe { e ->
-                        goToFindGameActivity()
-                    }
-                }
-
-            })
-            .show()
+        setStatus(Const.IN_GAME_STATUS)
+        setStartView(view)
+        currentUser.gameLobby?.let { presenter.setInitState(it) }
     }
 
     fun stopChange(time: Long): () -> Unit {
@@ -167,10 +123,10 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     override fun waitEnemyTimer(time: Long) {
         toolbar.tv_time_title.text = getString(R.string.wait_enemy)
-        timer = object : CountDownTimer(time, 1000) {
+        timer = object : CountDownTimer(time, DEF_INTERVAL) {
 
             override fun onTick(millisUntilFinished: Long) {
-                toolbar.tv_time.text =  "${millisUntilFinished / 1000}"
+                toolbar.tv_time.text =  "${millisUntilFinished / DEF_INTERVAL}"
                 Log.d(TAG_LOG,"Wait Change Time = ${millisUntilFinished / 1000}")
             }
 
@@ -182,6 +138,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     fun enemyDisconnectedBeforeGame() {
+        timer.cancel()
         MaterialDialog.Builder(this.activity!!)
             .title(R.string.game_ended)
             .content(R.string.enemy_disconnected)
@@ -189,11 +146,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             .onPositive(object : MaterialDialog.SingleButtonCallback {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                     timer.cancel()
-                    gameRepository.disconnectMe().subscribe{ e ->
-                        goToFindGameActivity()
-                    }
+                    presenter.removeRedundantLobbies()
                 }
-
             })
             .show()
     }
@@ -204,80 +158,27 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     override fun changeCards(cards: MutableList<Card>, mutCards: MutableList<Card>) {
-        li_change_loading.visibility = View.GONE
-        li_change_cards.visibility = View.VISIBLE
         Log.d(TAG_LOG,"changeCards")
         mode = MODE_CHANGE_CARDS
-        rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange(15000))
-
-        toolbar.tv_time_title.text = "Замена карт"
-        timer = object : CountDownTimer(10000, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                toolbar.tv_time.text =  "${millisUntilFinished / 1000}"
-                Log.d(TAG_LOG,"Card Change Time = ${millisUntilFinished / 1000}")
-            }
-
-            override fun onFinish() {
-                Log.d(TAG_LOG,"stop change cards")
-                stopChange(10000)()
-            }
-        }.start()
+        setChangeCardsView(cards, mutCards)
+        setChangeCardsTimer()
     }
 
     override fun setCardsList(cards: ArrayList<Card>) {
         timer.cancel()
         myCards = cards
-        Log.d(TAG_LOG,"set cards")
-        val viewGroup = view as ViewGroup
-        viewGroup.removeAllViews()
-        viewGroup.addView(LayoutInflater.from(context).inflate(R.layout.activity_game, viewGroup, false))
-        enemy_selected_card.visibility = View.INVISIBLE
-        my_selected_card.visibility = View.INVISIBLE
-        game_questions_container.visibility = View.GONE
-        Log.d(TAG_LOG,"set game adapter")
-        rv_game_my_cards.adapter = GameCardsListAdapter(
-            cards,
-            this.activity!!,
-            {
-                if (choosingEnabled) {
-                    presenter.chooseCard(it)
-                }
-            }
-        )
-        adapter = rv_game_my_cards.adapter as GameCardsListAdapter
-        rv_game_my_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
-
-        toolbar = view?.findViewById((R.id.game_toolbar))!!
-        setActionBar(toolbar)
-        toolbar.btn_cancel.setOnClickListener{quitGame()}
-        toolbar_title.text = "Round $round"
-        Log.d(TAG_LOG,"Round $round")
+        cardsSize = myCards.size
+        setEndView()
         startTimer()
+    }
 
-        val listener: View.OnClickListener = View.OnClickListener {
-
-            when(it.id) {
-
-                R.id.enemy_selected_card -> {
-                    if(enemy_selected_card.visibility == View.VISIBLE) {
-                        showDialogCard(enemyCard)
-                    }
-                }
-
-                R.id.my_selected_card -> {
-                    if(my_selected_card.visibility == View.VISIBLE) {
-                        showDialogCard(myCard)
-                    }
-                }
-            }
-
-        }
-
-        enemy_selected_card.setOnClickListener(listener)
-        my_selected_card.setOnClickListener(listener)
-
-
+    private fun setEndView() {
+        Log.d(TAG_LOG,"set cards")
+        setEndMainViews()
+        setEndVisibility()
+        setEndRecycler()
+        setEndToolbar()
+        setCardListeners()
     }
 
     private fun showDialogCard(card: Card) {
@@ -326,7 +227,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     private fun updateTime() {
         Log.d(TAG_LOG,"updateTime")
-        if(enemyAnswered and myAnswered) {
+        if(enemyAnswered and myAnswered and (cardsSize > 0)) {
             Log.d(TAG_LOG,"choose card mode")
             enemyAnswered = false
             myAnswered = false
@@ -349,11 +250,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
             presenter.changeGameMode(MODE_CARD_VIEW)
             presenter.waitEnemyGameMode(MODE_CARD_VIEW).subscribe { e ->
                 tv_time_title.text = getString(R.string.view_time)
-                timer = object : CountDownTimer(5000, 1000) {
+                timer = object : CountDownTimer(WATCH_CARDS_TIME, DEF_INTERVAL) {
 
                     override fun onTick(millisUntilFinished: Long) {
-                        tv_time.text = "${millisUntilFinished / 1000}"
-                        Log.d(TAG_LOG,"View Time = ${millisUntilFinished / 1000}")
+                        tv_time.text = "${millisUntilFinished / DEF_INTERVAL}"
+                        Log.d(TAG_LOG,"View Time = ${millisUntilFinished / DEF_INTERVAL}")
                     }
 
                     override fun onFinish() {
@@ -373,11 +274,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         disconnectTimer?.cancel()
         timer.cancel()
         tv_time_title.text = getString(R.string.time)
-        timer = object : CountDownTimer(30000, 1000) {
+        timer = object : CountDownTimer(MAIN_TIME, DEF_INTERVAL) {
 
             override fun onTick(millisUntilFinished: Long) {
-                tv_time.text =  "${millisUntilFinished / 1000}"
-                Log.d(TAG_LOG,"Card/Answer time = ${millisUntilFinished / 1000}")
+                tv_time.text =  "${millisUntilFinished / DEF_INTERVAL}"
+                Log.d(TAG_LOG,"Card/Answer time = ${millisUntilFinished / DEF_INTERVAL}")
             }
 
             override fun onFinish() {
@@ -386,11 +287,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                     if (!enemyAnswered) {
                         Log.d(TAG_LOG, "Disconnect Answer Time")
                         tv_time_title.text = getString(R.string.wait_enemy)
-                        disconnectTimer = object : CountDownTimer(10000, 1000) {
+                        disconnectTimer = object : CountDownTimer(DISCONNECT_TIME, DEF_INTERVAL) {
 
                             override fun onTick(millisUntilFinished: Long) {
-                                tv_time.text = "${millisUntilFinished / 1000}"
-                                Log.d(TAG_LOG, "Disconnect Answer Time = ${millisUntilFinished / 1000}")
+                                tv_time.text = "${millisUntilFinished / DEF_INTERVAL}"
+                                Log.d(TAG_LOG, "Disconnect Answer Time = ${millisUntilFinished / DEF_INTERVAL}")
                             }
 
                             override fun onFinish() {
@@ -414,11 +315,11 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 } else {
                     if (!enemyChoosed) {
                         tv_time_title.text = getString(R.string.wait_enemy)
-                        disconnectTimer = object : CountDownTimer(10000, 1000) {
+                        disconnectTimer = object : CountDownTimer(DISCONNECT_TIME, DEF_INTERVAL) {
 
                             override fun onTick(millisUntilFinished: Long) {
-                                tv_time.text = "${millisUntilFinished / 1000}"
-                                Log.d(TAG_LOG, "Disconnect Choose Time = ${millisUntilFinished / 1000}")
+                                tv_time.text = "${millisUntilFinished / DEF_INTERVAL}"
+                                Log.d(TAG_LOG, "Disconnect Choose Time = ${millisUntilFinished / DEF_INTERVAL}")
                             }
 
                             override fun onFinish() {
@@ -436,7 +337,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                         Log.d(TAG_LOG, "notChoosed")
                         myChoosed = true
                         val card: Card? = myCards.getRandom()
-                        card?.let { adapter.removeElement(it) }
+                        card?.let {
+                            adapter.removeElement(it)
+                        }
                         updateTime()
                     }
                 }
@@ -446,8 +349,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     override fun showQuestionForYou(question: Question) {
-        game_questions_container.visibility = View.VISIBLE
-
         childFragmentManager
             .beginTransaction()
             .replace(
@@ -455,6 +356,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 GameQuestionFragment.newInstance(question)
             )
             .commit()
+        game_questions_container.visibility = View.VISIBLE
 
     }
 
@@ -489,7 +391,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         enemyAnswered = true
         updateTime()
         if (correct) {
-            tv_enemy_score.text = (tv_enemy_score.text.toString().toInt() + 1).toString()
+            enemyScore++
+            tv_enemy_score.text = enemyScore.toString()
         }
     }
 
@@ -497,7 +400,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         myAnswered = true
         updateTime()
         if (correct) {
-            tv_my_score.text = (tv_my_score.text.toString().toInt() + 1).toString()
+            myScore++
+            tv_my_score.text = myScore.toString()
         }
     }
 
@@ -516,10 +420,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
 
-
-
     override fun showGameEnd(type: GameRepositoryImpl.GameEndType, card: Card) {
-
         timer.cancel()
         disconnectTimer?.cancel()
 
@@ -532,7 +433,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 .buttonsGravity(GravityEnum.END)
                 .onNeutral { dialog, which ->
                     dialog.dismiss()
-                    goToFindGameActivity()
+                    goToLastFragment()
                 }
                 .canceledOnTouchOutside(false)
                 .cancelable(false)
@@ -554,7 +455,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 .buttonsGravity(GravityEnum.END)
                 .onNeutral { dialog, which ->
                     dialog.dismiss()
-                    goToFindGameActivity()
+                    goToLastFragment()
                 }
                 .canceledOnTouchOutside(false)
                 .cancelable(false)
@@ -586,16 +487,153 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     }
 
-    private fun goToFindGameActivity() {
+    override fun goToLastFragment() {
         activity?.let{
             (it as NavigationView).performBackPressed()
         }
-        /*val fragment = GameListFragment.newInstance()
-        pushFragments(fragment, true)*/
+    }
+
+    private fun setStartView(view: View) {
+        setStartToolbar(view)
+        setStartRecycler()
+    }
+
+    private fun setStartRecycler() {
+        rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
+    }
+
+    private fun setStartToolbar(view: View) {
+        toolbar = view.findViewById(R.id.game_toolbar)
+        setActionBar(toolbar)
+        toolbar.findViewById<ImageButton>(R.id.btn_cancel).setOnClickListener{ quitGameBeforeGameStart()}
+    }
+
+    private fun setChangeCardsView(
+        cards: MutableList<Card>,
+        mutCards: MutableList<Card>
+    ) {
+        li_change_loading.visibility = View.GONE
+        li_change_cards.visibility = View.VISIBLE
+        rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange(15000))
+        toolbar.tv_time_title.text = getString(R.string.change_cards)
+    }
+
+    private fun setChangeCardsTimer() {
+        timer = object : CountDownTimer(CHANGE_CARDS_TIME, DEF_INTERVAL) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                toolbar.tv_time.text =  "${millisUntilFinished / DEF_INTERVAL}"
+                Log.d(TAG_LOG,"Card Change Time = ${millisUntilFinished / 1000}")
+            }
+
+            override fun onFinish() {
+                Log.d(TAG_LOG,"stop change cards")
+                stopChange(10000)()
+            }
+        }.start()
+    }
+
+    private fun setEndMainViews() {
+        val viewGroup = view as ViewGroup
+        viewGroup.removeAllViews()
+        viewGroup.addView(LayoutInflater.from(context).inflate(R.layout.activity_game, viewGroup, false))
+    }
+
+    private fun setEndVisibility() {
+        enemy_selected_card.visibility = View.INVISIBLE
+        my_selected_card.visibility = View.INVISIBLE
+        game_questions_container.visibility = View.GONE
+    }
+
+    private fun setEndRecycler() {
+        Log.d(TAG_LOG,"set game adapter")
+        rv_game_my_cards.adapter = GameCardsListAdapter(
+            myCards,
+            this.activity!!,
+            {
+                if (choosingEnabled) {
+                    presenter.chooseCard(it)
+                    cardsSize--
+                }
+            }
+        )
+        adapter = rv_game_my_cards.adapter as GameCardsListAdapter
+        rv_game_my_cards.layoutManager = CenterZoomLayoutManager(this.activity!!, LinearLayoutManager.HORIZONTAL,false)
+    }
+
+    private fun setEndToolbar() {
+        toolbar = view?.findViewById((R.id.game_toolbar))!!
+        setActionBar(toolbar)
+        toolbar.btn_cancel.setOnClickListener{quitGame()}
+        toolbar_title.text = "Round $round"
+        Log.d(TAG_LOG,"Round $round")
+    }
+
+    private fun setCardListeners() {
+        /*val listener: View.OnClickListener = View.OnClickListener {
+            when(it.id) {
+
+                R.id.enemy_selected_card -> {
+                    if(enemy_selected_card.visibility == View.VISIBLE) {
+                        showDialogCard(enemyCard)
+                    }
+                }
+
+                R.id.my_selected_card -> {
+                    if(my_selected_card.visibility == View.VISIBLE) {
+                        showDialogCard(myCard)
+                    }
+                }
+            }
+
+        }
+        enemy_selected_card.setOnClickListener(listener)
+        my_selected_card.setOnClickListener(listener)*/
+    }
+
+    fun quitGameBeforeGameStart() {
+        Log.d(TAG_LOG,"quit game before game start")
+        MaterialDialog.Builder(this.activity!!)
+            .title(R.string.question_dialog_title)
+            .content(R.string.question_dialog_content)
+            .positiveText(R.string.agree)
+            .negativeText(R.string.disagree)
+            .onPositive(object : MaterialDialog.SingleButtonCallback {
+                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                    timer.cancel()
+                    presenter.removeRedundantLobbies()
+//                    presenter.disconnectMe()
+                }
+            })
+            .show()
+    }
+
+    fun quitGame() {
+        Log.d(TAG_LOG,"quit game")
+        MaterialDialog.Builder(this.activity!!)
+            .title(R.string.question_dialog_title)
+            .content(R.string.question_dialog_content)
+            .positiveText(R.string.agree)
+            .negativeText(R.string.disagree)
+            .onPositive(object : MaterialDialog.SingleButtonCallback {
+                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                    timer.cancel()
+                    disconnectTimer?.cancel()
+                    presenter.disconnectMe()
+                }
+
+            })
+            .show()
     }
 
 
     companion object {
+
+        const val CHANGE_CARDS_TIME: Long = 10000
+        const val DEF_INTERVAL: Long = 1000
+        const val MAIN_TIME: Long = 30000
+        const val DISCONNECT_TIME: Long = 10000
+        const val WATCH_CARDS_TIME: Long = 5000
 
         const val MAX_LENGTH = 30
 

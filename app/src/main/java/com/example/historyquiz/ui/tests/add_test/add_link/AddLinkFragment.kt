@@ -59,6 +59,7 @@ class AddLinkFragment : BaseFragment(), AddLinkView, View.OnClickListener {
         initViews()
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -91,9 +92,34 @@ class AddLinkFragment : BaseFragment(), AddLinkView, View.OnClickListener {
         link.url = et_url.text.toString()
         link.name = et_name.text.toString()
         link.content = et_description.text.toString()
-        val intent = Intent()
-        intent.putExtra(LINK_ITEM, gson.toJson(link))
-        targetFragment?.onActivityResult(ADD_LINK_CODE, Activity.RESULT_OK, intent)
-        hideFragment()
+        if(checkLink(link)) {
+            val intent = Intent()
+            intent.putExtra(LINK_ITEM, gson.toJson(link))
+            targetFragment?.onActivityResult(ADD_LINK_CODE, Activity.RESULT_OK, intent)
+            hideFragment()
+        }
+    }
+
+    private fun checkLink(link: Link): Boolean {
+        var flag = true
+        if(link.url.equals("") || !android.util.Patterns.WEB_URL.matcher(link.url).matches()) {
+            flag = false
+            ti_url.error = "Введите корректный URL"
+        } else {
+            ti_url.error = null
+        }
+        if(link.name.equals("")) {
+            flag = false
+            ti_name.error = "Введите название ссылки"
+        } else {
+            ti_name.error = null
+        }
+        if(link.content.equals("")) {
+            flag = false
+            ti_description.error = "Введите описание"
+        } else {
+            ti_description.error = null
+        }
+        return flag
     }
 }

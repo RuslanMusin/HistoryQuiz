@@ -1,6 +1,8 @@
 package com.example.historyquiz.model.epoch
 
+import android.util.Log
 import com.example.historyquiz.model.user.User
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*
@@ -44,6 +46,32 @@ class UserEpoch {
     }
 
     fun updateGe() {
-        ge = ((win - lose) / sum).toDouble()
+        Log.d(TAG_LOG, "ge = ($win - $lose) / $sum ")
+        ge = ((win - lose).toDouble() / sum)
+        val calendar = GregorianCalendar.getInstance()
+        calendar.time = Date(updateDate)
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 5)
+        val date = Date()
+        if(calendar.time.after(date)) {
+            updateDate = date.time
+            lastGe = ge
+        }
+    }
+
+    fun updateKe() {
+        ke = (right - wrong).toDouble() / (right + wrong)
+        val calendar = GregorianCalendar.getInstance()
+        calendar.time = Date(updateDate)
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 5)
+        val date = Date()
+        if(date.after(calendar.time)) {
+            updateDate = date.time
+            lastKe = ke
+        }
+    }
+
+    fun updateEpoch() {
+        updateGe()
+        updateKe()
     }
 }

@@ -67,7 +67,7 @@ class TestCardFragment: BaseFragment(), TestCardView {
         }
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
-
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 }

@@ -13,7 +13,7 @@ class Lobby {
     var title: String? = null
     var lowerTitle: String? = null
     lateinit var epochId: String
-    lateinit var epoch: Epoch
+    var epoch: Epoch? = null
     var photoUrl: String? = null
     var cardNumber: Int = CARD_NUMBER
     var status: String = ONLINE_STATUS

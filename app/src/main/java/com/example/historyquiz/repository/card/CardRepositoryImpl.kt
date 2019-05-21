@@ -1,5 +1,6 @@
 package com.example.historyquiz.repository.card
 
+import android.util.Log
 import com.example.historyquiz.model.card.Card
 import com.example.historyquiz.model.db_dop_models.ElementId
 import com.example.historyquiz.model.db_dop_models.Relation
@@ -11,6 +12,7 @@ import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.CARD_NUMBER
 import com.example.historyquiz.utils.Const.DEFAULT_EPOCH_ID
 import com.example.historyquiz.utils.Const.SEP
+import com.example.historyquiz.utils.Const.TAG_LOG
 import com.example.historyquiz.utils.Const.WIN_GAME
 import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
@@ -86,31 +88,32 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
     }
 
     override fun addCardAfterGame(cardId: String , winnerId: String, loserId: String): Single<Boolean> {
+        val childUpdates = HashMap<String, Any>()
         val single: Single<Boolean> = Single.create { e ->
-            val childUpdates = HashMap<String, Any>()
             findMyCards(loserId).subscribe { loserCards ->
-                this.readCard(cardId)
-                    .subscribe { card ->
-                        val test: Test? = card?.test
-                        test?.id?.let {
+                readCard(cardId).subscribe { card ->
                             val addCardValues = toMapId(cardId)
                             childUpdates[USERS_CARDS + Const.SEP + winnerId + SEP + cardId] = addCardValues
-                            val removeCardValues = toMapId(null)
-                            childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
-                            this.findMyAbstractCardStates(it, winnerId)
-                                .subscribe { winnerCards ->
+                            Log.d(TAG_LOG, "cards winner path = ${USERS_CARDS + Const.SEP + winnerId + SEP + cardId}")
+                            if(loserCards.size > CARD_NUMBER && !loserId.equals(BOT_ID)) {
+                                val removeCardValues = toMapId(null)
+                                childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
+                                Log.d(TAG_LOG, "cards loser path = ${USERS_CARDS + Const.SEP + loserId + SEP + cardId}")
+                            }
+                            card.cardId?.let { absCardId ->
+                            findMyAbstractCardStates(absCardId, winnerId).subscribe { winnerCards ->
                                     if (winnerCards.size == 0) {
-                                        val addAbstractCardValues = abstractCardRepository.toMapId(it)
-                                        childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + it] =
+                                        val addAbstractCardValues = abstractCardRepository.toMapId(absCardId)
+                                        childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + absCardId] =
                                                 addAbstractCardValues
                                     }
                                     if (loserCards.size > CARD_NUMBER && !loserId.equals(BOT_ID)) {
-                                        this.findMyAbstractCardStates(it, loserId)
+                                        findMyAbstractCardStates(absCardId, loserId)
                                             .subscribe { loserCards ->
                                                 if (loserCards.size == 1) {
                                                     val removeAbstractCardValues =
                                                         abstractCardRepository.toMapId(null)
-                                                    childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + it] =
+                                                    childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + absCardId] =
                                                             removeAbstractCardValues
                                                 }
                                                 databaseReference.root.updateChildren(childUpdates)
@@ -248,13 +251,17 @@ class CardRepositoryImpl @Inject constructor() : CardRepository {
     override fun findMyCardsByEpoch(userId: String, epochId: String): Single<List<Card>> {
         val single:Single<List<Card>> =  Single.create { e ->
             findMyCards(userId).subscribe { cards ->
-                val officials: MutableList<Card> = ArrayList()
-                for (card in cards) {
-                    if (epochId.equals(DEFAULT_EPOCH_ID) || epochId.equals(card.epochId)) {
-                        officials.add(card)
+                if(epochId.equals(DEFAULT_EPOCH_ID)) {
+                    e.onSuccess(cards)
+                } else {
+                    val officials: MutableList<Card> = ArrayList()
+                    for (card in cards) {
+                        if (epochId.equals(card.epochId)) {
+                            officials.add(card)
+                        }
                     }
+                    e.onSuccess(officials)
                 }
-                e.onSuccess(officials)
             }
         }
         return single.compose(RxUtils.asyncSingle())

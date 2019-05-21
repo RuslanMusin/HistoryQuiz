@@ -51,8 +51,8 @@ class FastGameFragment : BaseFragment(), FastGameView, View.OnClickListener {
         arguments?.let {
             user = gson.fromJson(it.getString(USER_ITEM), User::class.java)
         }
-        setStatus(Const.EDIT_STATUS)
-        setWaitStatus(false)
+        changeStatus(false)
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -111,6 +111,7 @@ class FastGameFragment : BaseFragment(), FastGameView, View.OnClickListener {
             R.id.btn_create_game -> {
                 lobby.cardNumber = seekBarCards.progress
                 Log.d(TAG_LOG, "lobby.cardNumber = ${lobby.cardNumber}")
+
                 presenter.createGame(lobby, user)
             }
 
@@ -138,9 +139,14 @@ class FastGameFragment : BaseFragment(), FastGameView, View.OnClickListener {
         }
     }
 
-    override fun onGameCreated() {
-        val fragment = GameListFragment.newInstance()
-        pushFragments(fragment, true)
+    override fun changeStatus(isOnline: Boolean) {
+        if(isOnline) {
+            setStatus(Const.ONLINE_STATUS)
+            setWaitStatus(true)
+        } else {
+            setStatus(Const.EDIT_STATUS)
+            setWaitStatus(false)
+        }
     }
 
     companion object {

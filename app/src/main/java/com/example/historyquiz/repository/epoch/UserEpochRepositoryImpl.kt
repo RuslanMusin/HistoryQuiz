@@ -18,6 +18,7 @@ import com.example.historyquiz.utils.RxUtils
 import com.google.firebase.database.*
 import dagger.Lazy
 import io.reactivex.Single
+import io.reactivex.SingleEmitter
 import javax.inject.Inject
 
 class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
@@ -188,50 +189,53 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
 
     override fun updateAfterGame(lobby: Lobby, playerId: String?, isWin: Boolean, score: Int): Single<Boolean> {
         Log.d(TAG_LOG, "update after game")
-        val single: Single<Boolean> = Single.create { e ->
+        val single: Single<Boolean> = Single.create { outResult ->
             playerId?.let {
                 userRepository.get().readUserById(it).subscribe { user ->
                     findUserEpoch(it, lobby.epochId).subscribe { epoch ->
-                        findUserEpoch(it, DEFAULT_EPOCH_ID).subscribe { defEpoch ->
-                            Log.d(TAG_LOG, "find epoch after game")
-                            if (isWin) {
-                                epoch.win++
-                                defEpoch.win++
-                                user.points += GAME_WIN_POINTS
-                            } else {
-                                epoch.lose++
-                                defEpoch.lose++
-                                user.points += GAME_LOSE_POINTS
-                            }
-                            if (user.points >= user.nextLevel) {
-                                user.nextLevel = (1.5 * user.points + 20 * user.level).toLong()
-                                user.level++
-                                user.points = 0
-                            }
-                            epoch.updateGe()
-                            defEpoch.updateGe()
-                            userRepository.get().updateUser(user)
-                            Log.d(TAG_LOG, "after update user")
-                            if (user.id.equals(AppHelper.currentUser.id)) {
-                                AppHelper.currentUser = user
-                            }
-                            epoch.right += score
-                            epoch.wrong += (lobby.cardNumber - score)
-                            defEpoch.right += score
-                            defEpoch.wrong += (lobby.cardNumber - score)
-                            updateUserEpoch(epoch).subscribe { e ->
-                                updateUserEpoch(defEpoch).subscribe { e ->
-                                    findUserEpoches(playerId, true).subscribe { epoches ->
-                                        user.epochList = epoches.toMutableList()
-                                        val leaderStat = LeaderStat(user)
-                                        Log.d(TAG_LOG, "create leader stat")
-                                        leaderStatRepository.updateLeaderStat(leaderStat).subscribe { e ->
-                                            Log.d(TAG_LOG, "created leaderStat")
+                        val isDefEpoch = lobby.epochId.equals(DEFAULT_EPOCH_ID)
+                            findUserEpoch(it, DEFAULT_EPOCH_ID).subscribe { defEpoch ->
+                                Log.d(TAG_LOG, "find epoch after game")
+                                if (isWin) {
+                                    epoch.win++
+//                                    if (!isDefEpoch) defEpoch.win++
+                                    user.points += GAME_WIN_POINTS
+                                } else {
+                                    epoch.lose++
+//                                    if (!isDefEpoch) defEpoch.lose++
+                                    user.points += GAME_LOSE_POINTS
+                                }
+                                if (user.points >= user.nextLevel) {
+                                    user.nextLevel = (1.5 * user.points + 20 * user.level).toLong()
+                                    user.level++
+                                    user.points = 0
+                                }
+                                epoch.right += score
+                                epoch.wrong += (lobby.cardNumber - score)
+                                if (!isDefEpoch) {
+                                    defEpoch.right += score
+                                    defEpoch.wrong += (lobby.cardNumber - score)
+                                }
+                                epoch.updateEpoch()
+                                Log.d(TAG_LOG, "updateGe and ge = ${epoch.ge}")
+                                if (!isDefEpoch) defEpoch.updateKe()
+                                userRepository.get().updateUser(user)
+                                Log.d(TAG_LOG, "after update user")
+                                if (user.id.equals(AppHelper.currentUser.id)) {
+                                    AppHelper.currentUser = user
+                                }
+                                if (!isDefEpoch) {
+                                    updateUserEpoch(epoch).subscribe { e ->
+                                        updateUserEpoch(defEpoch).subscribe { e ->
+                                            updateLeaderStatAfterGame(playerId, user, outResult)
+
                                         }
                                     }
+                                } else {
+                                    updateUserEpoch(epoch).subscribe { e ->
+                                        updateLeaderStatAfterGame(playerId, user, outResult)
                                 }
                             }
-
                         }
 
                     }
@@ -241,17 +245,41 @@ class UserEpochRepositoryImpl @Inject constructor(): UserEpochRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
+    private fun updateLeaderStatAfterGame(
+        playerId: String,
+        user: User,
+        outResult: SingleEmitter<Boolean>
+    ) {
+        findUserEpoches(playerId, true).subscribe { epoches ->
+            user.epochList = epoches.toMutableList()
+            val leaderStat = LeaderStat(user)
+            Log.d(TAG_LOG, "update leader stat")
+            leaderStatRepository.updateLeaderStat(leaderStat).subscribe { e ->
+                Log.d(TAG_LOG, "updated leaderStat")
+                outResult.onSuccess(true)
+            }
+        }
+    }
+
     override fun updateAfterTest(userId: String, test: Test): Single<Boolean> {
         val single: Single<Boolean> = Single.create { e ->
             findUserEpoch(userId, test.epochId).subscribe { userEpoch ->
-                Log.d(TAG_LOG, "epoch was finded")
-                val right = test.rightQuestions.size
-                val wrong = test.wrongQuestions.size
-                userEpoch.right += right
-                userEpoch.wrong += wrong
-                userEpoch.ke += ((right - wrong).toDouble() / (right + wrong))
-                Log.d(TAG_LOG, "userEpoch.ke = ${userEpoch.ke}")
-                updateUserEpoch(userEpoch).subscribe { flag  -> e.onSuccess(true)}
+                findUserEpoch(userId, DEFAULT_EPOCH_ID).subscribe { defEpoch ->
+                    Log.d(TAG_LOG, "epoch was finded")
+                    val right = test.rightQuestions.size
+                    val wrong = test.wrongQuestions.size
+                    userEpoch.right += right
+                    userEpoch.wrong += wrong
+                    defEpoch.right += right
+                    defEpoch.wrong += wrong
+                    userEpoch.updateKe()
+                    defEpoch.updateKe()
+                    Log.d(TAG_LOG, "userEpoch.ke = ${userEpoch.ke}")
+                    updateUserEpoch(userEpoch).subscribe { flag ->
+                        updateUserEpoch(defEpoch).subscribe { defFlag ->
+                            e.onSuccess(true) }
+                    }
+                }
             }
         }
         return single.compose(RxUtils.asyncSingle())

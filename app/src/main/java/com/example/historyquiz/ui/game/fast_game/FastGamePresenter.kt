@@ -30,9 +30,21 @@ class FastGamePresenter @Inject constructor() : BasePresenter<FastGameView>() {
 
     lateinit var timer: CountDownTimer
 
+    private fun validateLobby(lobby: Lobby): Boolean {
+        var flag = true
+        if (!(lobby.cardNumber >= Const.CARD_NUMBER)) {
+            viewState.showSnackBar(R.string.set_card_min)
+            flag = false
+        }
+        if (lobby.epoch == null) {
+            flag = false
+        }
+        return flag
+    }
 
     fun createGame(lobby: Lobby, user: User) {
-        if(lobby.cardNumber >= Const.CARD_NUMBER) {
+        if(validateLobby(lobby)) {
+            viewState.showProgressDialog(R.string.wait_enemy)
             cardRepository.findMyCardsByEpoch(user.id, lobby.epochId).subscribe{ cards ->
                 val cardNumber = cards.size
                 Log.d(TAG_LOG, "enemy cards size = $cardNumber")
@@ -41,7 +53,7 @@ class FastGamePresenter @Inject constructor() : BasePresenter<FastGameView>() {
                         val mySize = myCards.size
                         Log.d(TAG_LOG, "my cards size = $mySize")
                         if (mySize >= lobby.cardNumber) {
-                            viewState.showProgressDialog(R.string.wait_enemy)
+                            viewState.setStatus(Const.ONLINE_STATUS)
                             lobby.isFastGame = true
                             val playerData = LobbyPlayerData()
                             playerData.playerId = AppHelper.currentId
@@ -50,16 +62,16 @@ class FastGamePresenter @Inject constructor() : BasePresenter<FastGameView>() {
                             val args = Bundle()
                             user?.id?.let { playGame(it, lobby) }
                         } else {
+                            viewState.hideProgressDialog()
                             viewState.showSnackBar(R.string.you_dont_have_card_min)
                         }
                     }
                 } else {
+                    viewState.hideProgressDialog()
                     viewState.showSnackBar(R.string.enemy_doesnt_have_card_min)
                 }
             }
 
-        } else {
-            viewState.showSnackBar(R.string.set_card_min)
         }
     }
 
@@ -76,6 +88,7 @@ class FastGamePresenter @Inject constructor() : BasePresenter<FastGameView>() {
                                 it.status = Const.IN_GAME_STATUS
                                 viewState.hideProgressDialog()
                                 userRepository.changeUserStatus(it).subscribe()
+                                viewState.removeStackDownTo(1)
                                 val fragment = PlayGameFragment.newInstance()
                                 viewState.pushFragments(fragment, true)
                             }
@@ -83,6 +96,7 @@ class FastGamePresenter @Inject constructor() : BasePresenter<FastGameView>() {
                             viewState.hideProgressDialog()
                             viewState.showSnackBar(R.string.not_accepted)
                             gamesRepository.removeFastLobby(userId,lobby).subscribe()
+                            viewState.changeStatus(false)
                         }
                     }
                     timer = object : CountDownTimer(20000, 1000) {
@@ -95,6 +109,7 @@ class FastGamePresenter @Inject constructor() : BasePresenter<FastGameView>() {
                             viewState.hideProgressDialog()
                             viewState.showSnackBar(R.string.time_end)
                             gamesRepository.removeFastLobby(userId,lobby).subscribe()
+                            viewState.changeStatus(false)
                         }
 
                     }

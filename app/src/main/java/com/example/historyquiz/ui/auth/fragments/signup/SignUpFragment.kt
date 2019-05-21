@@ -102,13 +102,20 @@ class SignUpFragment: BaseFragment(), SignUpView, View.OnClickListener {
         return user
     }
 
+    override fun showUsernameError(hasError: Boolean) {
+        if(hasError) {
+            ti_username.error = getString(R.string.enter_username)
+        } else {
+            ti_username.error = null
+        }
+    }
+
     override fun showEmailError(hasError: Boolean) {
         if(hasError) {
             ti_email.error = getString(R.string.enter_correct_name)
         } else {
             ti_email.error = null
         }
-
     }
 
     override fun showPasswordError(hasError: Boolean) {

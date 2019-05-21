@@ -56,6 +56,7 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
         lobby = Lobby()
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -66,7 +67,7 @@ class AddGameFragment : BaseFragment(), AddGameView, View.OnClickListener {
 
     private fun setToolbar() {
         setActionBar(toolbar_back)
-        setToolbarTitle(toolbar_title, getString(R.string.add_test))
+        setToolbarTitle(toolbar_title, getString(R.string.add_game))
     }
 
     private fun setListeners() {

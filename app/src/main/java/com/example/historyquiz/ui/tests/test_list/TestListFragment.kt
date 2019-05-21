@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.fragment_test_list.*
 import kotlinx.android.synthetic.main.toolbar_help.*
 import java.util.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -115,6 +116,11 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
         Log.d(TAG_LOG, "test loaded")
     }
 
+    override fun showTests(list: List<Test>) {
+        this.skills = list.toMutableList()
+        changeDataSet(list)
+    }
+
     override fun handleError(throwable: Throwable) {
 
     }
@@ -172,8 +178,9 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.search_menu, menu)
+        inflater?.inflate(R.menu.search_help_menu, menu)
         menu?.let {
+            val helpItem = menu.findItem(R.id.action_help)
             if(type.equals(NEW_ONES)) {
                 helpDialog = MaterialDialog.Builder(this.activity!!)
                     .customView(R.layout.dialog_help, false)
@@ -185,11 +192,12 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
                 helpDialog.btn_cancel.setOnClickListener { helpDialog.cancel() }
                 helpDialog.tv_help_content.text = getString(R.string.test_text)
 
-                val helpItem = menu.findItem(R.id.action_help)
                 helpItem.setOnMenuItemClickListener {
                     helpDialog.show()
                     true
                 }
+            } else {
+                helpItem.setVisible(false)
             }
             setSearchMenuItem(it)
         }
@@ -212,12 +220,25 @@ class TestListFragment : BaseFragment(), TestListView, View.OnClickListener {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                presenter.loadOfficialTestsByQUery(userId, newText, type)
-//                findFromList(newText)
+//                presenter.loadOfficialTestsByQUery(userId, newText, type)
+                findFromList(newText)
                 return false
             }
         })
 
+    }
+
+    private fun findFromList(query: String) {
+        val pattern: Pattern = Pattern.compile("(\\w*\\s+)*${query.toLowerCase()}.*")
+        val list: MutableList<Test> = java.util.ArrayList()
+        for(skill in skills) {
+            if (pattern.matcher(skill.title?.toLowerCase()).matches()) {
+                list.add(skill)
+            }
+        }
+
+        Log.d(TAG_LOG, "list.size = ${list.size}")
+        changeDataSet(list)
     }
 
     companion object {

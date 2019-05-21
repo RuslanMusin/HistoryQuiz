@@ -15,7 +15,7 @@ import com.example.historyquiz.ui.base.BaseFragment
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.BOT_ID
 import com.example.historyquiz.utils.Const.gson
-import kotlinx.android.synthetic.main.activity_add_list.*
+import kotlinx.android.synthetic.main.fragment_search_card.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import java.util.*
 import javax.inject.Inject
@@ -34,13 +34,14 @@ class AddPhotoFragment: BaseFragment(), AddPhotoView {
     lateinit var userId: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.activity_add_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_search_card, container, false)
         return view
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        spinner.visibility = View.GONE
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
         initRecycler()

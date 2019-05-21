@@ -4,8 +4,6 @@ import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 
 interface FastGameView : BasicFunctional {
 
-    fun onGameCreated()
-
-//    fun showProgressDialog()
+    fun changeStatus(isOnline: Boolean)
 
 }

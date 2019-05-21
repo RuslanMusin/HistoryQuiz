@@ -31,4 +31,11 @@ class AddCardListPresenter @Inject constructor() : BasePresenter<AddCardListView
                 .doAfterTerminate(Action { viewState.hideListLoading() })
                 .subscribe({ viewState.setOpenSearchList(it) }, { viewState.handleError(it) })
     }
+
+    fun query(query: String) {
+        wikiApiRepository!!
+            .query(query)
+            .subscribe({ viewState.setQueryResults(it) }, { viewState.handleError(it) })
+
+    }
 }

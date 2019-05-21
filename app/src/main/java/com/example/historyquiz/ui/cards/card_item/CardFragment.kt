@@ -89,6 +89,7 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
         setListeners()
         setData()
         card.id?.let { commentPresenter.loadComments(CARD_COMMENT_TYPE, it) }
+        hideLoading()
         setStatus(Const.ONLINE_STATUS)
         setWaitStatus(true)
     }
@@ -121,6 +122,7 @@ class CardFragment : CommentFragment(), CardView, View.OnClickListener {
 
     private fun getWikiUrl() {
         if(card.wikiUrl != null){
+            showLoading()
             val args = Bundle()
             args.putString(PAGE_TITLE, card.name)
             args.putString(PAGE_URL, card.wikiUrl)

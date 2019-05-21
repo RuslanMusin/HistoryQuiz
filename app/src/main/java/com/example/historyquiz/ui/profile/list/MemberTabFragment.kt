@@ -49,6 +49,7 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        hideLoading()
         setStatus(Const.ONLINE_STATUS)
         setWaitStatus(true)
     }
@@ -95,7 +96,6 @@ class MemberTabFragment : BaseFragment(), MembersTabView {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
         menu?.let {
-            it.findItem(R.id.action_help).setVisible(false)
             setSearchMenuItem(it) }
         super.onCreateOptionsMenu(menu, inflater)
     }

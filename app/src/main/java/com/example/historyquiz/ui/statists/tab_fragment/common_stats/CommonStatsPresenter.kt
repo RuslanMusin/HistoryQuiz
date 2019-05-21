@@ -19,7 +19,7 @@ class CommonStatsPresenter @Inject constructor() : BasePresenter<CommonStatsView
     fun loadStats() {
         val disposable =  userEpochRepository
             .findUserEpoches(AppHelper.currentUser.id, true)
-            .map { epoches -> epoches.sortedWith(compareByDescending(UserEpoch::keSub)) }
+            .map { epoches -> epoches.sortedWith(compareByDescending{i -> Math.abs(i.ke)}) }
             .doOnSubscribe(Consumer<Disposable> { viewState.showListLoading() })
             .doAfterTerminate(Action { viewState.hideListLoading() })
             .subscribe({ viewState.changeDataSet(it) }, { viewState.handleError(it) })

@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 import com.example.historyquiz.ui.navigation.NavigationView
+import com.example.historyquiz.utils.Const.ONLINE_STATUS
 import dagger.android.support.AndroidSupportInjection
 
 abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
@@ -20,6 +21,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BasicFunctional {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         (activity as BasicFunctional).setOfflineChecking()
+        setStatus(ONLINE_STATUS)
         setWaitStatus(false)
     }
 

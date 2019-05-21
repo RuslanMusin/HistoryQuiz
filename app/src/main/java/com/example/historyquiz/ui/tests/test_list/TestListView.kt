@@ -6,4 +6,6 @@ import com.example.historyquiz.ui.base.interfaces.BasicFunctional
 
 interface TestListView: BasicFunctional, BaseRecyclerView<Test> {
 
+    fun showTests(list: List<Test>)
+
 }
