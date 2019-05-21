@@ -46,6 +46,10 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
     lateinit var wrongQuestions: MutableList<Question>
     var procent: Long = 0
 
+    override fun performBackPressed() {
+        finishTest()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
        val view = inflater.inflate(R.layout.fragment_finish_test, container, false)
        test = gson.fromJson(arguments?.getString(TEST_ITEM), Test::class.java)
@@ -116,25 +120,22 @@ class FinishFragment : BaseFragment(), FinishView, View.OnClickListener {
         hideLoading()
     }
 
+    private fun finishTest() {
+        removeStackDownTo(2)
+        test.testDone = true
+        test.type = OLD_ONES
+        val args: Bundle = Bundle()
+        args.putString(TEST_ITEM, gson.toJson(test))
+        showLoading()
+        val fragment = TestFragment.newInstance(args)
+        pushFragments(fragment, true)
+    }
+
     override fun onClick(v: View?) {
 
         when (v?.id) {
 
-            R.id.btn_finish_test -> {
-              /*  for(question in test.questions) {
-                    question.userRight = false
-                    for(answer in question.answers) {
-                        answer.userClicked = false
-                    }
-                }*/
-                removeStackDownTo(2)
-                test.testDone = true
-                test.type = OLD_ONES
-                val args: Bundle = Bundle()
-                args.putString(TEST_ITEM, gson.toJson(test))
-                val fragment = TestFragment.newInstance(args)
-                pushFragments(fragment, true)
-            }
+            R.id.btn_finish_test ->  finishTest()
 
             R.id.li_wrong_answers -> {
                 if(wrongQuestions.size > 0) {

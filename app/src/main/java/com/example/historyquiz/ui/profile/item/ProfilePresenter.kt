@@ -7,6 +7,7 @@ import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.user.User
 import com.example.historyquiz.repository.card.CardRepository
+import com.example.historyquiz.repository.epoch.UserEpochRepository
 import com.example.historyquiz.repository.game.GameRepository
 import com.example.historyquiz.repository.user.UserRepository
 import com.example.historyquiz.ui.base.BasePresenter
@@ -24,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import dagger.Lazy
 import javax.inject.Inject
 
 @InjectViewState
@@ -35,6 +37,8 @@ class ProfilePresenter @Inject constructor() : BasePresenter<ProfileView>() {
     lateinit var cardRepository: CardRepository
     @Inject
     lateinit var gamesRepository: GameRepository
+    @Inject
+    lateinit var userEpochRepository: Lazy<UserEpochRepository>
 
     fun setUserRelationAndView(user: User) {
         var type: String = ""
@@ -97,6 +101,7 @@ class ProfilePresenter @Inject constructor() : BasePresenter<ProfileView>() {
     }
 
     fun logout() {
+//        userEpochRepository.get().createStartEpoches(currentUser, true)
         currentUser.status = Const.OFFLINE_STATUS
         userInSession = false
         userRepository.changeUserStatus(currentUser).subscribe()

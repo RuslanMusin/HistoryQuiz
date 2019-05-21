@@ -52,6 +52,7 @@ class FastGameFragment : BaseFragment(), FastGameView, View.OnClickListener {
             user = gson.fromJson(it.getString(USER_ITEM), User::class.java)
         }
         changeStatus(false)
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 

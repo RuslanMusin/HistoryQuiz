@@ -26,6 +26,7 @@ import com.example.historyquiz.ui.tests.add_test.TestViewModel
 import com.example.historyquiz.ui.tests.add_test.main.AddMainTestFragment
 import com.example.historyquiz.ui.tests.test_item.main.TestFragment
 import com.example.historyquiz.ui.tests.test_list.TestListFragment
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
 import com.example.historyquiz.utils.Const.QUESTION_NUMBER
 import com.example.historyquiz.utils.Const.TAG_LOG
@@ -161,7 +162,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     }
 
     private fun setStartFields() {
-        et_question.setText(getString(R.string.add_question_number, number + 1))
+//        et_question.setText(getString(R.string.add_question_number, number + 1))
     }
 
 
@@ -243,16 +244,15 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
     }
 
     private fun nextQuestion() {
-        if(number <= 9) {
-            prepareQuestion()
-            if(checkQuestion()) {
-                val args: Bundle = Bundle()
-                args.putString(TEST_ITEM, gson.toJson(test))
-                args.putInt(QUESTION_NUMBER, ++number)
-                val fragment = AddQuestionTestFragment.newInstance(args)
-                pushFragments(fragment, true)
-            }
+        prepareQuestion()
+        if(checkQuestion()) {
+            val args: Bundle = Bundle()
+            args.putString(TEST_ITEM, gson.toJson(test))
+            args.putInt(QUESTION_NUMBER, ++number)
+            val fragment = AddQuestionTestFragment.newInstance(args)
+            pushFragments(fragment, true)
         }
+
     }
 
     private fun checkQuestion(): Boolean {
@@ -260,6 +260,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         if(question.question == null || question.question?.trim().equals("")) {
             ti_question.error = "Введите вопрос!"
             flag = false
+            return flag
         } else {
             ti_question.error = null
         }
@@ -269,15 +270,18 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
                 count++
             }
             if(question.answers[i].text == null || question.answers[i].text?.trim().equals("")) {
-                editTexts[i].error = "Напишите вариант ответа"
+//                editTexts[i].error = "Напишите вариант ответа"
+                showSnackBar("Напишите ${i + 1} вариант ответа")
                 flag = false
+                return flag
             }else {
-                editTexts[i].error = null
+//                editTexts[i].error = null
             }
         }
         if(count == 0) {
             flag = false
             showSnackBar("Выберите хотя бы один ответ!")
+            return flag
         }
 
         answers.clear()
@@ -340,7 +344,11 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
                     .negativeText(R.string.disagree)
                     .onPositive(object : MaterialDialog.SingleButtonCallback {
                         override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                            val fragment = TestListFragment.newInstance()
+                            removeStackDownTo()
+                            val args = Bundle()
+                            args.putString(Const.TIME_TYPE, Const.NEW_ONES)
+                            args.putString(Const.USER_ID, AppHelper.currentId)
+                            val fragment = TestListFragment.newInstance(args)
                             pushFragments(fragment, true)
 //                            TestListActivity.start(activity as Activity)
                         }
@@ -371,7 +379,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
         val editText: EditText = view.findViewById(R.id.et_answer)
         val checkBox: CheckBox = view.findViewById(R.id.checkbox)
 
-        editText.setText("Answer $answerSize")
+//        editText.setText("Answer $answerSize")
         checkBox.setOnClickListener(checkListener)
 
         editTexts?.add(editText)
@@ -382,7 +390,7 @@ class AddQuestionTestFragment : BaseFragment(), AddQuestionTestView, View.OnClic
 
 
     private fun prepareQuestion() {
-
+        answers.clear()
         for (i in checkBoxes!!.indices) {
             val answer = Answer()
             answer.text = editTexts!![i].text.toString()

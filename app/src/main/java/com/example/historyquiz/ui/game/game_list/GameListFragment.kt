@@ -184,7 +184,7 @@ class GameListFragment : BaseFragment(), GameListView {
     }
 
     override fun hideProgressDialog() {
-        showSnackBar("Противник не принял приглашение")
+        super.hideProgressDialog()
         isClickable = true
     }
 

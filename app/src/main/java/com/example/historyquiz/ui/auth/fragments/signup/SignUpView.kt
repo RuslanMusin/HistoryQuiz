@@ -9,5 +9,7 @@ interface SignUpView: BasicFunctional {
 
     fun showPasswordError(hasError: Boolean)
 
+    fun showUsernameError(hasError: Boolean)
+
     fun goToProfile(user: User)
 }

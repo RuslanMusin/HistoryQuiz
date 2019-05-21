@@ -104,10 +104,20 @@ class StatListFragment : BaseFragment(), StatListView {
             .build()
 
         helpDialog.btn_cancel.setOnClickListener { helpDialog.cancel() }
-        helpDialog.tv_help_content.text = getString(R.string.stats_text)
         menu?.let {
             val helpItem = menu.findItem(R.id.action_help)
+            var text = getString(R.string.common_stats_text)
             helpItem.setOnMenuItemClickListener {
+                when(viewpager.currentItem) {
+
+                    0 -> text = getString(R.string.common_stats_text)
+
+                    1 -> text = getString(R.string.game_stats_text)
+
+                    2 -> text = getString(R.string.leader_stats_text)
+
+                }
+                helpDialog.tv_help_content.text = text
                 helpDialog.show()
                 true
             }

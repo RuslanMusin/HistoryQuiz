@@ -82,6 +82,9 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     lateinit var toolbar: Toolbar
     lateinit var adapter: GameCardsListAdapter
 
+    var myScore = 0
+    var enemyScore = 0
+
     override fun showBottomNavigation(navigationView: NavigationView) {
         navigationView.hideBottomNavigation()
         navigationView.changeWindowsSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
@@ -224,7 +227,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
 
     private fun updateTime() {
         Log.d(TAG_LOG,"updateTime")
-        if(enemyAnswered and myAnswered and (cardsSize >= 0)) {
+        if(enemyAnswered and myAnswered and (cardsSize > 0)) {
             Log.d(TAG_LOG,"choose card mode")
             enemyAnswered = false
             myAnswered = false
@@ -346,7 +349,6 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
     }
 
     override fun showQuestionForYou(question: Question) {
-        game_questions_container.visibility = View.VISIBLE
         childFragmentManager
             .beginTransaction()
             .replace(
@@ -354,6 +356,7 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
                 GameQuestionFragment.newInstance(question)
             )
             .commit()
+        game_questions_container.visibility = View.VISIBLE
 
     }
 
@@ -388,7 +391,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         enemyAnswered = true
         updateTime()
         if (correct) {
-            tv_enemy_score.text = (tv_enemy_score.text.toString().toInt() + 1).toString()
+            enemyScore++
+            tv_enemy_score.text = enemyScore.toString()
         }
     }
 
@@ -396,7 +400,8 @@ class PlayGameFragment : BaseFragment(), PlayGameView {
         myAnswered = true
         updateTime()
         if (correct) {
-            tv_my_score.text = (tv_my_score.text.toString().toInt() + 1).toString()
+            myScore++
+            tv_my_score.text = myScore.toString()
         }
     }
 

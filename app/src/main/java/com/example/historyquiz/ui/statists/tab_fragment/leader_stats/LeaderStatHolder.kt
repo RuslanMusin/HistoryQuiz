@@ -6,8 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.historyquiz.R
 import com.example.historyquiz.model.epoch.LeaderStat
+import com.example.historyquiz.repository.card.CardRepository
+import com.example.historyquiz.repository.user.UserRepository
+import com.example.historyquiz.utils.AppHelper
 import com.example.historyquiz.utils.Const
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.item_leader_stat.view.*
+import javax.inject.Inject
 
 class LeaderStatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

@@ -50,7 +50,7 @@ class UserEpoch {
         ge = ((win - lose).toDouble() / sum)
         val calendar = GregorianCalendar.getInstance()
         calendar.time = Date(updateDate)
-        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 1)
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 5)
         val date = Date()
         if(calendar.time.after(date)) {
             updateDate = date.time
@@ -62,7 +62,7 @@ class UserEpoch {
         ke = (right - wrong).toDouble() / (right + wrong)
         val calendar = GregorianCalendar.getInstance()
         calendar.time = Date(updateDate)
-        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 1)
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 5)
         val date = Date()
         if(date.after(calendar.time)) {
             updateDate = date.time

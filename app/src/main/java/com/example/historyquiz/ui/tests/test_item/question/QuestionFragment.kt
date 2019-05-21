@@ -71,6 +71,7 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
                                 answer.userClicked = false
                             }
                         }
+                        showLoading()
                         removeStackDownTo(number)
                         (activity as NavigationView).performBackPressed()
                     }
@@ -95,6 +96,7 @@ class QuestionFragment : BaseFragment(), QuestionView, View.OnClickListener {
         setListeners()
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 

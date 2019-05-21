@@ -3,6 +3,7 @@ package com.example.historyquiz.ui.navigation
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.design.widget.BottomNavigationView
@@ -98,6 +99,7 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Fabric.with(this, Crashlytics())
 
         setContentView(R.layout.activity_navigation)
@@ -167,32 +169,35 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
     }
 
     override fun setDialog(gameData: GameData, lobby: Lobby) {
-        val timer = object : CountDownTimer(5000, 1000) {
+        if(!dialog.isShowing) {
+            val timer = object : CountDownTimer(5000, 1000) {
 
-            override fun onTick(millisUntilFinished: Long) {
-            }
-
-            override fun onFinish() {
-                dialog.dismiss()
-                refuseAndWait(lobby)
-            }
-        }
-        dialog = dialog
-            .builder
-            .onPositive(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    timer.cancel()
-                    presenter.chooseDialogDecision(gameData, lobby)
+                override fun onTick(millisUntilFinished: Long) {
                 }
 
-            })
-            .onNegative { dialog: MaterialDialog, which: DialogAction ->
-                timer.cancel()
-                dialog.hide()
-                refuseAndWait(lobby) }
-            .build()
-        dialog.show()
-        timer.start()
+                override fun onFinish() {
+                    dialog.dismiss()
+                    refuseAndWait(lobby)
+                }
+            }
+            dialog = dialog
+                .builder
+                .onPositive(object : MaterialDialog.SingleButtonCallback {
+                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                        timer.cancel()
+                        presenter.chooseDialogDecision(gameData, lobby)
+                    }
+
+                })
+                .onNegative { dialog: MaterialDialog, which: DialogAction ->
+                    timer.cancel()
+                    dialog.hide()
+                    refuseAndWait(lobby)
+                }
+                .build()
+            dialog.show()
+            timer.start()
+        }
     }
 
     override fun setWaitStatus(isWaiting: Boolean) {
@@ -240,7 +245,6 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
         currentTab = TAB_PROFILE
         showTab = SHOW_PROFILE
         bottom_navigation.selectedItemId = R.id.action_profile
-        hideStartView()
     }
 
     private fun initListeners() {
@@ -374,6 +378,7 @@ open class NavigationActivity : BaseActivity(), NavigationView, View.OnClickList
 
             }
         }
+        hideStartView()
     }
 
     private fun chooseTab(tabId: String) {

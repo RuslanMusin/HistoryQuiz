@@ -3,6 +3,7 @@ package com.example.historyquiz.ui.game.game_list
 import android.os.CountDownTimer
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
+import com.example.historyquiz.R
 import com.example.historyquiz.model.db_dop_models.Relation
 import com.example.historyquiz.model.game.GameData
 import com.example.historyquiz.model.game.Lobby
@@ -81,12 +82,14 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
     }
 
     fun findGame(lobby: Lobby) {
+        viewState.showProgressDialog(R.string.wait_enemy)
         Log.d(TAG_LOG,"find game online")
         lobby.creator?.playerId?.let {creatorId ->
             val gameData: GameData = GameData()
             gameData.enemyId = creatorId
             userRepository.readUserById(creatorId).subscribe { enemy ->
                 if(!lobby.id.equals(enemy.lobbyId)) {
+                    viewState.hideProgressDialog()
                     viewState.showSnackBar("Игра была удалена. Список будет обновлен")
                     loadOfficialTests()
                     viewState.setItemClickable(true)
@@ -106,12 +109,14 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
 
                                 override fun onFinish() {
                                     viewState.hideProgressDialog()
+                                    viewState.showSnackBar("Противник не принял приглашение")
                                     gameRepository.notAccepted(lobby)
                                 }
                             }
                             timer.start()
                             gameRepository.goToLobby(lobby, gameFinded(), gameNotAccepted(lobby))
                         } else {
+                            viewState.hideProgressDialog()
                             viewState.showSnackBar("У противника не хватает карт для игры")
                             viewState.setItemClickable(true)
                         }
@@ -124,6 +129,7 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
 
     fun gameFinded(): () -> Unit {
         return {
+            viewState.hideProgressDialog()
             timer.cancel()
             viewState.onGameFinded()
         }
@@ -134,6 +140,7 @@ class GameListPresenter @Inject constructor() : BasePresenter<GameListView>() {
             timer.cancel()
             viewState.setWaitStatus(true)
             viewState.hideProgressDialog()
+            viewState.showSnackBar("Противник не принял приглашение")
             gameRepository.notAccepted(lobby)
         }
     }

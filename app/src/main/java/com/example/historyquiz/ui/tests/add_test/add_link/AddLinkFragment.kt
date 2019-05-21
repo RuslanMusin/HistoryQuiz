@@ -59,6 +59,7 @@ class AddLinkFragment : BaseFragment(), AddLinkView, View.OnClickListener {
         initViews()
         setStatus(Const.EDIT_STATUS)
         setWaitStatus(false)
+        hideLoading()
         super.onViewCreated(view, savedInstanceState)
     }
 
